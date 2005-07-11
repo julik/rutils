@@ -1,6 +1,6 @@
 module RuTils
-	class GilensonX < String
-
+	class Gilenson < String
+		def initialize(*args)
 			# Задача (вкратце) состоит в том чтобы все ступени разработки развести в отдельные методы
 			# и тестировать их отдельно друг от друга (а также иметь возможность их по-одному включать и выключать).
 			# Фильтры, которые начинаются с lift работают с блоком (например - вытащить таги, провести обработку
@@ -14,34 +14,105 @@ module RuTils
 			
 			@@order_of_filters = [
 					:inches,
-					:simple_quotes,
-					:typographer_quotes,
 					:dashes,
 					:emdashes,
+					:specials,
+					:spacing,
+					:dashglue,
+					:nonbreakables,
 					:plusmin,
 					:degrees,
 					:phones,
+					:simple_quotes,
+					:typographer_quotes,
+					:compound_quotes,
 			]			
 
-			private
+		  @phonemasks = [[	/([0-9]{4})\-([0-9]{2})\-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})/,
+			                  /([0-9]{4})\-([0-9]{2})\-([0-9]{2})/,
+			                  /(\([0-9\+\-]+\)) ?([0-9]{3})\-([0-9]{2})\-([0-9]{2})/,
+			                  /(\([0-9\+\-]+\)) ?([0-9]{2})\-([0-9]{2})\-([0-9]{2})/,
+			                  /(\([0-9\+\-]+\)) ?([0-9]{3})\-([0-9]{2})/,
+			                  /(\([0-9\+\-]+\)) ?([0-9]{2})\-([0-9]{3})/,
+			                  /([0-9]{3})\-([0-9]{2})\-([0-9]{2})/,
+			                  /([0-9]{2})\-([0-9]{2})\-([0-9]{2})/,
+			                  /([0-9]{1})\-([0-9]{2})\-([0-9]{2})/,
+			                  /([0-9]{2})\-([0-9]{3})/,
+			                  /([0-9]+)\-([0-9]+)/,
+											],[		
+											 '<nobr>\1&ndash;\2&ndash;\3&nbsp;\4:\5:\6</nobr>',
+			                 '<nobr>\1&ndash;\2&ndash;\3</nobr>',
+			                 '<nobr>\1&nbsp;\2&ndash;\3&ndash;\4</nobr>',
+			                 '<nobr>\1&nbsp;\2&ndash;\3&ndash;\4</nobr>',
+			                 '<nobr>\1&nbsp;\2&ndash;\3</nobr>',
+			                 '<nobr>\1&nbsp;\2&ndash;\3</nobr>',
+			                 '<nobr>\1&ndash;\2&ndash;\3</nobr>',
+			                 '<nobr>\1&ndash;\2&ndash;\3</nobr>',
+			                 '<nobr>\1&ndash;\2&ndash;\3</nobr>',
+			                 '<nobr>\1&ndash;\2</nobr>',
+			                 '<nobr>\1&ndash;\2</nobr>'
+										]]
+										
+		  @glueleft =  ['рис.', 'табл.', 'см.', 'им.', 'ул.', 'пер.', 'кв.', 'офис', 'оф.', 'г.']
+		  @glueright = ['руб.', 'коп.', 'у.е.', 'мин.']
 
+		  @settings = {
+											"inches" => true, # преобразовывать дюймы в &quot;
+		                  "laquo" => true,  # кавычки-ёлочки
+		                  "farlaquo" => false,  # кавычки-ёлочки для фара (знаки "больше-меньше")
+		                  "quotes" => true, # кавычки-английские лапки
+		                  "dash" => true,   # короткое тире (150)
+		                  "emdash" => true, # длинное тире двумя минусами (151)
+		                  "(c)" => true, 
+											"(r)" => true,
+											"(tm)" => true,
+											"(p)" => true,
+											"+-" => true, # спецсимволы, какие - понятно
+		                  "degrees" => true, # знак градуса
+		                  "<-->" => true,    # отступы $Indent*
+		                  "dashglue" => true, "wordglue" => true, # приклеивание предлогов и дефисов
+		                  "spacing" => true, # запятые и пробелы, перестановка
+		                  "phones" => true,  # обработка телефонов
+		                  "fixed" => false,   # подгон под фиксированную ширину
+		                  "html" => false     # запрет тагов html
+		               }
+			# irrelevant - indentation with images
+			@indent_a = "<!--indent-->"
+			@indent_b = "<!--indent-->"
+			
+			@mark_tag = "\200" # Подстановочные маркеры тегов
+			@mark_ignored = "\201" # Подстановочные маркеры неизменяемых групп
+		  
+			@ignore = /notypo/ # regex, который игнорируется. Этим надо воспользоваться для обработки pre и code
+
+			self.methods.each do | m |
+				next unless m.include?("process_")
+				raise "No hook for " + m unless @@order_of_filters.include?(m.gsub(/process_/, '').to_sym)
+			end
+
+			super(*args)
+
+
+		end
+		
+			
 			def to_html(*opts)
-				text = lift_tags(self.to_s) do | text |
-					lift_ignored(text) do |text|
+				text = self.to_s.clone
+				lift_tags(text) do | text |
+#					lift_ignored(text) do |text|
 						for filter in @@order_of_filters
 
-							raise "UnknownFilter #process_#{filter}!" unless self.respond_to?("process_#{filter}".to_sym)
-							
-							self.send("process_#{filter}".to_sym, text) if @settings[filter.to_sym] # вызываем конкретный фильтр
+							raise "UnknownFilter #process_#{filter} in @@order_of_filters!" unless self.respond_to?("process_#{filter}".to_sym)
+							self.send("process_#{filter}".to_sym, text) # if @settings[filter.to_sym] # вызываем конкретный фильтр
 						end
-					end
+#					end
 				end
+				text
 			end
 				
 			# Вытаскивает теги из текста, выполняет переданный блок и возвращает теги на место.
-			# Теги заменяются на специальный маркер			
-			def lift_tags(text, &block)
-		    tags = []
+			# Теги в процессе заменяются на специальный маркер			
+			def lift_tags(text, marker="\200", &block)
 				
 				# Выцепляем таги
 	 #	re =  /<\/?[a-z0-9]+("+ # имя тага
@@ -52,41 +123,29 @@ module RuTils
 	 #                                  ")?"+
 	 #                            ")*\/?>|\xA2\xA2[^\n]*?==/i;
 
-			  re =  /<\/?[a-z0-9]+(\s+([a-z]+(=((\'[^\']*\')|(\"[^\"]*\")|([0-9@\-_a-z:\/?&=\.]+)))?)?)*\/?>|\xA2\xA2[^\n]*?==/ui
-	      text.scan(re) do | match |
-		      match = "&lt;" + match if @settings["html"]
-					tags << match
-				end
+			  re =  /(<\/?[a-z0-9]+(\s+([a-z]+(=((\'[^\']*\')|(\"[^\"]*\")|([0-9@\-_a-z:\/?&=\.]+)))?)?)*\/?>)/ui
+				
+				tags = text.scan(re).inject([]) { | ar, match | ar << match[0] }
 
 		    text.gsub!(re, "\200") #маркер тега
 				
-				text = yield(text) if block_given? #делаем все что надо сделать без тегов
+				yield(text) if block_given? #делаем все что надо сделать без тегов
 				
-		    # Вставляем таги обратно.
-				while tag = tags.shift do
-					text.sub!("\200", tag)
-				end
-				text
+ 				tags.each { | tag | text.sub!(@mark_tag, tag) }  # Вставляем таги обратно.
+				
 			end
 
 			# Выцепляет игнорированные символы, выполняет блок с текстом
 			# без этих символов а затем вставляет их на место			
 			def lift_ignored(text, &block)
-		    ignored = []		
-				text.scan(@ignore) do |result|
-		      puts "Got ignored" 
-					ignored << result
-				end
+				ignored = text.scan(@ignore)
 		    text.gsub!(@ignore, "\201")
 				
 				# обрабатываем текст
-				text = yield(text) if block_given?				
+				yield(text) if block_given?				
 				
 				# возвращаем игнорированные символы
-				while skipped = ignored.shift do						
-						text.sub!("\201", skipped)
-				end
-				text
+				ignored.each { | tag | text.sub!(@mark_ignored, tag) }
 			end
 
 			# Кавычки - лапки			
@@ -137,19 +196,19 @@ module RuTils
 			# Обрабатывает знаки копирайта, торговой марки и т.д.
 			def process_specials(text)
 	      # 4. (с)
-	      text.gsub!(/\([сСcC]\)((?=\w)|(?=\s[0-9]+))/u, "&copy;") if @settings["(c)"]
+	      text.gsub!(/\([сСcC]\)((?=\w)|(?=\s[0-9]+))/u, "&copy;")
 	      # 4a. (r)
-	      text.gsub!( /\(r\)/ui, "<sup>&#174;</sup>") if @settings["(r)"]
+	      text.gsub!( /\(r\)/ui, "<sup>&#174;</sup>")
 
 	      # 4b. (tm)
-	      text.gsub!( /\(tm\)|\(тм\)/ui, "&#153;") if @settings["(tm)"]
+	      text.gsub!( /\(tm\)|\(тм\)/ui, "&#153;")
 	      # 4c. (p)   
-	      text.gsub!( /\(p\)/ui, "&#167;") if @settings["(p)"]
+	      text.gsub!( /\(p\)/ui, "&#167;")
 			end
 						
 			# Склейка дефисоов
-			def process_glue(text)
-		    text.gsub!( /([a-zа-яА-Я0-9]+(\-[a-zа-яА-Я0-9]+)+)/ui, '<nobr>\1</nobr>') if @settings["dashglue"]
+			def process_dashglue(text)
+		    text.gsub!( /([a-zа-яА-Я0-9]+(\-[a-zа-яА-Я0-9]+)+)/ui, '<nobr>\1</nobr>')
 			end
 			
 			# Запятые и пробелы
@@ -158,16 +217,16 @@ module RuTils
 		      text.gsub!( /(\s*)([\.?!]*)(\s*[ЁА-ЯA-Z])/su, "\\2\\1\\3");
 			end
 			
-			# Неразрывные пробелы
+			# Неразрывные пробелы - пока глючит страшным образом
 			def process_nonbreakables(text)
-		      text = " " + text + " ";
-		      _text = " " + text + " ";
-		      until _text == text
-		         _text = text
+	 		    text.replace " " + text + " ";
+	    	  _text = " " + text + " ";
+	    	  until _text == text
+	     		    _text.replace text.clone
 		         text.gsub!( /(\s+)([a-zа-яА-Я]{1,2})(\s+)([^\\s$])/ui, '\1\2&nbsp;\4')
 		         text.gsub!( /(\s+)([a-zа-яА-Я]{3})(\s+)([^\\s$])/ui,   '\1\2&nbsp;\4')
-		      end
-
+	 	      end
+ 
 		      for i in @glueleft
 		         text.gsub!( /(\s)(#{i})(\s+)/sui, '\1\2&nbsp;')
 		      end
@@ -175,8 +234,10 @@ module RuTils
 					for i in @glueright 
 		         text.gsub!( /(\s)(#{i})(\s+)/sui, '&nbsp;\2\3')
 					end
+					
 			end
-						
+
+			# Знак дюйма						
 			def process_inches(text)
 				text.gsub!(/\s([0-9]{1,2}([\.,][0-9]{1,2})?)\"/ui, ' \1&quot;') if @settings["inches"]
 			end
@@ -200,5 +261,4 @@ module RuTils
 		    text.gsub!( /\^([FCС])/, "&#176\\1")
 			end
 		end
-	end
 end

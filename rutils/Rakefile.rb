@@ -9,7 +9,7 @@ require 'fileutils'
 
 PKG_BUILD     = ENV['PKG_BUILD'] ? '.' + ENV['PKG_BUILD'] : ''
 PKG_NAME      = 'rutils'
-PKG_VERSION   = '0.02' + "$Revision$"
+PKG_VERSION   = '0.02' + "$Revision$".gsub('$', '').gsub('Revision:', '').strip
 PKG_FILE_NAME   = "#{PKG_NAME}-#{PKG_VERSION}"
 PKG_DESTINATION = ENV["RAILS_PKG_DESTINATION"] || "../#{PKG_NAME}"
 PKG_SUMMARY	= %q{ Simple processing of russian strings }
