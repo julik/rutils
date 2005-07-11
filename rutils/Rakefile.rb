@@ -9,7 +9,7 @@ require 'fileutils'
 
 PKG_BUILD     = ENV['PKG_BUILD'] ? '.' + ENV['PKG_BUILD'] : ''
 PKG_NAME      = 'rutils'
-PKG_VERSION   = '0.02' + "$Revision$".gsub('$', '').gsub('Revision:', '').strip
+PKG_VERSION   = '0.02'
 PKG_FILE_NAME   = "#{PKG_NAME}-#{PKG_VERSION}"
 PKG_DESTINATION = ENV["RAILS_PKG_DESTINATION"] || "../#{PKG_NAME}"
 PKG_SUMMARY	= %q{ Simple processing of russian strings }
@@ -92,8 +92,13 @@ task :betagem => [:test , :stats, :package] do
   Rake::SshFilePublisher.new("julik@julik.nl", "public_html/gems", "pkg", "#{PKG_FILE_NAME}.gem").upload
 end
 
+desc "Do a commit"
+task :commit do
+	
+end
+
 desc "Publish the release files to RubyForge."
-task :release => [:test, :package] do
+task :release => [:test, :commit, :package] do
   files = ["gem", "tgz", "zip"].map { |ext| "pkg/#{PKG_FILE_NAME}.#{ext}" }
 
   if RUBY_FORGE_PROJECT then
