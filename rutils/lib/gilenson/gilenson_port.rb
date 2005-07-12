@@ -82,7 +82,7 @@ module RuTils
 			@indent_a = "<!--indent-->"
 			@indent_b = "<!--indent-->"
 			
-			@mark_tag = "\200" # Подстановочные маркеры тегов
+			@mark_tag = "\xF0\xF0\xF0\xF0" # Подстановочные маркеры тегов
 			@mark_ignored = "\201" # Подстановочные маркеры неизменяемых групп
 		end
 
@@ -145,9 +145,11 @@ module RuTils
 
 # по-хорошему атрибуты тоже нужно типографить. Или не нужно? бугага...
 
-	      tags = text.scan(re).map{|tag| tag[0].strip }
+	      tags = text.scan(re).map{|tag| tag[0] }
 #			      match = "&lt;" + match if @settings["html"]
 		    text.gsub!(re, @mark_tag) #маркер тега, мы используем Invalid UTF-sequence для него
+		
+#		puts "matched #{tags.size} tags"
 			end
 
 	    # 1. Запятые и пробелы
@@ -171,32 +173,32 @@ module RuTils
 	      _text = '""';
 	      while _text != text do  
 	        _text = text
-	        text.gsub!( /(^|\s|\201|\200|>)\"([0-9A-Za-z\'\!\s\.\?\,\-\&\;\:\_\200\201]+(\"|&#148;))/ui, '\1&#147;\2')
+	        text.gsub!( /(^|\s|\201|\xF0\xF0\xF0\xF0|>)\"([0-9A-Za-z\'\!\s\.\?\,\-\&\;\:\_\xF0\xF0\xF0\xF0\201]+(\"|&#148;))/ui, '\1&#147;\2')
 					#this doesnt work in-place. somehow.
-	        text = text.gsub( /(\&\#147\;([A-Za-z0-9\'\!\s\.\?\,\-\&\;\:\200\201\_]*).*[A-Za-z0-9][\200\201\?\.\!\,]*)\"/ui, '\1&#148;')
+	        text = text.gsub( /(\&\#147\;([A-Za-z0-9\'\!\s\.\?\,\-\&\;\:\xF0\xF0\xF0\xF0\201\_]*).*[A-Za-z0-9][\xF0\xF0\xF0\xF0\201\?\.\!\,]*)\"/ui, '\1&#148;')
 	      end
 	    end
 
 	    # 2. ёлочки
 	    if @settings["laquo"]
 	      text.gsub!( /\"\"/ui, "&quot;&quot;");
-	      text.gsub!( /(^|\s|\201|\200|>|\()\"((\201|\200)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, "\\1&laquo;\\2");
+	      text.gsub!( /(^|\s|\201|\xF0\xF0\xF0\xF0|>|\()\"((\201|\xF0\xF0\xF0\xF0)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, "\\1&laquo;\\2");
 	      # nb: wacko only regexp follows:
-	      text.gsub!( /(^|\s|\201|\200|>|\()\"((\201|\200|\/&nbsp;|\/|\!)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, "\\1&laquo;\\2")
+	      text.gsub!( /(^|\s|\201|\xF0\xF0\xF0\xF0|>|\()\"((\201|\xF0\xF0\xF0\xF0|\/&nbsp;|\/|\!)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, "\\1&laquo;\\2")
 	      _text = "\"\"";
 	      while (_text != text) do
 					_text = text;
-	        text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\200)*)\"/sui, "\\1&raquo;")
+	        text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\xF0\xF0\xF0\xF0)*)\"/sui, "\\1&raquo;")
 	        # nb: wacko only regexps follows:
-	        text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\200)*\?(\201|\200)*)\"/sui, "\\1&raquo;")
-	        text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\200|\/|\!)*)\"/sui, "\\1&raquo;")
+	        text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\xF0\xF0\xF0\xF0)*\?(\201|\xF0\xF0\xF0\xF0)*)\"/sui, "\\1&raquo;")
+	        text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\xF0\xF0\xF0\xF0|\/|\!)*)\"/sui, "\\1&raquo;")
 	      end
 	    end
 
 
 	      # 2b. одновременно ёлочки и лапки
 	      if (@settings["quotes"] && (@settings["laquo"] or @settings["farlaquo"]))
-	        text.gsub!(/(\&\#147\;(([A-Za-z0-9'!\.?,\-&;:]|\s|\200|\201)*)&laquo;(.*)&raquo;)&raquo;/ui,"\\1&#148;");
+	        text.gsub!(/(\&\#147\;(([A-Za-z0-9'!\.?,\-&;:]|\s|\xF0\xF0\xF0\xF0|\201)*)&laquo;(.*)&raquo;)&raquo;/ui,"\\1&#148;");
 				end
 
 
@@ -277,17 +279,36 @@ module RuTils
 
 
 	    # БЕСКОНЕЧНОСТЬ. Вставляем таги обратно.
-			if (@skip_tags)
-					tags.each { | tag | text.sub!(@mark_tag, tag) }
-			end
+		#	if (@skip_tags)
+#		text = text.split("\xF0\xF0\xF0\xF0").join
+#				
+
+		tags.each do |tag|
+			text.sub!(@mark_tag, tag)
+		end
+	
+#				i = 0
+#				text.gsub!(@mark_tag) {
+#					i + 1
+#					tags[i-1]
+#				}
+
+#			text = text.split("\xF0\xF0\xF0\xF0")
+#puts "reinserted #{i} tags"
+#
+		#	end
 			
+
+#ext.gsub!("a", '')
+#			raise "Text still has tag markers!" if text.include?("a")
 
 	    # БЕСКОНЕЧНОСТЬ-2. вставляем ещё сигнорированный регексп
 	    #
-			if @ignore
-				ignored.each { | tag | text.sub!(@mark_ignored, tag) }
-			end
+#			if @ignore
+#				ignored.each { | tag | text.sub!(@mark_ignored, tag) }
+#			end
 
+#			raise "Text still has ignored markers!" if text.include?("\201")
 
 	    # БОНУС: прокручивание ссылок через A(...)
 	    # --- для ваки не портировано ---

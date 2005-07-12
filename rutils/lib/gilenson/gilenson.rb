@@ -83,8 +83,8 @@ module RuTils
 			@indent_a = "<!--indent-->"
 			@indent_b = "<!--indent-->"
 			
-			@mark_tag = "\200" # Подстановочные маркеры тегов
-			@mark_ignored = "\201" # Подстановочные маркеры неизменяемых групп
+			@mark_tag = "\xF0\xF0\xF0\xF0" # Подстановочные маркеры тегов
+			@mark_ignored = "\xFF\xFF\xFF\xFF" # Подстановочные маркеры неизменяемых групп
 		  
 			@ignore = /notypo/ # regex, который игнорируется. Этим надо воспользоваться для обработки pre и code
 
@@ -113,7 +113,7 @@ module RuTils
 				
 			# Вытаскивает теги из текста, выполняет переданный блок и возвращает теги на место.
 			# Теги в процессе заменяются на специальный маркер			
-			def lift_tags(text, marker="\200", &block)
+			def lift_tags(text, marker="\xF0\xF0\xF0\xF0", &block)
 				
 			 # Выцепляем таги
 			 #	re =  /<\/?[a-z0-9]+("+ # имя тага
@@ -128,7 +128,7 @@ module RuTils
 				
 				tags = text.scan(re).inject([]) { | ar, match | ar << match[0] }
 
-		    text.gsub!(re, "\200") #маркер тега
+		    text.gsub!(re, "\xF0\xF0\xF0\xF0") #маркер тега
 				
 				yield(text) if block_given? #делаем все что надо сделать без тегов
 				
@@ -140,7 +140,7 @@ module RuTils
 			# без этих символов а затем вставляет их на место			
 			def lift_ignored(text, &block)
 				ignored = text.scan(@ignore)
-		    text.gsub!(@ignore, "\201")
+		    text.gsub!(@ignore, "\xFF\xFF\xFF\xFF")
 				
 				# обрабатываем текст
 				yield(text) if block_given?				
@@ -156,9 +156,9 @@ module RuTils
 		      _text = '""';
 		      while _text != text do  
 		        _text = text
-		        text.gsub!( /(^|\s|\201|\200|>)\"([0-9A-Za-z\'\!\s\.\?\,\-\&\;\:\_\200\201]+(\"|&#148;))/ui, '\1&#147;\2')
+		        text.gsub!( /(^|\s|\xFF\xFF\xFF\xFF|\xF0\xF0\xF0\xF0|>)\"([0-9A-Za-z\'\!\s\.\?\,\-\&\;\:\_\xF0\xF0\xF0\xF0\xFF\xFF\xFF\xFF]+(\"|&#148;))/ui, '\1&#147;\2')
 						#this doesnt work in-place. somehow.
-		        text.replace text.gsub( /(\&\#147\;([A-Za-z0-9\'\!\s\.\?\,\-\&\;\:\200\201\_]*).*[A-Za-z0-9][\200\201\?\.\!\,]*)\"/ui, '\1&#148;')
+		        text.replace text.gsub( /(\&\#147\;([A-Za-z0-9\'\!\s\.\?\,\-\&\;\:\xF0\xF0\xF0\xF0\xFF\xFF\xFF\xFF\_]*).*[A-Za-z0-9][\xF0\xF0\xF0\xF0\xFF\xFF\xFF\xFF\?\.\!\,]*)\"/ui, '\1&#148;')
 		      end
 			end
 			
@@ -166,22 +166,22 @@ module RuTils
 			def process_typographer_quotes(text)
 		    # 2. ёлочки
 	      text.gsub!( /\"\"/ui, "&quot;&quot;");
-	      text.gsub!( /(^|\s|\201|\200|>|\()\"((\201|\200)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, "\\1&laquo;\\2");
+	      text.gsub!( /(^|\s|\xFF\xFF\xFF\xFF|\xF0\xF0\xF0\xF0|>|\()\"((\xFF\xFF\xFF\xFF|\xF0\xF0\xF0\xF0)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, "\\1&laquo;\\2");
 	      # nb: wacko only regexp follows:
-	      text.gsub!( /(^|\s|\201|\200|>|\()\"((\201|\200|\/&nbsp;|\/|\!)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, "\\1&laquo;\\2")
+	      text.gsub!( /(^|\s|\xFF\xFF\xFF\xFF|\xF0\xF0\xF0\xF0|>|\()\"((\xFF\xFF\xFF\xFF|\xF0\xF0\xF0\xF0|\/&nbsp;|\/|\!)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, "\\1&laquo;\\2")
 	      _text = "\"\"";
 	      while (_text != text) do
 					_text = text;
-	        text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\200)*)\"/sui, "\\1&raquo;")
+	        text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\xFF\xFF\xFF\xFF|\xF0\xF0\xF0\xF0)*)\"/sui, "\\1&raquo;")
 	        # nb: wacko only regexps follows:
-	        text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\200)*\?(\201|\200)*)\"/sui, "\\1&raquo;")
-	        text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\200|\/|\!)*)\"/sui, "\\1&raquo;")
+	        text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\xFF\xFF\xFF\xFF|\xF0\xF0\xF0\xF0)*\?(\xFF\xFF\xFF\xFF|\xF0\xF0\xF0\xF0)*)\"/sui, "\\1&raquo;")
+	        text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\xFF\xFF\xFF\xFF|\xF0\xF0\xF0\xF0|\/|\!)*)\"/sui, "\\1&raquo;")
 	      end
 			end
 			
 			# Cложные кавычки
 			def process_compound_quotes(text)
-        text.gsub!(/(\&\#147\;(([A-Za-z0-9'!\.?,\-&;:]|\s|\200|\201)*)&laquo;(.*)&raquo;)&raquo;/ui,"\\1&#148;");
+        text.gsub!(/(\&\#147\;(([A-Za-z0-9'!\.?,\-&;:]|\s|\xF0\xF0\xF0\xF0|\xFF\xFF\xFF\xFF)*)&laquo;(.*)&raquo;)&raquo;/ui,"\\1&#148;");
 			end
 
 			# Обрабатывает короткое тире

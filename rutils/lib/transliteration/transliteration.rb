@@ -38,9 +38,19 @@ module RuTils
 		def self.detranslify(str)
 			s = str.clone
 			TABLE.each do | translation |
-				s = s.gsub(/#{translation[1]}/, translation[0])
+				s.gsub!(/#{translation[1]}/, translation[0])
 			end
 			s
+		end
+		
+		# Транслитерирует строку, делая ее пригодной для применения как имя директории или URL
+		def self.dirify(string)
+			st = self.translify(string)
+      st.gsub!(/(\s\&\s)|(\s\&amp\;\s)/, ' and ') # convert & to "and"
+      st.gsub!(/\W/, ' ')  #replace non-chars
+      st.gsub!(/(_)$/, '') #trailing underscores
+      st.gsub!(/^(_)/, '') #leading unders
+			st.strip.translify.gsub(/(\s)/,'-').downcase.squeeze
 		end
 		
 		# Реализует транслитерацию любого объекта, реализующего String или to_s
@@ -58,13 +68,7 @@ module RuTils
 			
 			# Транслитерирует строку, делая ее пригодной для применения как имя директории или URL
 			def dirify
-				st = self.translify
-        st.gsub!(/(\s\&\s)|(\s\&amp\;\s)/, ' and ') # convert & to "and"
-        st.gsub!(/\W/, ' ')  #replace non-chars
-#        st.gsub!(/\ +/, '_') #replace spaces
-        st.gsub!(/(_)$/, '') #trailing underscores
-        st.gsub!(/^(_)/, '') #leading unders
-				st.strip.translify.gsub(/(\s)/,'-').downcase.squeeze
+				RuTils::Transliteration::dirify(self.to_s)
 			end
 		end
 		
