@@ -11,7 +11,7 @@ PKG_BUILD     = ENV['PKG_BUILD'] ? '.' + ENV['PKG_BUILD'] : ''
 PKG_NAME      = 'rutils'
 PKG_VERSION   = '0.02'
 PKG_FILE_NAME   = "#{PKG_NAME}-#{PKG_VERSION}"
-PKG_DESTINATION = ENV["RAILS_PKG_DESTINATION"] || "../#{PKG_NAME}"
+PKG_DESTINATION = "../#{PKG_NAME}"
 PKG_SUMMARY	= %q{ Simple processing of russian strings }
 PKG_DESCRIPTION = %q{ Allows simple processing of russian strings - transliteration, numerals as text and HTML beautification }
 PKG_HOMEPAGE = 'http://rubyforge.org/projects/rutils'
@@ -56,7 +56,6 @@ Rake::RDocTask.new("doc") do |rdoc|
   rdoc.rdoc_files.include FileList['lib/*.rb', 'lib/**/*.rb']
 end
 
-desc "Create compressed pkgs"
 spec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.name = PKG_NAME
@@ -87,18 +86,15 @@ Rake::GemPackageTask.new(spec) do |p|
 end
 
 
-desc "Publish the beta gem to julik.nl"
-task :betagem => [:test , :stats, :package] do 
-  Rake::SshFilePublisher.new("julik@julik.nl", "public_html/gems", "pkg", "#{PKG_FILE_NAME}.gem").upload
+desc "Remove packaging products (doc and pkg) - they are not source-managed"
+task :unclog do
+	`rm -rf ./doc`
+	`rm -rf ./pkg`
 end
 
-desc "Do a commit"
-task :commit do
-	
-end
 
 desc "Publish the release files to RubyForge."
-task :release => [:test, :commit, :package] do
+task :release => [:test, :unclog, :package] do
   files = ["gem", "tgz", "zip"].map { |ext| "pkg/#{PKG_FILE_NAME}.#{ext}" }
 
   if RUBY_FORGE_PROJECT then
