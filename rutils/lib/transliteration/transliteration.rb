@@ -58,7 +58,13 @@ module RuTils
 			
 			# Транслитерирует строку, делая ее пригодной для применения как имя директории или URL
 			def dirify
-				self.strip.translify.gsub(/(\s)/,'-').downcase.squeeze
+				st = self.translify
+        st.gsub!(/(\s\&\s)|(\s\&amp\;\s)/, ' and ') # convert & to "and"
+        st.gsub!(/\W/, ' ')  #replace non-chars
+#        st.gsub!(/\ +/, '_') #replace spaces
+        st.gsub!(/(_)$/, '') #trailing underscores
+        st.gsub!(/^(_)/, '') #leading unders
+				st.strip.translify.gsub(/(\s)/,'-').downcase.squeeze
 			end
 		end
 		

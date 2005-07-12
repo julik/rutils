@@ -6,7 +6,7 @@ require File.dirname(__FILE__) + '/../lib/rutils'
 class TranslitTest < Test::Unit::TestCase
 			
   def setup
-    @string = "Это кусок строки русских букв v peremshku s latinizey i ampersandom (pozor!) & something"
+    @string = "Это кусок строки русских букв v peremshku s latinizey i амперсандом (pozor!) & something"
   end
 
 	def test_translify
@@ -19,7 +19,7 @@ class TranslitTest < Test::Unit::TestCase
 	end
 
 	def test_dirify
-		assert_equal "eto-kusok-stroki-ruskih-bukv-v-peremshku-s-latinizey-i-ampersandom-(pozor!)-&-something", @string.dirify
+		assert_equal "eto-kusok-stroki-ruskih-bukv-v-peremshku-s-latinizey-i-ampersandom-pozor-and-something", @string.dirify
 		assert_equal "esche-ruskiy-tekst", "Еще РусСКий теКст".dirify
 	end	
 end
