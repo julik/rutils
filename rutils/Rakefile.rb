@@ -21,7 +21,7 @@ PKG_MAINTAINER = 'Julian "Julik" Tarkhanov'
 RELEASE_NAME  = "REL #{PKG_VERSION}"
 
 RUBY_FORGE_PROJECT = "rutils"
-RUBY_FORGE_USER    = "julik"
+RUBY_FORGE_USER    = ENV['RUBY_FORGE_USER'] ? ENV['RUBY_FORGE_USER'] : "julik"
 
 # нам нужна документация в Юникоде. А вы думали?
 PKG_RDOC_OPTS = '--charset UTF-8 --main README --line-numbers'
@@ -90,6 +90,63 @@ desc "Remove packaging products (doc and pkg) - they are not source-managed"
 task :unclog do
 	`rm -rf ./doc`
 	`rm -rf ./pkg`
+end
+
+desc "Publish the docs to Rubyforge site"
+task :pubdocs do
+	raise "This is not implemented yet" and return
+	
+	require 'net/sftp'
+	
+   # This echos password to shell which is a bit sucky
+   if ENV["RUBY_FORGE_PASSWORD"]
+     password = ENV["RUBY_FORGE_PASSWORD"]
+   else
+     print "#{RUBY_FORGE_USER}@rubyforge.org's password: "
+     password = STDIN.gets.chomp
+   end
+	
+	remote = "/var/www/gforge-projects/rutils"  + '/'
+	local = File.expand_path('.') + '/'
+	
+	sync = FileList["doc/**/**/*", "doc/**/*", "doc/*" ]
+	
+	puts sync.inspect
+	Net::SFTP.start('rubyforge.org', RUBY_FORGE_USER, password) do |server|
+ 		sync.each do |item|
+#			puts "putting #{local+item} to #{remote + item}"
+			if File.directory?(local+item)
+
+				begin
+					server.rmdir(remote+item)
+				rescue
+					puts $!
+				end
+
+				begin
+					server.mkdir(remote+item, :permissions => 0500)
+				rescue
+					puts $!
+
+				end
+				
+			else 
+				begin
+					server.remove(remote + item)
+				rescue
+					puts $!
+
+				end
+				
+				begin
+					server.put_file(local + item, remote + item)
+				rescue
+					puts $!
+
+				end
+			end
+		end
+ 	end
 end
 
 

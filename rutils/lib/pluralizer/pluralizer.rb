@@ -200,14 +200,15 @@ module RuTils
 			def propisju
 				RuTils::Pluralization::sum_string("", self, 1, "")
 			end
-		end
-		
-		# Реализует вывод множественного числа в зависимости от числительного
-		module StringFormatting
+			
 			# Выбирает корректный вариант числительного в зависимости от рода и числа
 			def items(gender, one_item, two_items, three_items)
 				RuTils::Pluralization::items(self, gender, one_item, two_items, three_items)
 			end	
+		end
+		
+		# Реализует вывод множественного числа в зависимости от числительного
+		module StringFormatting
 			
 			# Конвертирует строку в именительном падеже единственного числа в нужный падеж в зависимости от количества
 			# Названа ru_pluralize чтобы не конфликтовать с pluralize, обеспечиваемым ActiveSupport в Rails.

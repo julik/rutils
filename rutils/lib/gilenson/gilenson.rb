@@ -29,9 +29,18 @@ module RuTils
 					:simple_quotes,
 					:typographer_quotes,
 					:compound_quotes,
-			]			
+			]	
+			
+			# Символы, используемые в подстановках. Меняются через substitute_set(subst_name, subst_content)
+			@@sch = {
+				:laquo=>'&laquo;', #left acute
+				:raquo=>'&raquo;', #right acute
+				:ndash=>'&ndash;', #en dash
+				:mdash=>'&mdash;', #en dash
+				:inch=>'&quot;', #en dash
+			}		
 
-		  @phonemasks = [[	/([0-9]{4})\-([0-9]{2})\-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})/,
+		  @@phonemasks = [[	/([0-9]{4})\-([0-9]{2})\-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})/,
 			                  /([0-9]{4})\-([0-9]{2})\-([0-9]{2})/,
 			                  /(\([0-9\+\-]+\)) ?([0-9]{3})\-([0-9]{2})\-([0-9]{2})/,
 			                  /(\([0-9\+\-]+\)) ?([0-9]{2})\-([0-9]{2})\-([0-9]{2})/,
@@ -83,8 +92,8 @@ module RuTils
 			@indent_a = "<!--indent-->"
 			@indent_b = "<!--indent-->"
 			
-			@mark_tag = "\xF0\xF0\xF0\xF0" # Подстановочные маркеры тегов
-			@mark_ignored = "\xFF\xFF\xFF\xFF" # Подстановочные маркеры неизменяемых групп
+			@mark_tag = "\xF0\xF0\xF0\xF0" # Подстановочные маркеры тегов - BOM
+			@mark_ignored = "\xFF\xFF\xFF\xFF" # Подстановочные маркеры неизменяемых групп - BOM+ =)
 		  
 			@ignore = /notypo/ # regex, который игнорируется. Этим надо воспользоваться для обработки pre и code
 
@@ -103,7 +112,7 @@ module RuTils
 				lift_tags(text) do | text |
 #					lift_ignored(text) do |text|
 						for filter in @@order_of_filters
-							raise "UnknownFilter #process_#{filter} in @@order_of_filters!" unless self.respond_to?("process_#{filter}".to_sym)
+							raise "UnknownFilter #process_#{filter} in filterlist!" unless self.respond_to?("process_#{filter}".to_sym)
 							self.send("process_#{filter}".to_sym, text) # if @settings[filter.to_sym] # вызываем конкретный фильтр
 						end
 #					end
@@ -127,13 +136,12 @@ module RuTils
 			  re =  /(<\/?[a-z0-9]+(\s+([a-z]+(=((\'[^\']*\')|(\"[^\"]*\")|([0-9@\-_a-z:\/?&=\.]+)))?)?)*\/?>)/ui
 				
 				tags = text.scan(re).inject([]) { | ar, match | ar << match[0] }
-
 		    text.gsub!(re, "\xF0\xF0\xF0\xF0") #маркер тега
 				
 				yield(text) if block_given? #делаем все что надо сделать без тегов
 				
  				tags.each { | tag | text.sub!(@mark_tag, tag) }  # Вставляем таги обратно.
-				
+
 			end
 
 			# Выцепляет игнорированные символы, выполняет блок с текстом
