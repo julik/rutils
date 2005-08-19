@@ -73,7 +73,7 @@ spec = Gem::Specification.new do |s|
 	s.require_path = "lib"
 	s.autorequire = "rutils"
 	s.test_file = "test/run_tests.rb"
-	s.has_rdoc = "true"
+	s.has_rdoc = true
 	s.extra_rdoc_files = ["README", "TODO", "CHANGELOG"]
 	s.rdoc_options = PKG_RDOC_OPTS
 	s.executables << 'gilensize'
@@ -93,7 +93,7 @@ task :unclog do
 end
 
 desc "Publish the docs to Rubyforge site"
-task :pubdocs do
+task :pubdocs=>[:unclog, :doc] do
 	raise "This is not implemented yet" and return
 	
 	require 'net/sftp'

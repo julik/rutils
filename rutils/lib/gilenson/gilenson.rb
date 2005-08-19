@@ -32,6 +32,7 @@ module RuTils
 			]	
 			
 			# Символы, используемые в подстановках. Меняются через substitute_set(subst_name, subst_content)
+			# Нужно потому как ващето &nbsp; недопустим в XML, равно как и всякие mdash.
 			@@sch = {
 				:laquo=>'&laquo;', #left acute
 				:raquo=>'&raquo;', #right acute
@@ -65,10 +66,10 @@ module RuTils
 			                 '<nobr>\1&ndash;\2</nobr>'
 										]]
 										
-		  @glueleft =  ['рис.', 'табл.', 'см.', 'им.', 'ул.', 'пер.', 'кв.', 'офис', 'оф.', 'г.']
-		  @glueright = ['руб.', 'коп.', 'у.е.', 'мин.']
+		  @@glueleft =  ['рис.', 'табл.', 'см.', 'им.', 'ул.', 'пер.', 'кв.', 'офис', 'оф.', 'г.']
+		  @@glueright = ['руб.', 'коп.', 'у.е.', 'мин.']
 
-		  @settings = {
+		  @@settings = {
 											"inches" => true, # преобразовывать дюймы в &quot;
 		                  "laquo" => true,  # кавычки-ёлочки
 		                  "farlaquo" => false,  # кавычки-ёлочки для фара (знаки "больше-меньше")
@@ -89,17 +90,21 @@ module RuTils
 		                  "html" => false     # запрет тагов html
 		               }
 			# irrelevant - indentation with images
-			@indent_a = "<!--indent-->"
-			@indent_b = "<!--indent-->"
+			@@indent_a = "<!--indent-->"
+			@@indent_b = "<!--indent-->"
 			
-			@mark_tag = "\xF0\xF0\xF0\xF0" # Подстановочные маркеры тегов - BOM
-			@mark_ignored = "\xFF\xFF\xFF\xFF" # Подстановочные маркеры неизменяемых групп - BOM+ =)
+			@@mark_tag = "\xF0\xF0\xF0\xF0" # Подстановочные маркеры тегов - BOM
+			@@mark_ignored = "\xFF\xFF\xFF\xFF" # Подстановочные маркеры неизменяемых групп - BOM+ =)
 		  
-			@ignore = /notypo/ # regex, который игнорируется. Этим надо воспользоваться для обработки pre и code
+			@@ignore = /notypo/ # regex, который игнорируется. Этим надо воспользоваться для обработки pre и code
 
 			self.methods.each do | m |
 				next unless m.include?("process_")
-				raise "No hook for " + m unless @@order_of_filters.include?(m.gsub(/process_/, '').to_sym)
+				raise NoMethodError, "No hook for " + m unless @@order_of_filters.include?(m.gsub(/process_/, '').to_sym)
+			end
+			
+			@@order_of_filters.each do |filter|
+				raise NoMethodError, "No process method for " + filter unless self.methods.include?("process_#{filter}".to_sym)
 			end
 
 			super(*args)
@@ -138,23 +143,23 @@ module RuTils
 				tags = text.scan(re).inject([]) { | ar, match | ar << match[0] }
 		    text.gsub!(re, "\xF0\xF0\xF0\xF0") #маркер тега
 				
-				yield(text) if block_given? #делаем все что надо сделать без тегов
+				yield(text, marker) if block_given? #делаем все что надо сделать без тегов
 				
- 				tags.each { | tag | text.sub!(@mark_tag, tag) }  # Вставляем таги обратно.
+ 				tags.each { | tag | text.sub!(marker, tag) }  # Вставляем таги обратно.
 
 			end
 
 			# Выцепляет игнорированные символы, выполняет блок с текстом
 			# без этих символов а затем вставляет их на место			
-			def lift_ignored(text, &block)
+			def lift_ignored(text, marker = "\xFF\xFF\xFF\xFF", &block)
 				ignored = text.scan(@ignore)
-		    text.gsub!(@ignore, "\xFF\xFF\xFF\xFF")
+		    text.gsub!(@ignore, marker)
 				
 				# обрабатываем текст
-				yield(text) if block_given?				
+				yield(text, marker) if block_given?				
 				
 				# возвращаем игнорированные символы
-				ignored.each { | tag | text.sub!(@mark_ignored, tag) }
+				ignored.each { | tag | text.sub!(marker, tag) }
 			end
 
 			# Кавычки - лапки			
