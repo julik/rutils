@@ -1,6 +1,6 @@
 if defined?(RedCloth)
 	# RuTils выполняет перегрузку Textile Glyphs в RedCloth, перенося форматирование спецсимволов на Gilenson.
-	class RedCloth  < String
+	class RedCloth  < String #:nodoc:
 		# Этот метод в RedCloth эскейпит слишком много HTML, нам ничего не оставляет :-)		
 		def htmlesc(text, mode=0) #:nodoc:
 			text

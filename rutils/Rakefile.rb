@@ -9,7 +9,7 @@ require 'fileutils'
 
 PKG_BUILD     = ENV['PKG_BUILD'] ? '.' + ENV['PKG_BUILD'] : ''
 PKG_NAME      = 'rutils'
-PKG_VERSION   = '0.02'
+PKG_VERSION   = '0.03'
 PKG_FILE_NAME   = "#{PKG_NAME}-#{PKG_VERSION}"
 PKG_DESTINATION = "../#{PKG_NAME}"
 PKG_SUMMARY	= %q{ Simple processing of russian strings }
@@ -24,7 +24,7 @@ RUBY_FORGE_PROJECT = "rutils"
 RUBY_FORGE_USER    = ENV['RUBY_FORGE_USER'] ? ENV['RUBY_FORGE_USER'] : "julik"
 
 # нам нужна документация в Юникоде. А вы думали?
-PKG_RDOC_OPTS = '--charset UTF-8 --main README --line-numbers'
+PKG_RDOC_OPTS = ['--main=README', '--line-numbers', '--charset=utf-8']
 
 desc "Run all tests (requires BlueCloth, RedCloth and Rails for integration tests)"
 task :default => [ :test ]
@@ -49,10 +49,10 @@ desc "Generate RDoc documentation"
 Rake::RDocTask.new("doc") do |rdoc|
   rdoc.rdoc_dir = 'doc'
   rdoc.title  = PKG_SUMMARY
-  rdoc.options << PKG_RDOC_OPTS
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('CHANGELOG')
   rdoc.rdoc_files.include('TODO')
+  rdoc.options << PKG_RDOC_OPTS
   rdoc.rdoc_files.include FileList['lib/*.rb', 'lib/**/*.rb']
 end
 
@@ -69,7 +69,8 @@ spec = Gem::Specification.new do |s|
   s.homepage = PKG_HOMEPAGE
 
   s.has_rdoc = true
-	s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").to_a + ["Rakefile.rb"]
+	s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").to_a
+	s.files << ["Rakefile.rb", "README", "TODO", "CHANGELOG"]
 	s.require_path = "lib"
 	s.autorequire = "rutils"
 	s.test_file = "test/run_tests.rb"
@@ -95,58 +96,6 @@ end
 desc "Publish the docs to Rubyforge site"
 task :pubdocs=>[:unclog, :doc] do
 	raise "This is not implemented yet" and return
-	
-	require 'net/sftp'
-	
-   # This echos password to shell which is a bit sucky
-   if ENV["RUBY_FORGE_PASSWORD"]
-     password = ENV["RUBY_FORGE_PASSWORD"]
-   else
-     print "#{RUBY_FORGE_USER}@rubyforge.org's password: "
-     password = STDIN.gets.chomp
-   end
-	
-	remote = "/var/www/gforge-projects/rutils"  + '/'
-	local = File.expand_path('.') + '/'
-	
-	sync = FileList["doc/**/**/*", "doc/**/*", "doc/*" ]
-	
-	puts sync.inspect
-	Net::SFTP.start('rubyforge.org', RUBY_FORGE_USER, password) do |server|
- 		sync.each do |item|
-#			puts "putting #{local+item} to #{remote + item}"
-			if File.directory?(local+item)
-
-				begin
-					server.rmdir(remote+item)
-				rescue
-					puts $!
-				end
-
-				begin
-					server.mkdir(remote+item, :permissions => 0500)
-				rescue
-					puts $!
-
-				end
-				
-			else 
-				begin
-					server.remove(remote + item)
-				rescue
-					puts $!
-
-				end
-				
-				begin
-					server.put_file(local + item, remote + item)
-				rescue
-					puts $!
-
-				end
-			end
-		end
- 	end
 end
 
 

@@ -7,15 +7,13 @@ module RuTils
 		end
 	end
 	
+	# Это - прямой порт Тыпографицы от pixelapes.
 	# Настройки можно регулировать через методы, т.е.
 	#
-	# typ = Typografica.new
-	# typ.html = false 		=> "false"
-	# typ.dash = true			=> "true"
-	# Это - прямой порт Тыпографицы от pixelapes. По возможности менять его не стоит,
-	# если надо улучшить Гиленсона это надо делать в своей реализациии.
-	# Реакция на конкретные настройки тоже должна быть настроена - тестовый набор тестирует функционал "в целом" - здесь же надо быть
-	# аккуратнее
+	#   typ = Typografica.new('Эти "так называемые" великие деятели')
+	#   typ.html = false 		=> "false"
+	#   typ.dash = true			=> "true"
+	#   typ.to_html => 'Эти &laquo;так называемые&raquo; великие деятели'
 	class Gilenson		
 		def initialize(text, *args)
 			@_text = text
@@ -88,7 +86,7 @@ module RuTils
 
 
 		# Proxy unknown method calls as setting switches. Methods with = will set settings, methods without - fetch them
-		def method_missing(meth, *args)
+		def method_missing(meth, *args) #:nodoc:
 			setting = meth.to_s.gsub(/=$/, '')
 			super(meth, *args) unless @settings.has_key?(setting) #this will pop the exception if we have no such setting
 

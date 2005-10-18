@@ -5,29 +5,15 @@ module RuTils
       variant = (amount%10==1 && amount%100!=11 ? 1 : amount%10>=2 && amount%10<=4 && (amount%100<10 || amount%100>=20) ? 2 : 3)
       variants[variant-1]
 	  end
-	  
-		#
-		# "Сумма прописью":
-		#	 преобразование числа из цифрого вида в символьное
-		#===============================================
-		# Исходные данные:
-		# amount - число от 0 до 2147483647 (2^31-1)
-		# Eсли нужно оперировать с числами > 2 147 483 647,
-		# замените описание переменных amount и tmp_val
-		# на "AS DOUBLE"
-		# Далее нужно задать информацию о единице изменения:
-		# gender	 = 1 - мужской, = 2 - женский, = 3 - средний
-		# Название единицы изменения:
-		# one_item - именительный падеж единственного числа (= 1)
-		# two_items - родительный падеж единственного числа (= 2-4)
-		# five_items - родительный падеж множественного числа ( = 5-10)
-		#
-		# gender должен быть задан обязательно, 
-		# название единицы может быть не задано = ""
-		# -------------------------------
-		# Результат: into - запись прописью
-		#================================
-		def self.sum_string(into, amount, gender, one_item='', two_items='', five_items='')
+    
+		#  Выполняет преобразование числа из цифрого вида в символьное
+		#   amount - числительное
+		#   gender	 = 1 - мужской, = 2 - женский, = 3 - средний
+		#   one_item - именительный падеж единственного числа (= 1)
+		#   two_items - родительный падеж единственного числа (= 2-4)
+		#   five_items - родительный падеж множественного числа ( = 5-10)
+		def self.sum_string(amount, gender, one_item='', two_items='', five_items='')
+		    into = ''
 				tmp_val ||= 0
 
 				return "ноль " + five_items if amount == 0
@@ -53,17 +39,11 @@ module RuTils
 				into, tmp_val = sum_string_fn(into, tmp_val, 1, "миллиард", "миллиарда", "миллиардов")
 				return into
 		end
-		
-		def self.sum_string_fn(into, tmp_val, gender, one_item='', two_items='', five_items='')
-		 #
-		 # Формирование строки для трехзначного числа:
-		 # (последний из трех знаков tmp_val)
-		 # Eсли нужно оперировать с числами > 2 147 483 647,
-		 # замените в описании на tmp_val AS DOUBLE 
-		 #=========================================
+
+    private
+  		def self.sum_string_fn(into, tmp_val, gender, one_item='', two_items='', five_items='')
 			rest, rest1, end_word, ones, tens, hundreds = [nil]*6
 			#
-
 			rest = tmp_val % 1000
 			tmp_val = tmp_val / 1000
 			if rest == 0 
@@ -152,36 +132,33 @@ module RuTils
 						ones = "девять "
 				end
 			end
-			
+
 			# сборка строки
 			return [(hundreds + tens + ones + end_word + " " + into).strip, tmp_val] 
-		end
-
-		def self.items(amount, one_item, two_items, three_items)
-			RuTils::Pluralization::choose_plural(amount, one_item, two_items, three_items)
 		end
 		
 		# Реализует вывод прописью любого объекта, реализующего Float
 		module FloatFormatting
 			
 			# Выдает сумму прописью с учетом дробной доли. Дробная доля округляется до миллионной, или (если
-			# дробная доля оканчивается на нули) до ближайшей доли ( 500 тысячных округляется до 5 десятых)
+			# дробная доля оканчивается на нули) до ближайшей доли ( 500 тысячных округляется до 5 десятых).
+			# Дополнительный аргумент - род существительного (1 - мужской, 2- женский, 3-средний)
 			def propisju(gender = 2)
 				raise "NaN propisju eto ne propis!" if self.nan?
 		
-				st = RuTils::Pluralization::sum_string("", self.to_i, gender, "целая", "целых", "целых")
+				st = RuTils::Pluralization::sum_string(self.to_i, gender, "целая", "целых", "целых")
 				it = []
 	
 				rmdr = self.to_s.match(/\.(\d+)/)[1]
 		
 				signs = rmdr.to_s.size- 1
 				
-				it << ["десятая", "десятых", "десятых"]
-				it << ["сотая", "сотых", "сотых"]
-				it << ["тысячная", "тысячных", "тысячных"]
-				it << ["десятитысячная", "десятитысячных", "десятитысячных"]
-				it << ["стотысячная", "стотысячных", "стотысячных"]
-				it << ["миллионная", "милллионных", "миллионных"]
+				it << ["десятая", "десятых"]
+				it << ["сотая", "сотых"]
+				it << ["тысячная", "тысячных"]
+				it << ["десятитысячная", "десятитысячных"]
+				it << ["стотысячная", "стотысячных"]
+				it << ["миллионная", "милллионных"]
 		 # 	it << ["десятимиллионная", "десятимилллионных", "десятимиллионных"]
 		 # 	it << ["стомиллионная", "стомилллионных", "стомиллионных"]
 		 # 	it << ["миллиардная", "миллиардных", "миллиардных"]
@@ -194,38 +171,29 @@ module RuTils
 					signs = rmdr.to_s.size- 1
 				end
 								
-				suf1, suf2, suf3 = it[signs][0], it[signs][1], it[signs][2]		
-				st + " " + RuTils::Pluralization::sum_string("", rmdr.to_i, 2, suf1, suf2, suf3)
+				suf1, suf2, suf3 = it[signs][0], it[signs][1], it[signs][2]
+				st + " " + RuTils::Pluralization::sum_string(rmdr.to_i, 2, suf1, suf2, suf2)
 			end
 		end
 		
 		# Реализует вывод прописью любого объекта, реализующего Numeric
 		module NumericFormatting
 			# Выбирает корректный вариант числительного в зависимости от рода и числа и оформляет сумму прописью
-			# 234.propisju => "двести сорок три"
+			#   234.propisju => "двести сорок три"
+			#   221.propisju(2) => "двести двадцать одна"
 			def propisju(gender = 1)
-				RuTils::Pluralization::sum_string("", self, gender, "")
+				RuTils::Pluralization::sum_string(self, gender, "")
 			end
 			
 			def propisju_items(gender=1, *forms)
-			  RuTils::Pluralization::sum_string("", self, gender, "") + " " + RuTils::Pluralization::choose_plural(self, *forms)
+			  RuTils::Pluralization::sum_string(self, gender, "") + " " + RuTils::Pluralization::choose_plural(self, *forms)
 			end
 			
-			# Выбирает корректный вариант числительного в зависимости от рода и числа
-			def items(one_item, two_items, three_items)
-				RuTils::Pluralization::choose_plural(self, one_item, two_items, three_items)
+			# Выбирает корректный вариант числительного в зависимости от рода и числа. Например:
+			# * 4.items("колесо", "колеса", "колес") => "колеса"
+			def items(one_item, two_items, five_items)
+				RuTils::Pluralization::choose_plural(self, one_item, two_items, five_items)
 			end	
-		end
-		
-		# Реализует вывод множественного числа в зависимости от числительного
-		module StringFormatting
-			
-			# Конвертирует строку в именительном падеже единственного числа в нужный падеж в зависимости от количества
-			# Названа ru_pluralize чтобы не конфликтовать с pluralize, обеспечиваемым ActiveSupport в Rails.
-			# Кто реализует?
-			def ru_pluralize(amount)
-				self
-			end
 		end
 	end
 end
@@ -234,15 +202,7 @@ class Numeric
 	include RuTils::Pluralization::NumericFormatting
 end
 
-class String
-	include RuTils::Pluralization::StringFormatting
-end
 
 class Float
 	include RuTils::Pluralization::FloatFormatting
-end
-
-
-class Fixnum
-	include RuTils::Pluralization::StringFormatting
 end
