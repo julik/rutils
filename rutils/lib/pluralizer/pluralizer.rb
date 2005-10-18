@@ -1,5 +1,11 @@
 module RuTils
 	module Pluralization
+	  # Выбирает нужный падеж существительного в зависимости от числа
+	  def self.choose_plural(amount, *variants)
+      variant = (amount%10==1 && amount%100!=11 ? 1 : amount%10>=2 && amount%10<=4 && (amount%100<10 || amount%100>=20) ? 2 : 3)
+      variants[variant-1]
+	  end
+	  
 		#
 		# "Сумма прописью":
 		#	 преобразование числа из цифрого вида в символьное
@@ -151,8 +157,8 @@ module RuTils
 			return [(hundreds + tens + ones + end_word + " " + into).strip, tmp_val] 
 		end
 
-		def self.items(amount, gender, one_item, two_items, three_items)
-			RuTils::Pluralization::sum_string("", amount, gender, one_item, two_items, three_items)
+		def self.items(amount, one_item, two_items, three_items)
+			RuTils::Pluralization::choose_plural(amount, one_item, two_items, three_items)
 		end
 		
 		# Реализует вывод прописью любого объекта, реализующего Float
@@ -160,10 +166,10 @@ module RuTils
 			
 			# Выдает сумму прописью с учетом дробной доли. Дробная доля округляется до миллионной, или (если
 			# дробная доля оканчивается на нули) до ближайшей доли ( 500 тысячных округляется до 5 десятых)
-			def propisju
-				raise "Cannot write something propisju whith is NaN" if self.nan?
+			def propisju(gender = 2)
+				raise "NaN propisju eto ne propis!" if self.nan?
 		
-				st = RuTils::Pluralization::sum_string("", self.to_i, 2, "целая", "целых", "целых")
+				st = RuTils::Pluralization::sum_string("", self.to_i, gender, "целая", "целых", "целых")
 				it = []
 	
 				rmdr = self.to_s.match(/\.(\d+)/)[1]
@@ -197,13 +203,17 @@ module RuTils
 		module NumericFormatting
 			# Выбирает корректный вариант числительного в зависимости от рода и числа и оформляет сумму прописью
 			# 234.propisju => "двести сорок три"
-			def propisju
-				RuTils::Pluralization::sum_string("", self, 1, "")
+			def propisju(gender = 1)
+				RuTils::Pluralization::sum_string("", self, gender, "")
+			end
+			
+			def propisju_items(gender=1, *forms)
+			  RuTils::Pluralization::sum_string("", self, gender, "") + " " + RuTils::Pluralization::choose_plural(self, *forms)
 			end
 			
 			# Выбирает корректный вариант числительного в зависимости от рода и числа
-			def items(gender, one_item, two_items, three_items)
-				RuTils::Pluralization::items(self, gender, one_item, two_items, three_items)
+			def items(one_item, two_items, three_items)
+				RuTils::Pluralization::choose_plural(self, one_item, two_items, three_items)
 			end	
 		end
 		

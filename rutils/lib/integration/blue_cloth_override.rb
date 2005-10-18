@@ -1,0 +1,8 @@
+if defined?(BlueCloth)
+	class BlueCloth < String
+		alias_method :old_to_html, :to_html
+		def to_html(*opts)
+			RuTils::overrides_enabled? ? RuTils::Gilenson.new(old_to_html(*opts)).to_html : old_to_html(*opts)
+		end
+	end
+end

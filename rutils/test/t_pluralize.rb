@@ -3,16 +3,18 @@ require 'test/unit'
 require File.dirname(__FILE__) + '/../lib/rutils'
 
 
-# Тест сумм прописью
 class PropisjuTestCase < Test::Unit::TestCase
-
 	def test_ints
 		assert_equal "пятьсот двадцать три", 523.propisju
 		assert_equal "шесть тысяч семьсот двадцать семь", 6727.propisju
 		assert_equal "восемь миллионов шестьсот пятьдесят два", 8000652.propisju
+		assert_equal "восемь миллионов шестьсот пятьдесят две", 8000652.propisju(2)
+		assert_equal "восемь миллионов шестьсот пятьдесят два", 8000652.propisju(3)
 		assert_equal "сорок пять", 45.propisju
 		assert_equal "пять", 5.propisju
 		assert_equal "шестьсот двенадцать", 612.propisju
+		assert_equal "двадцать пять колес", 25.propisju_items(3, "колесо", "колеса", "колес")
+		assert_equal "двадцать одна подстава", 21.propisju_items(2, "подстава", "подставы", "подстав")
 	end
 
 	def test_floats
@@ -24,10 +26,10 @@ class PropisjuTestCase < Test::Unit::TestCase
 	end
 			
 	def test_items
-		assert_equal "пятьсот двадцать три чемодана", 523.items(1, "чемодан", "чемодана", "чемоданов")
-		assert_equal "шесть тысяч семьсот двадцать семь партий", 6727.items(2, "партия", "партии", "партий")
-		assert_equal "сорок пять козлов", 45.items(1, "козел", "козла", "козлов")
-		assert_equal "двести шестьдесят колес", 260.items(3, "колесо", "колеса", "колес")
+		assert_equal "чемодана", 523.items("чемодан", "чемодана", "чемоданов")
+		assert_equal "партий", 6727.items("партия", "партии", "партий")
+		assert_equal "козлов", 45.items("козел", "козла", "козлов")
+		assert_equal "колес", 260.items("колесо", "колеса", "колес")
 	end			
 end
 

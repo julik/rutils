@@ -1,24 +1,24 @@
-if defined?(RedCloth)
-	# RuTils выполняет перегрузку Textile Glyphs в RedCloth, перенося форматирование спецсимволов на Gilenson.
-	class RedCloth  < String
-		# Этот метод в RedCloth эскейпит слишком много HTML, нам ничего не оставляет :-)		
-		def htmlesc(text, mode=0)
-			text
-		end
-		
-		# А этот метод обрабатывает Textile Glyphs - ту самую типографицу.
-		# Вместо того чтобы влезать в таблицы мы просто заменим Textile Glyphs - и все будут рады.	
-		def pgl(text)
-			text.replace RuTils::Gilenson.new(text).to_html
-		end
-	end	
-end
+load File.dirname(__FILE__) + '/blue_cloth_override.rb'
+load File.dirname(__FILE__) + '/red_cloth_override.rb'
+load File.dirname(__FILE__) + '/rails_date_helper_override.rb'
 
-if defined?(BlueCloth)
-	class BlueCloth < String
-		alias_method :old_to_html, :to_html
-		def to_html(*opts)
-			RuTils::Gilenson.new(old_to_html(*opts)).to_html
-		end
-	end
+module RuTils
+  @@overrides = true
+  
+  # Метод позволяет проверить, включена ли перегрузка функций других модулей.
+  # Попутно он спрашивает модуль Locale (если таковой имеется) является ли русский
+  # текущим языком, и если является, включает перегрузку функций имплицитно.
+  # Модуль Locale можно скачать и скомпилировать а можно получить как часть Multilingual Rails.
+  def self.overrides_enabled?
+    if defined?(Locale) and Locale.respond_to?(:current)
+      return true if Locale.current.split('_').first == 'ru'
+    end
+    @@overrides ? true : false
+  end
+
+  # Включает или выключает перегрузки других модулей. Полезно, например, в случае когда нужно рендерить страницу
+  # сайта на нескольких языках и нужно отключить русское оформление текста для других языков.  
+  def self.overrides= (new_override_flag)
+    @@overrides = (new_override_flag ? true : false)
+  end
 end
