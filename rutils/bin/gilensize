@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 $KCODE = 'u'
-require 'rubygems'
-require_gem 'rutils'
+require File.dirname(__FILE__) + '/../lib/rutils'
 
 while st = gets do
 	puts RuTils::Gilenson::Formatter.new(st).to_html

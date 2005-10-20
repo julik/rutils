@@ -1,5 +1,5 @@
 module RuTils
-	class Gilenson < String #:nodoc:
+	class Gilenson::New < String #:nodoc:
 
 		def initialize(*args)
 			# Задача (вкратце) состоит в том чтобы все ступени разработки развести в отдельные методы

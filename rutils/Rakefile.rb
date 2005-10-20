@@ -7,9 +7,11 @@ require 'rake/gempackagetask'
 require 'rake/contrib/rubyforgepublisher'
 require 'fileutils'
 
+require 'lib/rutils'
+
 PKG_BUILD     = ENV['PKG_BUILD'] ? '.' + ENV['PKG_BUILD'] : ''
 PKG_NAME      = 'rutils'
-PKG_VERSION   = '0.03'
+PKG_VERSION   = RuTils::VERSION
 PKG_FILE_NAME   = "#{PKG_NAME}-#{PKG_VERSION}"
 PKG_DESTINATION = "../#{PKG_NAME}"
 PKG_SUMMARY	= %q{ Simple processing of russian strings }
@@ -18,7 +20,7 @@ PKG_HOMEPAGE = 'http://rubyforge.org/projects/rutils'
 PKG_EMAIL = 'me@julik.nl'
 PKG_MAINTAINER = 'Julian "Julik" Tarkhanov'
 
-RELEASE_NAME  = "REL #{PKG_VERSION}"
+RELEASE_NAME  = "rutils-#{PKG_VERSION}"
 
 RUBY_FORGE_PROJECT = "rutils"
 RUBY_FORGE_USER    = ENV['RUBY_FORGE_USER'] ? ENV['RUBY_FORGE_USER'] : "julik"
@@ -69,7 +71,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = PKG_HOMEPAGE
 
   s.has_rdoc = true
-	s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").to_a
+	s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").exclude("gilenson.rb").to_a
 	s.files << ["Rakefile.rb", "README", "TODO", "CHANGELOG"]
 	s.require_path = "lib"
 	s.autorequire = "rutils"
@@ -211,5 +213,7 @@ task :release => [:test, :unclog, :package] do
 
       first_file = false
     end
+    cvs_aware_rev = 'r_' + PKG_VERSION.gsub(/-|\./, '_')
+    `cvs tag #{cvs_aware_rev} .`
   end
 end

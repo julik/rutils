@@ -2,8 +2,11 @@ require 'date'
 
 module RuTils
 	module DateTime
-	  ABBR_MONTHNAMES = %w{ Янв Фев Мар Апр Май Июн Июл Авг Сен Окт Ноя Дек }
-	  MONTHNAMES = %w{ Январь Февраль Март Апрель Май Июнь Июль Август Сентябрь Октябрь Ноябрь Декабрь }
+	  ABBR_MONTHNAMES = [nil] + %w{ Янв Фев Мар Апр Май Июн Июл Авг Сен Окт Ноя Дек }
+	  MONTHNAMES = [nil] + %w{ Январь Февраль Март Апрель Май Июнь Июль Август Сентябрь Октябрь Ноябрь Декабрь }
+	  DAYNAMES = %w(Воскресенье Понедельник Вторник Среда Четверг Пятница Суббота)
+	  ABBR_DAYNAMES = %w(Вск Пн Вт Ср Чт Пт Сб)
+	  
 		def self.distance_of_time_in_words(from_time, to_time = 0, include_seconds = false, absolute = false) #nodoc
 			from_time = from_time.to_time if from_time.respond_to?(:to_time)
 			to_time = to_time.to_time if to_time.respond_to?(:to_time)
@@ -32,26 +35,6 @@ module RuTils
 		end
 		
 	end
-end
-
-class RuTils::DateTime::RussianDate < Date
-	  # Full month names, in English.  Months count from 1 to 12; a
-	  # month's numerical representation indexed into this array
-	  # gives the name of that month (hence the first element is nil).
-	  MONTHNAMES = [nil] + %w(Январь Февраль Март Апрель Май Июнь Июль
-				  Август Сентябрь Октябрь Ноябрь Декабрь)
-
-	  # Full names of days of the week, in English.  Days of the week
-	  # count from 0 to 6 (except in the commercial week); a day's numerical
-	  # representation indexed into this array gives the name of that day.
-	  DAYNAMES = %w(Воскресенье Понедельник Вторник Среда Четверг Пятница Суббота)
-
-	  # Abbreviated month names, in English.
-	  ABBR_MONTHNAMES = [nil] + %w(Янв Фев Мар Апр Май Июнь
-				       Июль Авг Сен Окт Ноя Дек)
-	  # Abbreviated day names, in English.
-	  ABBR_DAYNAMES = %w(Вск Пн Вт Ср Чт Пт Сб)
-
 end
 
 class Date

@@ -3,7 +3,7 @@ require 'jcode'
 
 # Главный контейнер модуля
 module RuTils
-	VERSION = '$Revision$'
+	VERSION = '0.0.4'
 end
 
 require File.dirname(__FILE__) + '/pluralizer/pluralizer'

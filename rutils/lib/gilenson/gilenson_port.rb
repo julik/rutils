@@ -1,10 +1,13 @@
 module RuTils
 
-	module GilensonMixin
-		# Форматирует строку с помощью Gilensize
-		def gilensize(*args)
-			RuTils::Gilenson.new(self, *args).to_html
-		end
+	module Gilenson
+  	module StringFormatting
+  		# Форматирует строку с помощью Gilenson. Всп дополнительные опции передаются форматтеру.
+  		def gilensize(*args)
+  		  args = {} unless args.is_a?(Hash)
+  			RuTils::Gilenson::Formatter.new(self, *args).to_html
+  		end
+    end
 	end
 	
 	# Это - прямой порт Тыпографицы от pixelapes.
@@ -14,7 +17,7 @@ module RuTils
 	#   typ.html = false 		=> "false"
 	#   typ.dash = true			=> "true"
 	#   typ.to_html => 'Эти &laquo;так называемые&raquo; великие деятели'
-	class Gilenson		
+	class Gilenson::Typografica		
 		def initialize(text, *args)
 			@_text = text
 		  @skip_tags = true;
@@ -327,6 +330,11 @@ module RuTils
 
 end #end RuTils
 
+unless defined?(RuTils::Gilenson::Formatter)
+  class RuTils::Gilenson::Formatter < RuTils::Gilenson::Typografica
+  end
+end
+
 class String
-	include RuTils::GilensonMixin
+	include RuTils::Gilenson::StringFormatting
 end
