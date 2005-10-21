@@ -1,4 +1,4 @@
-if defined?(ActionView``)
+if defined?(ActionView)
   module ActionView  #:nodoc:
     module Helpers #:nodoc:
       module DateHelper #:nodoc:
@@ -12,9 +12,11 @@ if defined?(ActionView``)
         #
         # Set <tt>include_seconds</tt> to true if you want more detailed approximations if distance < 1 minute
 
-        alias :distance_of_time_in_words :stock_distance_of_time_in_words
+        alias :stock_distance_of_time_in_words :distance_of_time_in_words
         def distance_of_time_in_words(*args)
-          RuTils::overrides_enabled? ? RuTils::DateTime::distance_of_time_in_words(*args) : stock_distance_of_time_in_words
+#          RuTils::overrides_enabled? ? RuTils::DateTime::distance_of_time_in_words(*args) : stock_distance_of_time_in_words
+
+          RuTils::DateTime::distance_of_time_in_words(*args)
         end
 
         # Like distance_of_time_in_words, but where <tt>to_time</tt> is fixed to <tt>Time.now</tt>.

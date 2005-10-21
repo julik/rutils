@@ -1,7 +1,3 @@
-load File.dirname(__FILE__) + '/blue_cloth_override.rb'
-load File.dirname(__FILE__) + '/red_cloth_override.rb'
-load File.dirname(__FILE__) + '/rails_date_helper_override.rb'
-
 module RuTils
   @@overrides = true
   
@@ -22,3 +18,7 @@ module RuTils
     @@overrides = (new_override_flag ? true : false)
   end
 end
+
+load File.dirname(__FILE__) + '/blue_cloth_override.rb'
+load File.dirname(__FILE__) + '/red_cloth_override.rb'
+load File.dirname(__FILE__) + '/rails_date_helper_override.rb'
