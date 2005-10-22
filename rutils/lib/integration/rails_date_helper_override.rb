@@ -14,9 +14,7 @@ if defined?(ActionView)
 
         alias :stock_distance_of_time_in_words :distance_of_time_in_words
         def distance_of_time_in_words(*args)
-#          RuTils::overrides_enabled? ? RuTils::DateTime::distance_of_time_in_words(*args) : stock_distance_of_time_in_words
-
-          RuTils::DateTime::distance_of_time_in_words(*args)
+          RuTils::overrides_enabled? ? RuTils::DateTime::distance_of_time_in_words(*args) : stock_distance_of_time_in_words
         end
 
         # Like distance_of_time_in_words, but where <tt>to_time</tt> is fixed to <tt>Time.now</tt>.
