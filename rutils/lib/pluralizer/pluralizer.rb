@@ -134,7 +134,7 @@ module RuTils
 			end
 
 			# сборка строки
-			return [(hundreds + tens + ones + end_word + " " + into).strip, tmp_val] 
+			return [(hundreds.to_s + tens.to_s + ones.to_s + end_word.to_s + " " + into.to_s).strip, tmp_val] 
 		end
 		
 		# Реализует вывод прописью любого объекта, реализующего Float
@@ -174,6 +174,11 @@ module RuTils
 				suf1, suf2, suf3 = it[signs][0], it[signs][1], it[signs][2]
 				st + " " + RuTils::Pluralization::sum_string(rmdr.to_i, 2, suf1, suf2, suf2)
 			end
+
+			def propisju_items(gender=1, *forms)
+			  self.propisju(gender) + " " + forms[1]
+			end
+
 		end
 		
 		# Реализует вывод прописью любого объекта, реализующего Numeric
@@ -186,7 +191,7 @@ module RuTils
 			end
 			
 			def propisju_items(gender=1, *forms)
-			  RuTils::Pluralization::sum_string(self, gender, "") + " " + RuTils::Pluralization::choose_plural(self, *forms)
+			  self.propisju(gender) + " " + RuTils::Pluralization::choose_plural(self.to_i, *forms)
 			end
 			
 			# Выбирает корректный вариант числительного в зависимости от рода и числа. Например:

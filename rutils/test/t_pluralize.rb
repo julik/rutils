@@ -14,7 +14,7 @@ class PropisjuTestCase < Test::Unit::TestCase
 		assert_equal "пять", 5.propisju
 		assert_equal "шестьсот двенадцать", 612.propisju
 		assert_equal "двадцать пять колес", 25.propisju_items(3, "колесо", "колеса", "колес")
-		assert_equal "двадцать одна подстава", 21.propisju_items(2, "подстава", "подставы", "подстав")
+		assert_equal "двадцать одна подстава", 21.propisju_items(2, "подстава", "подставы", "подстав")  	
 	end
 
 	def test_floats
@@ -23,6 +23,7 @@ class PropisjuTestCase < Test::Unit::TestCase
 		assert_equal "триста сорок одна целая двести сорок пять тысячных", (341.245).propisju
 		assert_equal "двести три целых сорок одна сотая", (203.41).propisju
 		assert_equal "четыреста сорок две целых пять десятых", (442.50000).propisju
+		assert_equal "двести двенадцать целых четыре десятых сволочи", (212.40).propisju_items(2, "сволочь", "сволочи", "сволочей")
 	end
 			
 	def test_items
