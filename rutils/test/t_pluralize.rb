@@ -32,7 +32,7 @@ class PropisjuTestCase < Test::Unit::TestCase
 		assert_equal "партий", 6727.items("партия", "партии", "партий")
 		assert_equal "козлов", 45.items("козел", "козла", "козлов")
 		assert_equal "колес", 260.items("колесо", "колеса", "колес")
-	end			
+	end
 end
 
 #class PluralizeTestCase < Test::Unit::TestCase
