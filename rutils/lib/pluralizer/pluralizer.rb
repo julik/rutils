@@ -1,5 +1,5 @@
 module RuTils
-	module Pluralization
+	module Pluralization #:nodoc:
 	  # Выбирает нужный падеж существительного в зависимости от числа
 	  def self.choose_plural(amount, *variants)
       variant = (amount%10==1 && amount%100!=11 ? 1 : amount%10>=2 && amount%10<=4 && (amount%100<10 || amount%100>=20) ? 2 : 3)
@@ -176,7 +176,11 @@ module RuTils
 			end
 
 			def propisju_items(gender=1, *forms)
-			  self.propisju(gender) + " " + forms[1]
+			  if self == self.to_i
+			    return self.to_i.propisju_items(gender, *forms)
+			  else
+  			  self.propisju(gender) + " " + forms[1]
+        end
 			end
 
 		end

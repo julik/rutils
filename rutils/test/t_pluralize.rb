@@ -24,6 +24,7 @@ class PropisjuTestCase < Test::Unit::TestCase
 		assert_equal "двести три целых сорок одна сотая", (203.41).propisju
 		assert_equal "четыреста сорок две целых пять десятых", (442.50000).propisju
 		assert_equal "двести двенадцать целых четыре десятых сволочи", (212.40).propisju_items(2, "сволочь", "сволочи", "сволочей")
+		assert_equal "двести двенадцать сволочей", (212.00).propisju_items(2, "сволочь", "сволочи", "сволочей")
 	end
 			
 	def test_items

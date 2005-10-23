@@ -1,7 +1,7 @@
 if defined?(ActionView)
   module ActionView  #:nodoc:
-    module Helpers #:nodoc:
-      module DateHelper #:nodoc:
+    module Helpers
+      module DateHelper
 
         # Reports the approximate distance in time between two Time objects or integers. 
         # For example, if the distance is 47 minutes, it'll return

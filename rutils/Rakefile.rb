@@ -26,7 +26,7 @@ RUBY_FORGE_PROJECT = "rutils"
 RUBY_FORGE_USER    = ENV['RUBY_FORGE_USER'] ? ENV['RUBY_FORGE_USER'] : "julik"
 
 # нам нужна документация в Юникоде. А вы думали?
-PKG_RDOC_OPTS = ['--main=README', '--line-numbers', '--charset=utf-8']
+PKG_RDOC_OPTS = ['--main=README', '--line-numbers', '--charset=utf-8', '--promiscuous']
 
 desc "Run all tests (requires BlueCloth, RedCloth and Rails for integration tests)"
 task :default => [ :test ]
