@@ -1,5 +1,5 @@
 $KCODE = 'u'
-require 'jcode'
+require 'jcode' # вот от этого надо бы избавиться - скопировать jsize из jcode и поместить его в свой namespace
 
 # Главный контейнер модуля
 module RuTils

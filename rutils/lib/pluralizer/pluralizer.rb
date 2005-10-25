@@ -55,17 +55,17 @@ module RuTils
 			# начинаем подсчет с Rest
 			end_word = five_items
 			# сотни
-			case rest / 100
-				when 0 then hundreds = ""
-				when 1 then hundreds = "сто "
-				when 2 then hundreds = "двести "
-				when 3 then hundreds = "триста "
-				when 4 then hundreds = "четыреста "
-				when 5 then hundreds = "пятьсот "
-				when 6 then hundreds = "шестьсот "
-				when 7 then hundreds = "семьсот "
-				when 8 then hundreds = "восемьсот "
-				when 9 then hundreds = "девятьсот "
+			hundreds = case rest / 100
+				when 0 then ""
+				when 1 then "сто "
+				when 2 then "двести "
+				when 3 then "триста "
+				when 4 then "четыреста "
+				when 5 then "пятьсот "
+				when 6 then "шестьсот "
+				when 7 then "семьсот "
+				when 8 then "восемьсот "
+				when 9 then "девятьсот "
 			end
 
 			# десятки
@@ -75,17 +75,17 @@ module RuTils
 			case rest1
 				when 0 then tens = ""
 				when 1 # особый случай
-					case rest
-						when 10 then tens = "десять "
-						when 11 then tens = "одиннадцать "
-						when 12 then tens = "двенадцать "
-						when 13 then tens = "тринадцать "
-						when 14 then tens = "четырнадцать "
-						when 15 then tens = "пятнадцать "
-						when 16 then tens = "шестнадцать "
-						when 17 then tens = "семнадцать "
-						when 18 then tens = "восемнадцать "
-						when 19 then tens = "девятнадцать "
+					tens = case rest
+						when 10 then "десять "
+						when 11 then "одиннадцать "
+						when 12 then "двенадцать "
+						when 13 then "тринадцать "
+						when 14 then "четырнадцать "
+						when 15 then "пятнадцать "
+						when 16 then "шестнадцать "
+						when 17 then "семнадцать "
+						when 18 then "восемнадцать "
+						when 19 then "девятнадцать "
 					end
 				when 2: tens = "двадцать "
 				when 3: tens = "тридцать "
@@ -100,13 +100,10 @@ module RuTils
 			if rest1 < 1 or rest1 > 1 # единицы
 				case rest % 10
 					when 1
-						case gender
-							when 1
-								ones = "один "
-							when 2
-								ones = "одна "
-							when 3
-								ones = "одно "
+						ones = case gender
+							when 1 then "один "
+							when 2 then "одна "
+							when 3 then "одно "
 						end
 						end_word = one_item
 					when 2
@@ -134,7 +131,8 @@ module RuTils
 			end
 
 			# сборка строки
-			return [(hundreds.to_s + tens.to_s + ones.to_s + end_word.to_s + " " + into.to_s).strip, tmp_val] 
+			st = ''
+			return [(st << hundreds.to_s << tens.to_s  << ones.to_s << end_word.to_s << " " << into.to_s).strip, tmp_val] 
 		end
 		
 		# Реализует вывод прописью любого объекта, реализующего Float
@@ -144,14 +142,14 @@ module RuTils
 			# дробная доля оканчивается на нули) до ближайшей доли ( 500 тысячных округляется до 5 десятых).
 			# Дополнительный аргумент - род существительного (1 - мужской, 2- женский, 3-средний)
 			def propisju(gender = 2)
-				raise "NaN propisju eto ne propis!" if self.nan?
+				raise "Это не число!" if self.nan?
 		
 				st = RuTils::Pluralization::sum_string(self.to_i, gender, "целая", "целых", "целых")
 				it = []
 	
-				rmdr = self.to_s.match(/\.(\d+)/)[1]
+				remainder = self.to_s.match(/\.(\d+)/)[1]
 		
-				signs = rmdr.to_s.size- 1
+				signs = remainder.to_s.size- 1
 				
 				it << ["десятая", "десятых"]
 				it << ["сотая", "сотых"]
@@ -167,12 +165,12 @@ module RuTils
 		 # 	it << ["триллионная", "триллионных", "триллионных"]
 
 				while it[signs].nil?
-					rmdr = (rmdr/10).round
-					signs = rmdr.to_s.size- 1
+					remainder = (remainder/10).round
+					signs = remainder.to_s.size- 1
 				end
-								
+
 				suf1, suf2, suf3 = it[signs][0], it[signs][1], it[signs][2]
-				st + " " + RuTils::Pluralization::sum_string(rmdr.to_i, 2, suf1, suf2, suf2)
+				st + " " + RuTils::Pluralization::sum_string(remainder.to_i, 2, suf1, suf2, suf2)
 			end
 
 			def propisju_items(gender=1, *forms)
@@ -207,11 +205,11 @@ module RuTils
 	end
 end
 
-class Numeric
+class Object::Numeric
 	include RuTils::Pluralization::NumericFormatting
 end
 
 
-class Float
+class Object::Float
 	include RuTils::Pluralization::FloatFormatting
 end

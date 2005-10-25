@@ -1,5 +1,5 @@
-if defined?(ActionView)
-  module ActionView  #:nodoc:
+if defined?(Object::ActionView)
+  module Object::ActionView  #:nodoc:
     module Helpers
       module DateHelper
 

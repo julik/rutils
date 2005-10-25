@@ -330,11 +330,12 @@ module RuTils
 
 end #end RuTils
 
+# Вгружаем этот форматтер если уже не загружен наш новый
 unless defined?(RuTils::Gilenson::Formatter)
   class RuTils::Gilenson::Formatter < RuTils::Gilenson::Typografica
   end
 end
 
-class String
+class Object::String
 	include RuTils::Gilenson::StringFormatting
 end
