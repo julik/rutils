@@ -84,6 +84,7 @@ spec = Gem::Specification.new do |s|
 	s.extra_rdoc_files = ["README", "TODO", "CHANGELOG"]
 	s.rdoc_options = PKG_RDOC_OPTS
 	s.executables << 'gilensize'
+	s.executables << 'rutilize'
 end
 
 Rake::GemPackageTask.new(spec) do |p|

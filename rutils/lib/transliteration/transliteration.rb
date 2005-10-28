@@ -56,8 +56,8 @@ module RuTils::Transliteration::Simple
 	end
 end
 		
-# Реулизует транслитерацию "в обе стороны", дающую возможность автоматически использовать URL как ключ записи
-module RuTils::Transliteration::BiDi
+# Реализует транслитерацию "в обе стороны", дающую возможность автоматически использовать URL как ключ записи
+module RuTils::Transliteration::BiDi  #:nodoc:
 		TABLE_TO = {
 			 "А"=>"A","Б"=>"B","В"=>"V","Г"=>"G","Д"=>"D",
 			 "Е"=>"E","Ё"=>"JO","Ж"=>"ZH","З"=>"Z","И"=>"I",
@@ -148,22 +148,22 @@ module RuTils::Transliteration::StringFormatting
 	end
 	
 	# Транслитерирует строку (взаимно-однозначный транслит), и возвращает измененную строку
-	def bidi_translify(allow_slashes = true)
+	def bidi_translify(allow_slashes = true) #:nodoc:
 		RuTils::Transliteration::BiDi::translify(self.to_s, allow_slashes)
 	end
 	
 	# Транслитерирует строку (взаимно-однозначный транслит), меняя объект
-	def bidi_translify!(allow_slashes = true)
+	def bidi_translify!(allow_slashes = true) #:nodoc:
 		self.replace(RuTils::Transliteration::BiDi::translify(self.to_s, allow_slashes))
 	end
 
 	# Заменяет латиницу на кириллицу (взаимно-однозначный транслит), меняя объект
-	def bidi_detranslify!(allow_slashes = true)
+	def bidi_detranslify!(allow_slashes = true) #:nodoc:
 		self.replace(RuTils::Transliteration::BiDi::detranslify(self.to_s, allow_slashes))
 	end
 	
 	# Заменяет латиницу на кириллицу (взаимно-однозначный транслит), и возвращает измененную строку
-	def bidi_detranslify(allow_slashes = true)
+	def bidi_detranslify(allow_slashes = true) #:nodoc:
 		RuTils::Transliteration::BiDi::detranslify(self.to_s, allow_slashes =  true)
 	end
 end
