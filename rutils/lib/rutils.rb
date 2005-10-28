@@ -1,8 +1,10 @@
 $KCODE = 'u'
 require 'jcode' # вот от этого надо бы избавиться - скопировать jsize из jcode и поместить его в свой namespace
 
+
 # Главный контейнер модуля
 module RuTils
+  INSTALLATION_DIRECTORY = File.expand_path(File.dirname(__FILE__) + '/../')
   MAJOR = 0
   MINOR = 1
   TINY = 0

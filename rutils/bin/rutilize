@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+# == Synopsis
+# 
+# Copy RuTils to your Rails application, automatically making it speak Russian.
+# The application will need to be restarted for changes to take effect.
+# After that your app contains RuTils and is not dependent on RuTils gem
+# 
+# == Usage
+# 
+#   rutilize /Sites/my_app /Sites/my_other_app
+#   
+# == Author
+#   Julik <me@julik.nl>
+  
+
+$KCODE = 'u'
+require File.dirname(__FILE__) + '/../lib/rutils'
+require 'optparse'
+require 'rdoc/usage'
+
+opts = OptionParser.new
+opts.on(" -h", "--help") { RDoc::usage }
+opts.parse(ARGV) rescue RDoc::usage('usage')
+
+if ARGV.empty?
+  RDoc::usage_no_exit('usage')
+  exit(-1)
+end
+
+for item in ARGV
+  puts "Teaching #{item} to speak Russian"
+  raise "The directory #{item} does not exist" unless File.exist?(item)
+  raise "#{item} - not a directory" unless File.directory?(item)
+  raise "This directory doesn't seem to be a Rails application" unless File.exist?(item + '/vendor')
+  Dir::mkdir(item+'/vendor/plugins') unless File.exist?(item + '/vendor/plugins')
+  `cp -r #{RuTils::INSTALLATION_DIRECTORY} #{item}/vendor/plugins`
+end

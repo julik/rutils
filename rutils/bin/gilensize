@@ -2,6 +2,17 @@
 $KCODE = 'u'
 require File.dirname(__FILE__) + '/../lib/rutils'
 
+# == Synopsis
+# 
+# Processes text on standard input with Typografica
+# 
+# == Usage
+# 
+#   cat myfile.txt | gilensize > output.txt
+#   
+# == Author
+#   Julik <me@julik.nl>
+
 while st = gets do
 	puts RuTils::Gilenson::Formatter.new(st).to_html
 end

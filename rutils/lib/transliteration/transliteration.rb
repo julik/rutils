@@ -3,7 +3,7 @@ module RuTils
   end
 end
 
-# Реулизует простейшую транслитерацию
+# Реализует простейшую транслитерацию
 #   "вот мы и здесь".translify => "vot my i zdes"
 #   "vot my i zdes".detranslify => "вот мы и здесь"
 module RuTils::Transliteration::Simple
@@ -168,6 +168,6 @@ module RuTils::Transliteration::StringFormatting
 	end
 end
 
-class String
+class Object::String
 	include RuTils::Transliteration::StringFormatting
 end

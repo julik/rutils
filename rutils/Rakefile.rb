@@ -76,7 +76,7 @@ spec = Gem::Specification.new do |s|
 
   s.has_rdoc = true
 	s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").exclude("gilenson.rb").to_a
-	s.files << ["Rakefile.rb", "README", "TODO", "CHANGELOG"]
+	s.files << ["Rakefile.rb", "README", "TODO", "CHANGELOG", "init.rb"]
 	s.require_path = "lib"
 	s.autorequire = "rutils"
 	s.test_file = "test/run_tests.rb"
