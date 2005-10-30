@@ -4,7 +4,7 @@ require File.dirname(__FILE__) + '/../lib/rutils'
 
 
 class TranslitTest < Test::Unit::TestCase
-			
+
   def setup
     @string = "Это кусок строки русских букв v peremshku s latinizey i амперсандом (pozor!) & something"
   end
@@ -22,4 +22,67 @@ class TranslitTest < Test::Unit::TestCase
 		assert_equal "eto-kusok-stroki-ruskih-bukv-v-peremshku-s-latinizey-i-ampersandom-pozor-and-something", @string.dirify
 		assert_equal "esche-ruskiy-tekst", "Еще РусСКий теКст".dirify
 	end	
+end
+
+
+class BiDiTranslitTest < Test::Unit::TestCase
+
+  def setup
+    @strings_all_with_slash = {
+	"ThisIsРусскийName/ДляВас/ДемонстрацияOfSwitching" => "ThisIs+Russkijj+Name/+DljaVas+/+Demonstracija+OfSwitching",
+	"Андрэ Нортон Зачумлённый корабльzip" => "+Andreh__Norton__Zachumljonnyjj__korabl'+zip",
+	"Эй Эгегей" => "+EHjj__EHgegejj",
+	"эй-эй" => "+ehjj+-+ehjj",
+	"WebРазработка/Скрипты" => "Web+Razrabotka+/+Skripty",
+	"Смотрите зайцы -- нас много" => "+Smotrite__zajjcy__+--+__nas__mnogo",
+	"Привет Родина" => "+Privet__Rodina",
+	"ЙухХа" => "+JJukhKHa",
+	"Ыхыхых Its English text" => "+Ykhykhykh__+Its+__+English+__+text",
+	"Пьянь" => "+P'jan'",
+	"----____" => "----____",
+	"Madonna - Свежия Песенки" => "Madonna+__+-+__Svezhija__Pesenki",
+	"58-49" => "58-49",
+	"Въезд ГЛЯНЬ ВЪЕЗД" => "+V~ezd__GLJAN_'__V_~EZD",
+	"----____" => "----____",
+	"Въезд ГЛЯНь ВЪЕЗД" => "+V~ezd__GLJAN'__V_~EZD",
+	"Установка mod_perl" => "+Ustanovka__+mod_perl",
+	"Проверка__двери неразумной" => "+Proverka+__+dveri__nerazumnojj",
+	"Проверка_ дверцы" => "+Proverka+_+__dvercy",
+	"Кровать устала _ь" => "+Krovat'__ustala__+_+'",
+	"test__bed" => "test__bed",
+	"test_ bed" => "test_+__+bed",
+	"test__ __bed" => "test__+__+__bed",
+	"a_-_b-_-c" => "a_-_b-_-c",
+	"a - b _ c" => "a+__+-+__+b+__+_+__+c",
+	}
+    @strings_tran_without_slash = {
+	"Андрэ/ Н/о/ртон /Зачум//лённый корабль/z/ip" => "+Andreh__Norton__Zachumljonnyjj__korabl'+zip",
+	"WebРазработка/Мимо" => "Web+RazrabotkaMimo",
+	"test_/_bed" => "test__bed",
+	}
+    @strings_detran_without_slash = {
+	"Webds" => "/We/bds/",
+	"WebРазработкаМимо" => "Web/+Razrabotka+/+Mimo",
+	"WebСкрипты" => "Web/+Skripty",
+	"ПХПScripts" => "+PKHP+/Scripts",
+	}
+  end
+
+	def test_bidi_translify
+		@strings_all_with_slash.each do |strFrom, strTo|
+			assert_equal strTo, strFrom.bidi_translify
+		end
+		@strings_tran_without_slash.each do |strFrom, strTo|
+			assert_equal strTo, strFrom.bidi_translify(false)
+		end
+	end
+
+	def test_bidi_detranslify
+		@strings_all_with_slash.each do |strTo, strFrom|
+			assert_equal strTo, strFrom.bidi_detranslify
+		end
+		@strings_detran_without_slash.each do |strTo, strFrom|
+			assert_equal strTo, strFrom.bidi_detranslify(false)
+		end
+	end
 end
