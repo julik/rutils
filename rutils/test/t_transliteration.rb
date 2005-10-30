@@ -28,7 +28,7 @@ end
 class BiDiTranslitTest < Test::Unit::TestCase
 
   def setup
-    @strings_all_with_slash = {
+	@strings_all_with_slash = {
 	"ThisIsРусскийName/ДляВас/ДемонстрацияOfSwitching" => "ThisIs+Russkijj+Name/+DljaVas+/+Demonstracija+OfSwitching",
 	"Андрэ Нортон Зачумлённый корабльzip" => "+Andreh__Norton__Zachumljonnyjj__korabl'+zip",
 	"Эй Эгегей" => "+EHjj__EHgegejj",
@@ -55,12 +55,14 @@ class BiDiTranslitTest < Test::Unit::TestCase
 	"a_-_b-_-c" => "a_-_b-_-c",
 	"a - b _ c" => "a+__+-+__+b+__+_+__+c",
 	}
-    @strings_tran_without_slash = {
+	
+	@strings_tran_without_slash = {
 	"Андрэ/ Н/о/ртон /Зачум//лённый корабль/z/ip" => "+Andreh__Norton__Zachumljonnyjj__korabl'+zip",
 	"WebРазработка/Мимо" => "Web+RazrabotkaMimo",
 	"test_/_bed" => "test__bed",
 	}
-    @strings_detran_without_slash = {
+	
+	@strings_detran_without_slash = {
 	"Webds" => "/We/bds/",
 	"WebРазработкаМимо" => "Web/+Razrabotka+/+Mimo",
 	"WebСкрипты" => "Web/+Skripty",
