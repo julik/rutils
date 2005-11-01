@@ -19,6 +19,11 @@ Gilenson работает медленнее).
 
 Если вы используете RuTils для сайта под mod_ruby воспользуйтесь директивой RubyKanjiCode в своем httpd.conf.
 
+Большое спасибо Роману Иванову aka Kukutz и Николаю Яремко aka Kuso Mendokuzee за реализацию большинства алгоритмов
+на PHP.
+
+Разработку RuTils ведут Julik[http://live.julik.nl] и Mash[http://imfo.ru]
+
 == Cумма прописью и выбор числительного
 
 RuTils реализует сумму прописью для целых и дробных чисел, с дополнительным учетом рода. Например:
@@ -44,15 +49,15 @@ RuTils на данный момент реализует простейший т
 	
 == BiDi-транслит.
 
-Порт "BiDi Translit"[http://pixel-apes.com/translit/article#h256-10] от Pixel Apes.
+Порт BiDiTranslit[http://pixel-apes.com/translit/article#h256-10] от Pixel Apes.
 Реализует транслитерацию "в обе стороны", предоставляя возможность получить валидный URL
 из строки, содержащей русские и английские буквы. С некоторыми потерями (запятых и прочих
 "слабозначащих" символов) возможно восстановление исходной строки.
 
 Два режима работы:
 
-* Уничтожение всех слешей, которые встретятся во входной строке. В этом случае методы вызываются с передачей в них false. Например, +"Web/Скрипты".bidi_translify(false)+
-* Пропуск слэшей (используется по умолчанию). Например, +"Web/+Skripty".bidi_detranslify+
+* Уничтожение всех слешей, которые встретятся во входной строке. В этом случае методы вызываются с передачей в них false. Например, "Web/Скрипты".bidi_translify(false)
+* Пропуск слэшей (используется по умолчанию). Например, "Web/+Skripty".bidi_detranslify
 
 	"WebРазработка/Скрипты".bidi_translify     => "Web+Razrabotka+/+Skripty"
 	"+Ustanovka__+mod_perl".bidi_detranslify   => "Установка mod_perl"
@@ -61,13 +66,10 @@ RuTils на данный момент реализует простейший т
 
 == Обработка русской типографики в HTML
 
-Gilenson - порт Тыпографицы[http://pixel-apes.com/typografica] от
+Gilenson - порт Typografica[http://pixel-apes.com/typografica] от
 Pixel Apes. Тыпографица - механизм автоматической расстановки подстановок в тексте
 перед его выводом в HTML, оформляющий неразрывные пробелы, типографские кавычки
 и реализующая элементарные макроподстановки.
-
-Большое спасибо Роману Иванову aka Kukutz и Николаю Яремко aka Kuso Mendokuzee за изначальную реализацию
-на PHP.
 
 Имейте в виду, что на баги в Gilenson жаловаться разработчикам Typografica не стоит -
 они вас не поймут и будут правы. Поддержку Gilenson PixelApes не осуществляют.
@@ -98,14 +100,17 @@ Textile английские кавычки и типографские знак
 Если вы хотите использовать rutils как дополенние к Rails в одном конкретном приложении, скопируйте
 директорию rutils в папку vendor/plugins вашего приложения. Вы можете воспользоваться командой
 rutilize чтобы сделать это автоматически. После этого вы сможете использовать RuTils без
-необходимости установки gem'а.
+необходимости установки gem'а на вашем сервере.
 
-  $ rutilize /Sites/my_app
+  $ rutilize /Sites/my_app1 /Sites/my_app2 /Sites/my_another_app
+  
+Вы можете свободно распространять RuTils со своим Rails-приложением при условии сохранения структуры
+и файла README.
 
 == Требования
 
 * Ruby 1.8.2, немного прямых рук.
-* Rake[http://rake.rubyforge.org], Rails, RedCloth и BlueCloth для выполнения тестов 
+* Rake[http://rake.rubyforge.org], Rails[http://rubyonrails.org], RedCloth[http://www.whytheluckystiff.net/ruby/redcloth/] и BlueCloth[http://www.deveiate.org/projects/BlueCloth] для выполнения тестов 
 
 == Как использовать
 
