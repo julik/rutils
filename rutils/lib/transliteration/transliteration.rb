@@ -115,7 +115,7 @@ module RuTils::Transliteration::BiDi  #:nodoc:
 	def self.detranslify(str, allow_slashes = true)
 		slash = allow_slashes ? '/' : '';
 
-		str.split('/').inject("") do | out, pg|
+		str.split('/').inject(out = "") do |out, pg|
 			strings = pg.split('+')
 			1.step(strings.length-1, 2) do |x|
 				TABLE_FROM.each do | translation |
@@ -124,7 +124,7 @@ module RuTils::Transliteration::BiDi  #:nodoc:
 			end
 			out << slash << strings.to_s
 		end
-		out[slash.length, out.length-1]
+		out[slash.length, out.length-slash.length]
 	end
 end
 
@@ -163,7 +163,7 @@ module RuTils::Transliteration::StringFormatting
 	
 	# Заменяет латиницу на кириллицу (взаимно-однозначный транслит), и возвращает измененную строку
 	def bidi_detranslify(allow_slashes = true) #:nodoc:
-		RuTils::Transliteration::BiDi::detranslify(self.to_s, allow_slashes =  true)
+		RuTils::Transliteration::BiDi::detranslify(self.to_s, allow_slashes)
 	end
 end
 
