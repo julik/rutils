@@ -4,10 +4,13 @@ require 'jcode' # вот от этого надо бы избавиться - с
 
 # Главный контейнер модуля
 module RuTils
+  # Папка, куда установлен модуль RuTils. Нужно чтобы автоматически копировать RuTils в другие приложения.
   INSTALLATION_DIRECTORY = File.expand_path(File.dirname(__FILE__) + '/../')
   MAJOR = 0
   MINOR = 1
-  TINY = 1
+  TINY = 2
+
+  # Версия RuTils
 	VERSION = "#{MAJOR}.#{MINOR}.#{TINY}"
 end
 

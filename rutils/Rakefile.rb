@@ -95,19 +95,19 @@ end
 
 
 desc "Remove packaging products (doc and pkg) - they are not source-managed"
-task :unclog do
+task :clobber do
 	`rm -rf ./doc`
 	`rm -rf ./pkg`
 end
 
 desc "Publish the docs to Rubyforge site"
-task :pubdocs=>[:unclog, :doc] do
+task :pubdocs=>[:clobber, :doc] do
 	raise "This is not implemented yet" and return
 end
 
 
 desc "Publish the release files to RubyForge."
-task :release => [:test, :unclog, :package] do
+task :release => [:test, :clobber, :package] do
   files = ["gem", "tgz", "zip"].map { |ext| "pkg/#{PKG_FILE_NAME}.#{ext}" }
 
   if RUBY_FORGE_PROJECT then
