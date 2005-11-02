@@ -1,7 +1,8 @@
 if defined?(Object::RedCloth)
   # RuTils выполняет перегрузку Textile Glyphs в RedCloth, перенося форматирование спецсимволов на Gilenson.
   class Object::RedCloth  < String #:nodoc:
-    # Этот метод в RedCloth эскейпит слишком много HTML, нам ничего не оставляет :-)    
+
+    # Этот метод в RedCloth при наличии Гиленсона надо отключать    
     alias_method  :stock_htmlesc, :htmlesc
     def htmlesc(text, mode=0) #:nodoc:
       RuTils::overrides_enabled? ?  text :  stock_htmlesc(text, mode)

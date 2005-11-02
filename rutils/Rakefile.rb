@@ -32,10 +32,9 @@ PKG_RDOC_OPTS = ['--main=README',
                  '--charset=utf-8',
                  '--promiscuous']
 
-desc "Run all tests (requires BlueCloth, RedCloth and Rails for integration tests)"
 task :default => [ :test ]
 
-desc "Run tests"
+desc "Run all tests (requires BlueCloth, RedCloth and Rails for integration tests)"
 Rake::TestTask.new("test") { |t|
   t.libs << "test"
   t.pattern = 'test/t_*.rb'
@@ -75,7 +74,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = PKG_HOMEPAGE
 
   s.has_rdoc = true
-	s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").exclude("gilenson.rb").to_a
+	s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").exclude(".DS_Store").exclude("gilenson.rb").to_a
 	s.files << ["Rakefile.rb", "README", "TODO", "CHANGELOG", "init.rb"]
 	s.require_path = "lib"
 	s.autorequire = "rutils"
