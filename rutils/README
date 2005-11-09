@@ -48,7 +48,7 @@ RuTils на данный момент реализует простейший т
  	"Вот такое вот дело".translify => "Vot takoye vot delo"
 	"Несомненный прогресс по сравнению с PHP".dirify => "nesomnennyi-progress-po-sravneniu-s-php"
 	
-== BiDi-транслит.
+== BiDi-транслит
 
 Порт BiDiTranslit[http://pixel-apes.com/translit/article#h256-10] от Pixel Apes.
 Реализует транслитерацию "в обе стороны", предоставляя возможность получить валидный URL
@@ -82,6 +82,31 @@ Pixel Apes. Тыпографица - механизм автоматическо
 пользуясь стандартным выводом
 
 	$ cat myfile.txt | gilensize > myfile.html
+
+== Даты
+
+В класс Date введены следующие константы:
+	* RU_MONTHNAMES (Январь Февраль Март...)
+	* RU_DAYNAMES (Воскресенье Понедельник...)
+	* RU_ABBR_MONTHNAMES (Янв Фев Мар...)
+	* RU_ABBR_DAYNAMES (Вск Пн Вт Ср...)
+	* RU_INFLECTED_MONTHNAMES (Января Февраля Марта...)
+	* RU_DAYNAMES_E (первое второе третье...)
+
+Пример использования:
+
+	require 'date'
+	date = Date.new(2005, 11, 9)
+	puts "#{Date::RU_ABBR_MONTHNAMES[date.mon]}"   => Ноя
+	puts "#{Date::RU_MONTHNAMES[date.mon]}"        => Ноябрь
+	puts "#{Date::RU_ABBR_DAYNAMES[date.wday]}"    => Ср
+	puts "#{Date::RU_DAYNAMES[date.wday]}"         => Среда
+
+При включенной перезагрузке функций (RuTils::overrides_enabled) осуществляется "покрытие" стандартной
+функции Time#strftime ("родную" #strftime можно продолжать использовать через alias-метод #strftime_norutils):
+
+	Time.local(2005,"dec",31).strftime("%a, %A, %b, %B")          => "Сб, Суббота, Дек, Декабрь"
+	Time.local(2005,"dec",31).strftime_norutils("%a, %A, %b, %B") => "Sat, Saturday, Dec, December"
 
 == Интеграция с Rails, RedCloth и BlueCloth
 
