@@ -33,6 +33,13 @@ class PropisjuTestCase < Test::Unit::TestCase
 		assert_equal "козлов", 45.items("козел", "козла", "козлов")
 		assert_equal "колес", 260.items("колесо", "колеса", "колес")
 	end
+	
+	def test_money
+		assert_equal "сто двадцать три рубля", 123.rublej
+		assert_equal "триста сорок три рубля двадцать копеек", (343.20).rublej
+		assert_equal "сорок две копейки", (0.4187).rublej
+		assert_equal "триста тридцать два рубля", (331.995).rublej
+	end	
 end
 
 #class PluralizeTestCase < Test::Unit::TestCase

@@ -23,12 +23,13 @@ PKG_MAINTAINER = 'Julian "Julik" Tarkhanov'
 RELEASE_NAME  = "rutils-#{PKG_VERSION}"
 
 RUBY_FORGE_PROJECT = "rutils"
-RUBY_FORGE_USER    = ENV['RUBY_FORGE_USER'] ? ENV['RUBY_FORGE_USER'] : "julik"
+RUBY_FORGE_USER    = ENV['RUBY_FORGE_USER'] ? ENV['RUBY_FORGE_USER'] : (ENV['USER'] ? ENV['USER'] : "julik")
 
 # нам нужна документация в Юникоде. А вы думали?
+# Rubydoc вызванный из RubyGems поддерживает значения опций только через знак равенства
 PKG_RDOC_OPTS = ['--main=README',
                  '--line-numbers',
-                 '--webcvs http://rubyforge.org/cgi-bin/viewcvs.cgi/rutils/%s?cvsroot=rutils',
+                 '--webcvs=http://rubyforge.org/cgi-bin/viewcvs.cgi/rutils/%s?cvsroot=rutils',
                  '--charset=utf-8',
                  '--promiscuous']
 
@@ -90,13 +91,6 @@ Rake::GemPackageTask.new(spec) do |p|
   p.gem_spec = spec
   p.need_tar = true
   p.need_zip = true
-end
-
-
-desc "Remove packaging products (doc and pkg) - they are not source-managed"
-task :clobber do
-	`rm -rf ./doc`
-	`rm -rf ./pkg`
 end
 
 desc "Publish the docs to Rubyforge site"
@@ -217,6 +211,7 @@ task :release => [:test, :clobber, :package] do
 
       first_file = false
     end
+    # Tag the release in SCM
     cvs_aware_rev = 'r_' + PKG_VERSION.gsub(/-|\./, '_')
     `cvs tag #{cvs_aware_rev} .`
   end

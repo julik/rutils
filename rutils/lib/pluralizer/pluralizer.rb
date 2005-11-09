@@ -5,6 +5,22 @@ module RuTils
       variant = (amount%10==1 && amount%100!=11 ? 1 : amount%10>=2 && amount%10<=4 && (amount%100<10 || amount%100>=20) ? 2 : 3)
       variants[variant-1]
 	  end
+
+    def self.rublej(amount)
+      pts = []
+      
+			pts << RuTils::Pluralization::sum_string(amount.to_i, 1, "рубль", "рубля", "рублей") unless amount.to_i == 0
+      if amount.kind_of?(Float)
+			  remainder = (amount.divmod(1)[1]*100).round
+			  if (remainder == 100)
+  			  pts = [RuTils::Pluralization::sum_string(amount.to_i+1, 1, 'рубль', 'рубля', 'рублей')]
+        else
+  			  pts << RuTils::Pluralization::sum_string(remainder.to_i, 2, 'копейка', 'копейки', 'копеек')
+        end
+      end
+      
+      pts.join(' ')
+    end
     
 		#  Выполняет преобразование числа из цифрого вида в символьное
 		#   amount - числительное
@@ -39,9 +55,9 @@ module RuTils
 				into, tmp_val = sum_string_fn(into, tmp_val, 1, "миллиард", "миллиарда", "миллиардов")
 				return into
 		end
-
+    
     private
-  		def self.sum_string_fn(into, tmp_val, gender, one_item='', two_items='', five_items='')
+		def self.sum_string_fn(into, tmp_val, gender, one_item='', two_items='', five_items='')
 			rest, rest1, end_word, ones, tens, hundreds = [nil]*6
 			#
 			rest = tmp_val % 1000
@@ -145,13 +161,12 @@ module RuTils
 				raise "Это не число!" if self.nan?
 		
 				st = RuTils::Pluralization::sum_string(self.to_i, gender, "целая", "целых", "целых")
-				it = []
 	
 				remainder = self.to_s.match(/\.(\d+)/)[1]
 		
 				signs = remainder.to_s.size- 1
 				
-				it << ["десятая", "десятых"]
+				it = [["десятая", "десятых"]]
 				it << ["сотая", "сотых"]
 				it << ["тысячная", "тысячных"]
 				it << ["десятитысячная", "десятитысячных"]
@@ -201,6 +216,12 @@ module RuTils
 			def items(one_item, two_items, five_items)
 				RuTils::Pluralization::choose_plural(self, one_item, two_items, five_items)
 			end	
+			
+			# Выводит сумму в рублях прописью. Например:
+			# * (15.4).rublej => "пятнадцать рублей сорок копеек"
+			def rublej
+			  RuTils::Pluralization::rublej(self)
+			end
 		end
 	end
 end

@@ -11,7 +11,7 @@ module RuTils
   TINY = 2
 
   # Версия RuTils
-	VERSION = "#{MAJOR}.#{MINOR}.#{TINY}"
+	VERSION = [MAJOR, MINOR ,TINY].join('.')
 	
 	def self.load_component(name) #:nodoc:
     require RuTils::INSTALLATION_DIRECTORY + "/lib/#{name}/#{name}"
@@ -25,7 +25,7 @@ end
 
 RuTils::load_component :pluralizer #Выбор числительного и сумма прописью
 require File.dirname(__FILE__) + '/gilenson/gilenson_port'
-# RuTils::load_component :gilenson
+# RuTils::load_component :gilenson_port
 RuTils::load_component :datetime # Дата и время без локалей
 RuTils::load_component :transliteration # Транслит
 RuTils::load_component :integration # Интеграция с rails, textile и тд
