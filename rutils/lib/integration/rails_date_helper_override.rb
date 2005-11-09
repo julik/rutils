@@ -26,7 +26,7 @@ if defined?(Object::ActionView)
         def select_month(date, options = {})
           month_options = []
           if RuTils::overrides_enabled?
-            month_names = options[:use_short_month] ? RuTils::DateTime::ABBR_MONTHNAMES : RuTils::DateTime::INFLECTED_MONTHNAMES            
+            month_names = options[:use_short_month] ? Date::RU_ABBR_MONTHNAMES : Date::RU_INFLECTED_MONTHNAMES
           else
             month_names = options[:use_short_month] ? Date::ABBR_MONTHNAMES : Date::MONTHNAMES
           end
