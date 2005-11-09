@@ -1,5 +1,6 @@
 CVS
-* Добавлена функциия Numeric#rublej
+* Добавлена функциия Numeric#rublej (julik)
+* Добавлена русская версия Time#ru_strftime и Date#ru_strftime (mash)
 
 Версия 0.1.2 - 01.11.2005
 * Добавлен BiDi-транслит c тестами (mash)
