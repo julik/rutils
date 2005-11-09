@@ -13,17 +13,14 @@ end
 
 class StrftimeRuTest < Test::Unit::TestCase
 	def test_strftime_ru
-		assert_equal "Суббота, тридцатьпервое декабря 2005 года", Time.local(2005,"dec",31).strftime_ru("%A, %E %Y года")
-		assert_equal "Среда, тридцатое ноября 2005 года", Time.local(2005,"nov",30).strftime_ru("%A, %E %Y года")
-		assert_equal "Вторник, двадцатьдевятое ноября 2005 года", Time.local(2005,"nov",29).strftime_ru("%A, %E %Y года")
-		assert_equal "Понедельник, двадцатьпервое ноября 2005 года", Time.local(2005,11,21).strftime_ru("%A, %E %Y года")
-		assert_equal "Воскресенье, двадцатое ноября 2005 года", Time.local(2005,11,20).strftime_ru("%A, %E %Y года")
-		assert_equal "Суббота, девятнадцатое ноября 2005 года", Time.local(2005,11,19).strftime_ru("%A, %E %Y года")
-		assert_equal "Пятница, одиннадцатое ноября 2005 года", Time.local(2005,11,11).strftime_ru("%A, %E %Y года")
-		assert_equal "Вторник, первое ноября 2005 года", Time.local(2005,11,1).strftime_ru("%A, %E %Y года")
-		assert_equal "Воскресенье, первое января 2006 года", Time.local(2006,1,1).strftime_ru("%A, %E %Y года")
-		assert_equal "Вск Воскресенье Янв Январь первое января 1", Time.local(2006,1,1).strftime_ru("%a %A %b %B %E %e")
-		assert_equal "Сб Суббота Дек Декабрь тридцатьпервое декабря 31", Time.local(2005,12,31).strftime_ru("%a %A %b %B %E %e")
-		assert_equal "31.12.2005", Time.local(2005,12,31).strftime_ru
+		if RuTils::overrides_enabled?
+			assert_equal "Сб, Суббота, Дек, Декабрь", Time.local(2005,"dec",31).strftime("%a, %A, %b, %B")
+			assert_equal "%a, %A, %b, %B", Time.local(2005,"dec",31).strftime("%%a, %%A, %%b, %%B")
+			assert_equal "%Сб, %Суббота, %Дек, %Декабрь", Time.local(2005,"dec",31).strftime("%%%a, %%%A, %%%b, %%%B")
+			assert_equal "Сегодня: 31 Декабрь, Суббота, 2005 год", Time.local(2005,"dec",31).strftime("Сегодня: %d Декабрь, %A, %Y год")
+			
+			date = Date.new(2005, 11, 9)
+			assert_equal "Ноя Ноябрь Ср Среда", "#{Date::RU_ABBR_MONTHNAMES[date.mon]} #{Date::RU_MONTHNAMES[date.mon]} #{Date::RU_ABBR_DAYNAMES[date.wday]} #{Date::RU_DAYNAMES[date.wday]}"
+		end #RuTils::overrides_enabled?
 	end
 end
