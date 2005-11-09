@@ -1,4 +1,7 @@
 CVS
+* Изменены константы дат, используемые в lib/integration/rails_date_helper_override.rb:
+  Было: RuTils::DateTime::ABBR_MONTHNAMES, RuTils::DateTime::INFLECTED_MONTHNAMES
+  Стало: Date::RU_ABBR_MONTHNAMES, Date::RU_INFLECTED_MONTHNAMES
 * Добавлена функциия Numeric#rublej (julik)
 * Добавлена русская версия Time#ru_strftime и Date#ru_strftime (mash)
 
