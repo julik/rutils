@@ -8,7 +8,7 @@ module RuTils
   INSTALLATION_DIRECTORY = File.expand_path(File.dirname(__FILE__) + '/../')
   MAJOR = 0
   MINOR = 1
-  TINY = 2
+  TINY = 3
 
   # Версия RuTils
   VERSION = [MAJOR, MINOR ,TINY].join('.')
