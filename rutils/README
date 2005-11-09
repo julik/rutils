@@ -7,7 +7,7 @@ RuTils - простой обработчик русского текста на 
 Весь функционал RuTils поддерживает только UTF-8 (настройка $KCODE / KanjiCode 'u'). Стандартно работа RuTils проверяется
 как на стандартной версии Ruby, так и на парсере регулярных выражений Oniguruma (правда имейте в виду, что с ним
 Gilenson работает медленнее).
-	
+
 Пожалуйста упоминайте версию при сообщении ошибок. Версию RUTILS всегда можно узнать в константе
 
   RuTils::VERSION
@@ -28,16 +28,16 @@ Gilenson работает медленнее).
 
 RuTils реализует сумму прописью для целых и дробных чисел, с дополнительным учетом рода. Например:
 
-	4.propisju	=> "четыре"
-	345.propisju => "триста сорок пять"
-	231.propisju(2) => "двести тридцать одна"
-	341.propisju_items(1, "чемодан", "чемодана", "чемоданов") => "триста сорок один чемодан"
-	(212.40).propisju_items(2, "сволочь", "сволочи", "сволочей") => "двести двенадцать целых четыре десятых сволочи"
-	(413.2).rublej => "четыреста тринадцать рублей двадцать копеек"
-	
+  4.propisju => "четыре"
+  345.propisju => "триста сорок пять"
+  231.propisju(2) => "двести тридцать одна"
+  341.propisju_items(1, "чемодан", "чемодана", "чемоданов") => "триста сорок один чемодан"
+  (212.40).propisju_items(2, "сволочь", "сволочи", "сволочей") => "двести двенадцать целых четыре десятых сволочи"
+  (413.2).rublej => "четыреста тринадцать рублей двадцать копеек"
+
 Также реализуется выбор варианта числительного в зависимости от числа
 
-	15.items("кодер", "кодера", "кодеров") => "кодеров"
+  15.items("кодер", "кодера", "кодеров") => "кодеров"
 
 == Транслит
 
@@ -45,9 +45,9 @@ RuTils на данный момент реализует простейший т
 
 Простейший транслит "в одну сторону".
 
- 	"Вот такое вот дело".translify => "Vot takoye vot delo"
-	"Несомненный прогресс по сравнению с PHP".dirify => "nesomnennyi-progress-po-sravneniu-s-php"
-	
+  "Вот такое вот дело".translify => "Vot takoye vot delo"
+  "Несомненный прогресс по сравнению с PHP".dirify => "nesomnennyi-progress-po-sravneniu-s-php"
+
 == BiDi-транслит
 
 Порт BiDiTranslit[http://pixel-apes.com/translit/article#h256-10] от Pixel Apes.
@@ -60,10 +60,10 @@ RuTils на данный момент реализует простейший т
 * Уничтожение всех слешей, которые встретятся во входной строке. В этом случае методы вызываются с передачей в них false. Например, "Web/Скрипты".bidi_translify(false)
 * Пропуск слэшей (используется по умолчанию). Например, "Web/+Skripty".bidi_detranslify
 
-	"WebРазработка/Скрипты".bidi_translify     => "Web+Razrabotka+/+Skripty"
-	"+Ustanovka__+mod_perl".bidi_detranslify   => "Установка mod_perl"
-	"WebРазработка/Мимо".bidi_translify(false) => "Web+RazrabotkaMimo"
-	"+PKHP+/Scripts".bidi_translify(false)     => "ПХПScripts"
+  "WebРазработка/Скрипты".bidi_translify     => "Web+Razrabotka+/+Skripty"
+  "+Ustanovka__+mod_perl".bidi_detranslify   => "Установка mod_perl"
+  "WebРазработка/Мимо".bidi_translify(false) => "Web+RazrabotkaMimo"
+  "+PKHP+/Scripts".bidi_translify(false)     => "ПХПScripts"
 
 == Обработка русской типографики в HTML
 
@@ -72,8 +72,8 @@ Pixel Apes. Тыпографица - механизм автоматическо
 перед его выводом в HTML, оформляющий неразрывные пробелы, типографские кавычки
 и реализующая элементарные макроподстановки.
 
-	%q{ "И это называется языком?", -- таков был его вопрос}.gilensize =>
-		"&amp;laquo;И это&amp;nbsp;называется языком?&&amp;raquo;, &amp;mdash; таков был&amp;nbsp;его вопрос" 
+  %q{ "И это называется языком?", -- таков был его вопрос}.gilensize =>
+    "&amp;laquo;И это&amp;nbsp;называется языком?&&amp;raquo;, &amp;mdash; таков был&amp;nbsp;его вопрос" 
 
 Имейте в виду, что на баги в Gilenson жаловаться разработчикам Typografica не стоит -
 они вас не поймут и будут правы. Поддержку Gilenson PixelApes не осуществляют.
@@ -81,32 +81,32 @@ Pixel Apes. Тыпографица - механизм автоматическо
 В комплекте также есть скрипт gilensize, которым можно поточно обрабатывать Unicode-тексты в среде UNIX
 пользуясь стандартным выводом
 
-	$ cat myfile.txt | gilensize > myfile.html
+  $ cat myfile.txt | gilensize > myfile.html
 
 == Даты
 
 В класс Date введены следующие константы:
-	* RU_MONTHNAMES (Январь Февраль Март...)
-	* RU_DAYNAMES (Воскресенье Понедельник...)
-	* RU_ABBR_MONTHNAMES (Янв Фев Мар...)
-	* RU_ABBR_DAYNAMES (Вск Пн Вт Ср...)
-	* RU_INFLECTED_MONTHNAMES (Января Февраля Марта...)
-	* RU_DAYNAMES_E (первое второе третье...)
+  * RU_MONTHNAMES (Январь Февраль Март...)
+  * RU_DAYNAMES (Воскресенье Понедельник...)
+  * RU_ABBR_MONTHNAMES (Янв Фев Мар...)
+  * RU_ABBR_DAYNAMES (Вск Пн Вт Ср...)
+  * RU_INFLECTED_MONTHNAMES (Января Февраля Марта...)
+  * RU_DAYNAMES_E (первое второе третье...)
 
 Пример использования:
 
-	require 'date'
-	date = Date.new(2005, 11, 9)
-	puts "#{Date::RU_ABBR_MONTHNAMES[date.mon]}"   => Ноя
-	puts "#{Date::RU_MONTHNAMES[date.mon]}"        => Ноябрь
-	puts "#{Date::RU_ABBR_DAYNAMES[date.wday]}"    => Ср
-	puts "#{Date::RU_DAYNAMES[date.wday]}"         => Среда
+  require 'date'
+  date = Date.new(2005, 11, 9)
+  puts "#{Date::RU_ABBR_MONTHNAMES[date.mon]}"   => Ноя
+  puts "#{Date::RU_MONTHNAMES[date.mon]}"        => Ноябрь
+  puts "#{Date::RU_ABBR_DAYNAMES[date.wday]}"    => Ср
+  puts "#{Date::RU_DAYNAMES[date.wday]}"         => Среда
 
 При включенной перезагрузке функций (RuTils::overrides_enabled) осуществляется "покрытие" стандартной
 функции Time#strftime ("родную" #strftime можно продолжать использовать через alias-метод #strftime_norutils):
 
-	Time.local(2005,"dec",31).strftime("%a, %A, %b, %B")          => "Сб, Суббота, Дек, Декабрь"
-	Time.local(2005,"dec",31).strftime_norutils("%a, %A, %b, %B") => "Sat, Saturday, Dec, December"
+  Time.local(2005,"dec",31).strftime("%a, %A, %b, %B")          => "Сб, Суббота, Дек, Декабрь"
+  Time.local(2005,"dec",31).strftime_norutils("%a, %A, %b, %B") => "Sat, Saturday, Dec, December"
 
 == Интеграция с Rails, RedCloth и BlueCloth
 
@@ -145,16 +145,16 @@ rutilize чтобы сделать это автоматически. После
 
 Просто включите rutils в свою программу как gem
 
-	require_gem 'rutils'
-	
+  require_gem 'rutils'
+
 или как библиотеку
 
-	require 'rutils'
-	
+  require 'rutils'
+
 == Где получить помощь
 
 На странице проекта на RubyForge[http://rubyforge.org/projects/rutils]
 
 == Работает ли это с текстом  в кодировке Windows-1251
 
-Нет и никогда не будет. 
+Нет и никогда не будет.

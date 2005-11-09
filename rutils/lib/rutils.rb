@@ -11,15 +11,15 @@ module RuTils
   TINY = 2
 
   # Версия RuTils
-	VERSION = [MAJOR, MINOR ,TINY].join('.')
-	
-	def self.load_component(name) #:nodoc:
+  VERSION = [MAJOR, MINOR ,TINY].join('.')
+  
+  def self.load_component(name) #:nodoc:
     require RuTils::INSTALLATION_DIRECTORY + "/lib/#{name}/#{name}"
-	end
+  end
 
-	def self.reload_component(name) #:nodoc:
+  def self.reload_component(name) #:nodoc:
     load RuTils::INSTALLATION_DIRECTORY + "/lib/#{name}/#{name}.rb"
-	end
+  end
 end
 
 

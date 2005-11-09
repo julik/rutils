@@ -14,7 +14,7 @@ PKG_NAME      = 'rutils'
 PKG_VERSION   = RuTils::VERSION
 PKG_FILE_NAME   = "#{PKG_NAME}-#{PKG_VERSION}"
 PKG_DESTINATION = "../#{PKG_NAME}"
-PKG_SUMMARY	= %q{ Simple processing of russian strings }
+PKG_SUMMARY  = %q{ Simple processing of russian strings }
 PKG_DESCRIPTION = %q{ Allows simple processing of russian strings - transliteration, numerals as text and HTML beautification }
 PKG_HOMEPAGE = 'http://rubyforge.org/projects/rutils'
 PKG_EMAIL = 'me@julik.nl'
@@ -75,16 +75,16 @@ spec = Gem::Specification.new do |s|
   s.homepage = PKG_HOMEPAGE
 
   s.has_rdoc = true
-	s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").exclude(".DS_Store").exclude("gilenson.rb").to_a
-	s.files << ["Rakefile.rb", "README", "TODO", "CHANGELOG", "init.rb"]
-	s.require_path = "lib"
-	s.autorequire = "rutils"
-	s.test_file = "test/run_tests.rb"
-	s.has_rdoc = true
-	s.extra_rdoc_files = ["README", "TODO", "CHANGELOG"]
-	s.rdoc_options = PKG_RDOC_OPTS
-	s.executables << 'gilensize'
-	s.executables << 'rutilize'
+  s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").exclude(".DS_Store").exclude("gilenson.rb").to_a
+  s.files << ["Rakefile.rb", "README", "TODO", "CHANGELOG", "init.rb"]
+  s.require_path = "lib"
+  s.autorequire = "rutils"
+  s.test_file = "test/run_tests.rb"
+  s.has_rdoc = true
+  s.extra_rdoc_files = ["README", "TODO", "CHANGELOG"]
+  s.rdoc_options = PKG_RDOC_OPTS
+  s.executables << 'gilensize'
+  s.executables << 'rutilize'
 end
 
 Rake::GemPackageTask.new(spec) do |p|
@@ -95,7 +95,7 @@ end
 
 desc "Publish the docs to Rubyforge site"
 task :pubdocs=>[:clobber, :doc] do
-	raise "This is not implemented yet" and return
+  raise "This is not implemented yet" and return
 end
 
 

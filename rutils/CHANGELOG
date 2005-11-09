@@ -1,4 +1,5 @@
 CVS
+* код приведён к "2 spaces - no tabs", частично полетели дифы
 * Изменены константы дат, используемые в lib/integration/rails_date_helper_override.rb:
   Было: RuTils::DateTime::ABBR_MONTHNAMES, RuTils::DateTime::INFLECTED_MONTHNAMES
   Стало: Date::RU_ABBR_MONTHNAMES, Date::RU_INFLECTED_MONTHNAMES

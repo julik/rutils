@@ -25,48 +25,48 @@ end
 # Интеграция с RedCloth - Textile.
 # Нужно иметь в виду что Textile осуществляет свою обработку типографики, которую мы подменяем!
 class TextileIntegrationTest < Test::Unit::TestCase
-	def test_integration_textile
-	  RuTils::overrides = true
-	  assert RuTils.overrides_enabled?
-		assert_equal "<p>И&nbsp;вот &laquo;они пошли туда&raquo;, и&nbsp;шли шли&nbsp;шли</p>", 
-			RedCloth.new('И вот "они пошли туда", и шли шли шли').to_html
+  def test_integration_textile
+    RuTils::overrides = true
+    assert RuTils.overrides_enabled?
+    assert_equal "<p>И&nbsp;вот &laquo;они пошли туда&raquo;, и&nbsp;шли шли&nbsp;шли</p>", 
+      RedCloth.new('И вот "они пошли туда", и шли шли шли').to_html
 
-  	RuTils::overrides = false
-	  assert !RuTils.overrides_enabled?
-		assert_equal "<p>И вот &#8220;они пошли туда&#8221;, и шли шли шли</p>", 
-			RedCloth.new('И вот "они пошли туда", и шли шли шли').to_html
-	end
+    RuTils::overrides = false
+    assert !RuTils.overrides_enabled?
+    assert_equal "<p>И вот &#8220;они пошли туда&#8221;, и шли шли шли</p>", 
+      RedCloth.new('И вот "они пошли туда", и шли шли шли').to_html
+  end
 end
 
 # Интеграция с BlueCloth - Markdown
 # Сам Markdown никакой обработки типографики не производит (это делает RubyPants, но вряд ли его кто-то юзает на практике)
 class MarkdownIntegrationTest < Test::Unit::TestCase
-	def test_integration_markdown
-	  RuTils::overrides = true
-	  assert RuTils.overrides_enabled?
-		assert_equal "<p>И вот&nbsp;&laquo;они пошли туда&raquo;, и&nbsp;шли шли&nbsp;шли</p>", 
-			BlueCloth.new('И вот "они пошли туда", и шли шли шли').to_html
-			
-		RuTils::overrides = false
-	  assert !RuTils.overrides_enabled?
-		assert_equal "<p>И вот \"они пошли туда\", и шли шли шли</p>", 
-			BlueCloth.new('И вот "они пошли туда", и шли шли шли').to_html
-	end
+  def test_integration_markdown
+    RuTils::overrides = true
+    assert RuTils.overrides_enabled?
+    assert_equal "<p>И вот&nbsp;&laquo;они пошли туда&raquo;, и&nbsp;шли шли&nbsp;шли</p>", 
+      BlueCloth.new('И вот "они пошли туда", и шли шли шли').to_html
+      
+    RuTils::overrides = false
+    assert !RuTils.overrides_enabled?
+    assert_equal "<p>И вот \"они пошли туда\", и шли шли шли</p>", 
+      BlueCloth.new('И вот "они пошли туда", и шли шли шли').to_html
+  end
 end
 
 # Перегрузка helper'ов Rails
 class RailsHelpersOverrideTest < Test::Unit::TestCase
-	def test_distance_of_time_in_words
-	  eval 'class Foo
-	          include ActionView::Helpers::DateHelper
-	          def get_dst
-	            distance_of_time_in_words(Time.now - 20.minutes, Time.now)
-	          end
-	        end'
-	        
-	  RuTils::overrides = true
-	  foo = Foo.new
-	  assert_equal "20 минут", foo.get_dst
-	end
+  def test_distance_of_time_in_words
+    eval 'class Foo
+            include ActionView::Helpers::DateHelper
+            def get_dst
+              distance_of_time_in_words(Time.now - 20.minutes, Time.now)
+            end
+          end'
+          
+    RuTils::overrides = true
+    foo = Foo.new
+    assert_equal "20 минут", foo.get_dst
+  end
 end
 
