@@ -16,9 +16,8 @@ module RuTils
   #   typ = Typografica.new('Эти "так называемые" великие деятели')
   #   typ.html = false     => "false"
   #   typ.dash = true      => "true"
-  #   typ.to_html => 'Эти &#171;так называемые&#187; великие деятели'
+  #   typ.to_html => 'Эти &laquo;так называемые&raquo; великие деятели'
   class Gilenson::Typografica    
-    attr_accessor :glyph
     def initialize(text, *args)
       @_text = text
       @skip_tags = true;
@@ -30,80 +29,8 @@ module RuTils
       @fixed_size = 80  # максимальная ширина
       @ignore = /notypo/ # regex, который игнорируется. Этим надо воспользоваться для обработки pre и code
 
-      @glueleft =  ['рис.', 'табл.', 'см.', 'им.', 'ул.', 'пер.', 'кв.', 'офис', 'оф.', 'г.']
-      @glueright = ['руб.', 'коп.', 'у.е.', 'мин.']
+      @de_nobr = true;
 
-      @settings = {
-                    "inches"    => true,    # преобразовывать дюймы в &quot;
-                    "laquo"     => true,    # кавычки-ёлочки
-                    "farlaquo"  => false,   # кавычки-ёлочки для фара (знаки "больше-меньше")
-                    "quotes"    => true,    # кавычки-английские лапки
-                    "dash"      => true,    # короткое тире (150)
-                    "emdash"    => true,    # длинное тире двумя минусами (151)
-                    "(c)"       => true,
-                    "(r)"       => true,
-                    "(tm)"      => true,
-                    "(p)"       => true,
-                    "+-"        => true,    # спецсимволы, какие - понятно
-                    "degrees"   => true,    # знак градуса
-                    "<-->"      => true,    # отступы $Indent*
-                    "dashglue"  => true, "wordglue" => true, # приклеивание предлогов и дефисов
-                    "spacing"   => true,    # запятые и пробелы, перестановка
-                    "phones"    => true,    # обработка телефонов
-                    "fixed"     => false,   # подгон под фиксированную ширину
-                    "html"      => false,   # запрет тагов html
-                    "de_nobr"   => true,    # при true все <nobr/> заменяются на <span class="nobr"/>
-                   }
-      # irrelevant - indentation with images
-      @indent_a = "<!--indent-->"
-      @indent_b = "<!--indent-->"
-      
-      @mark_tag = "\xF0\xF0\xF0\xF0" # Подстановочные маркеры тегов
-      @mark_ignored = "\201" # Подстановочные маркеры неизменяемых групп
-      
-      # XHTML... Даёшь!
-      @glyph = {
-                    :quot       => "&#34;",     # quotation mark
-                    :amp        => "&#38;",     # ampersand
-                    :apos       => "&#39;",     # apos
-                    :gt         => "&#62;",     # greater-than sign
-                    :lt         => "&#60;",     # less-than sign
-                    :nbsp       => "&#160;",    # non-breaking space
-                    :sect       => "&#167;",    # section sign
-                    :copy       => "&#169;",    # copyright sign
-                    :laquo      => "&#171;",    # left-pointing double angle quotation mark = left pointing guillemet
-                    :reg        => "&#174;",    # registered sign = registered trade mark sign
-                    :deg        => "&#176;",    # degree sign
-                    :plusmn     => "&#177;",    # plus-minus sign = plus-or-minus sign
-                    :middot     => "&#183;",    # middle dot = Georgian comma = Greek middle dot
-                    :raquo      => "&#187;",    # right-pointing double angle quotation mark = right pointing guillemet
-                    :ndash      => "&#8211;",   # en dash
-                    :mdash      => "&#8212;",   # em dash
-                    :lsquo      => "&#8216;",   # left single quotation mark
-                    :rsquo      => "&#8217;",   # right single quotation mark
-                    :ldquo      => "&#8220;",   # left double quotation mark
-                    :rdquo      => "&#8221;",   # right double quotation mark
-                    :bdquo      => "&#8222;",   # double low-9 quotation mark
-                    :bull       => "&#8226;",   # bullet = black small circle
-                    :hellip     => "&#8230;",   # horizontal ellipsis = three dot leader
-                    :trade      => "&#8482;",   # trade mark sign
-                    :minus      => "&#8722;",   # minus sign
-               }
-      
-      # Кто придумал &#147;? Не учите людей плохому...
-      # Привет А.Лебедеву http://www.artlebedev.ru/kovodstvo/62/
-      @glyph_ugly = {
-                    '132'       => @glyph[:bdquo],
-                    '133'       => @glyph[:hellip],
-                    '146'       => @glyph[:apos],
-                    '147'       => @glyph[:ldquo],
-                    '148'       => @glyph[:rdquo],
-                    '149'       => @glyph[:bull],
-                    '150'       => @glyph[:ndash],
-                    '151'       => @glyph[:mdash],
-                    '153'       => @glyph[:trade],
-               }
-      
       @phonemasks = [[  /([0-9]{4})\-([0-9]{2})\-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})/,
                         /([0-9]{4})\-([0-9]{2})\-([0-9]{2})/,
                         /(\([0-9\+\-]+\)) ?([0-9]{3})\-([0-9]{2})\-([0-9]{2})/,
@@ -116,18 +43,48 @@ module RuTils
                         /([0-9]{2})\-([0-9]{3})/,
                         /([0-9]+)\-([0-9]+)/,
                       ],[    
-                       '<nobr>\1' + @glyph[:ndash] +'\2' + @glyph[:ndash] + '\3' + @glyph[:nbsp]  + '\4:\5:\6</nobr>',
-                       '<nobr>\1' + @glyph[:ndash] +'\2' + @glyph[:ndash] + '\3</nobr>',
-                       '<nobr>\1' + @glyph[:nbsp]  +'\2' + @glyph[:ndash] + '\3' + @glyph[:ndash] + '\4</nobr>',
-                       '<nobr>\1' + @glyph[:nbsp]  +'\2' + @glyph[:ndash] + '\3' + @glyph[:ndash] + '\4</nobr>',
-                       '<nobr>\1' + @glyph[:nbsp]  +'\2' + @glyph[:ndash] + '\3</nobr>',
-                       '<nobr>\1' + @glyph[:nbsp]  +'\2' + @glyph[:ndash] + '\3</nobr>',
-                       '<nobr>\1' + @glyph[:ndash] +'\2' + @glyph[:ndash] + '\3</nobr>',
-                       '<nobr>\1' + @glyph[:ndash] +'\2' + @glyph[:ndash] + '\3</nobr>',
-                       '<nobr>\1' + @glyph[:ndash] +'\2' + @glyph[:ndash] + '\3</nobr>',
-                       '<nobr>\1' + @glyph[:ndash] +'\2</nobr>',
-                       '<nobr>\1' + @glyph[:ndash] +'\2</nobr>'
+                       '<nobr>\1&ndash;\2&ndash;\3&nbsp;\4:\5:\6</nobr>',
+                       '<nobr>\1&ndash;\2&ndash;\3</nobr>',
+                       '<nobr>\1&nbsp;\2&ndash;\3&ndash;\4</nobr>',
+                       '<nobr>\1&nbsp;\2&ndash;\3&ndash;\4</nobr>',
+                       '<nobr>\1&nbsp;\2&ndash;\3</nobr>',
+                       '<nobr>\1&nbsp;\2&ndash;\3</nobr>',
+                       '<nobr>\1&ndash;\2&ndash;\3</nobr>',
+                       '<nobr>\1&ndash;\2&ndash;\3</nobr>',
+                       '<nobr>\1&ndash;\2&ndash;\3</nobr>',
+                       '<nobr>\1&ndash;\2</nobr>',
+                       '<nobr>\1&ndash;\2</nobr>'
                     ]]
+
+      @glueleft =  ['рис.', 'табл.', 'см.', 'им.', 'ул.', 'пер.', 'кв.', 'офис', 'оф.', 'г.']
+      @glueright = ['руб.', 'коп.', 'у.е.', 'мин.']
+
+      @settings = {
+                      "inches" => true, # преобразовывать дюймы в &quot;
+                      "laquo" => true,  # кавычки-ёлочки
+                      "farlaquo" => false,  # кавычки-ёлочки для фара (знаки "больше-меньше")
+                      "quotes" => true, # кавычки-английские лапки
+                      "dash" => true,   # короткое тире (150)
+                      "emdash" => true, # длинное тире двумя минусами (151)
+                      "(c)" => true, 
+                      "(r)" => true,
+                      "(tm)" => true,
+                      "(p)" => true,
+                      "+-" => true, # спецсимволы, какие - понятно
+                      "degrees" => true, # знак градуса
+                      "<-->" => true,    # отступы $Indent*
+                      "dashglue" => true, "wordglue" => true, # приклеивание предлогов и дефисов
+                      "spacing" => true, # запятые и пробелы, перестановка
+                      "phones" => true,  # обработка телефонов
+                      "fixed" => false,   # подгон под фиксированную ширину
+                      "html" => false     # запрет тагов html
+                   }
+      # irrelevant - indentation with images
+      @indent_a = "<!--indent-->"
+      @indent_b = "<!--indent-->"
+      
+      @mark_tag = "\xF0\xF0\xF0\xF0" # Подстановочные маркеры тегов
+      @mark_ignored = "\201" # Подстановочные маркеры неизменяемых групп
     end
 
 
@@ -145,13 +102,6 @@ module RuTils
 
       text = @_text
       
-      # Замена &entity_name; на входе ('&nbsp;' => '&#160;' и т.д.)
-      @glyph.each {|key,value| text.gsub!(/&#{key};/, value)}
-      
-      # Никогда (вы слышите?!) не пущать лабуду &#not_correct_number;
-      @glyph_ugly.each {|key,value| text.gsub!(/&##{key};/, value)}
-
-
       # -2. игнорируем ещё регексп
       ignored = []
 
@@ -163,7 +113,7 @@ module RuTils
       text.gsub!(@ignore, @mark_ignored)  # маркер игнора
 
       # -1. запрет тагов html
-      text.gsub!(/&/, self.glyph[:amp]) if @settings["html"]
+      text.gsub!(/&/, '&amp;') if @settings["html"]
 
 
        # 0. Вырезаем таги
@@ -181,16 +131,16 @@ module RuTils
       #  и будем верить, что спец.символы в дикой природе не встречаются.
 
       tags = []
-      if @skip_tags
-      #     re =  /<\/?[a-z0-9]+("+ # имя тага
-      #                              "\s+("+ # повторяющая конструкция: хотя бы один разделитель и тельце
-      #                                     "[a-z]+("+ # атрибут из букв, за которым может стоять знак равенства и потом
-      #                                              "=((\'[^\']*\')|(\"[^\"]*\")|([0-9@\-_a-z:\/?&=\.]+))"+ # 
-      #                                           ")?"+
-      #                                  ")?"+
-      #                            ")*\/?>|\xA2\xA2[^\n]*?==/i;
+      if (@skip_tags)
+   #     re =  /<\/?[a-z0-9]+("+ # имя тага
+   #                              "\s+("+ # повторяющая конструкция: хотя бы один разделитель и тельце
+   #                                     "[a-z]+("+ # атрибут из букв, за которым может стоять знак равенства и потом
+   #                                              "=((\'[^\']*\')|(\"[^\"]*\")|([0-9@\-_a-z:\/?&=\.]+))"+ # 
+   #                                           ")?"+
+   #                                  ")?"+
+   #                            ")*\/?>|\xA2\xA2[^\n]*?==/i;
 
-      #     re =  /<\/?[a-z0-9]+(\s+([a-z]+(=((\'[^\']*\')|(\"[^\"]*\")|([0-9@\-_a-z:\/?&=\.]+)))?)?)*\/?>|\xA2\xA2[^\n]*?==/ui
+#          re =  /<\/?[a-z0-9]+(\s+([a-z]+(=((\'[^\']*\')|(\"[^\"]*\")|([0-9@\-_a-z:\/?&=\.]+)))?)?)*\/?>|\xA2\xA2[^\n]*?==/ui
 
         re =  /(<\/?[a-z0-9]+(\s+([a-z]+(=((\'[^\']*\')|(\"[^\"]*\")|([0-9@\-_a-z:\/?&=\.]+)))?)?)*\/?>)/ui
 
@@ -215,74 +165,74 @@ module RuTils
 
       # 3. Спецсимволы
       # 0. дюймы с цифрами
-      text.gsub!(/\s([0-9]{1,2}([\.,][0-9]{1,2})?)\"/ui, ' \1'+self.glyph[:quot]) if @settings["inches"]
+      text.gsub!(/\s([0-9]{1,2}([\.,][0-9]{1,2})?)\"/ui, ' \1&quot;') if @settings["inches"]
 
       # 1. лапки
-      if @settings["quotes"]
-        text.gsub!( /\"\"/ui, self.glyph[:quot]*2)
-        text.gsub!( /\"\.\"/ui, self.glyph[:quot]+"."+self.glyph[:quot])
+      if (@settings["quotes"])
+        text.gsub!( /\"\"/ui, "&quot;&quot;")
+        text.gsub!( /\"\.\"/ui, "&quot;.&quot;")
         _text = '""';
         while _text != text do  
           _text = text
-          text.gsub!( /(^|\s|\201|\xF0\xF0\xF0\xF0|>)\"([0-9A-Za-z\'\!\s\.\?\,\-\&\;\:\_\xF0\xF0\xF0\xF0\201]+(\"|#{self.glyph[:rdquo]}))/ui, '\1'+self.glyph[:ldquo]+'\2')
+          text.gsub!( /(^|\s|\201|\xF0\xF0\xF0\xF0|>)\"([0-9A-Za-z\'\!\s\.\?\,\-\&\;\:\_\xF0\xF0\xF0\xF0\201]+(\"|&#148;))/ui, '\1&#147;\2')
           #this doesnt work in-place. somehow.
-          text = text.gsub( /(#{self.glyph[:ldquo]}([A-Za-z0-9\'\!\s\.\?\,\-\&\;\:\xF0\xF0\xF0\xF0\201\_]*).*[A-Za-z0-9][\xF0\xF0\xF0\xF0\201\?\.\!\,]*)\"/ui, '\1'+self.glyph[:rdquo])
+          text = text.gsub( /(\&\#147\;([A-Za-z0-9\'\!\s\.\?\,\-\&\;\:\xF0\xF0\xF0\xF0\201\_]*).*[A-Za-z0-9][\xF0\xF0\xF0\xF0\201\?\.\!\,]*)\"/ui, '\1&#148;')
         end
       end
 
       # 2. ёлочки
       if @settings["laquo"]
-        text.gsub!( /\"\"/ui, self.glyph[:quot]*2);
-        text.gsub!( /(^|\s|\201|\xF0\xF0\xF0\xF0|>|\()\"((\201|\xF0\xF0\xF0\xF0)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, '\1'+self.glyph[:laquo]+'\2');
+        text.gsub!( /\"\"/ui, "&quot;&quot;");
+        text.gsub!( /(^|\s|\201|\xF0\xF0\xF0\xF0|>|\()\"((\201|\xF0\xF0\xF0\xF0)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, "\\1&laquo;\\2");
         # nb: wacko only regexp follows:
-        text.gsub!( /(^|\s|\201|\xF0\xF0\xF0\xF0|>|\()\"((\201|\xF0\xF0\xF0\xF0|\/#{self.glyph[:nbsp]}|\/|\!)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, '\1'+self.glyph[:laquo]+'\2')
-        _text = '""';
+        text.gsub!( /(^|\s|\201|\xF0\xF0\xF0\xF0|>|\()\"((\201|\xF0\xF0\xF0\xF0|\/&nbsp;|\/|\!)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, "\\1&laquo;\\2")
+        _text = "\"\"";
         while (_text != text) do
           _text = text;
-          text.gsub!( /(#{self.glyph[:laquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\xF0\xF0\xF0\xF0)*)\"/sui, '\1'+self.glyph[:raquo])
+          text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\xF0\xF0\xF0\xF0)*)\"/sui, "\\1&raquo;")
           # nb: wacko only regexps follows:
-          text.gsub!( /(#{self.glyph[:laquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\xF0\xF0\xF0\xF0)*\?(\201|\xF0\xF0\xF0\xF0)*)\"/sui, '\1'+self.glyph[:raquo])
-          text.gsub!( /(#{self.glyph[:raquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\xF0\xF0\xF0\xF0|\/|\!)*)\"/sui, '\1'+self.glyph[:raquo])
+          text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\xF0\xF0\xF0\xF0)*\?(\201|\xF0\xF0\xF0\xF0)*)\"/sui, "\\1&raquo;")
+          text.gsub!( /(\&laquo\;([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](\201|\xF0\xF0\xF0\xF0|\/|\!)*)\"/sui, "\\1&raquo;")
         end
       end
 
 
         # 2b. одновременно ёлочки и лапки
         if (@settings["quotes"] && (@settings["laquo"] or @settings["farlaquo"]))
-          text.gsub!(/(#{self.glyph[:ldquo]}(([A-Za-z0-9'!\.?,\-&;:]|\s|\xF0\xF0\xF0\xF0|\201)*)#{self.glyph[:laquo]}(.*)#{self.glyph[:raquo]})#{self.glyph[:raquo]}/ui,'\1'+self.glyph[:rdquo]);
+          text.gsub!(/(\&\#147\;(([A-Za-z0-9'!\.?,\-&;:]|\s|\xF0\xF0\xF0\xF0|\201)*)&laquo;(.*)&raquo;)&raquo;/ui,"\\1&#148;");
         end
 
 
         # 3. тире
-        if @settings["dash"]
-          text.gsub!( /(\s|;)\-(\s)/ui, '\1'+self.glyph[:ndash]+'\2')
+        if (@settings["dash"])
+          text.gsub!( /(\s|;)\-(\s)/ui, "\\1&ndash;\\2")
         end
 
 
         # 3a. тире длинное
-        if @settings["emdash"]
-          text.gsub!( /(\s|;)\-\-(\s)/ui, '\1'+self.glyph[:mdash]+'\2')
+        if (@settings["emdash"])
+          text.gsub!( /(\s|;)\-\-(\s)/ui, "\\1&mdash;\\2")
           # 4. (с)
-          text.gsub!(/\([сСcC]\)((?=\w)|(?=\s[0-9]+))/u, self.glyph[:copy]) if @settings["(c)"]
+          text.gsub!(/\([сСcC]\)((?=\w)|(?=\s[0-9]+))/u, "&copy;") if @settings["(c)"]
           # 4a. (r)
-          text.gsub!( /\(r\)/ui, '<sup>'+self.glyph[:reg]+'</sup>') if @settings["(r)"]
+          text.gsub!( /\(r\)/ui, "<sup>&#174;</sup>") if @settings["(r)"]
 
           # 4b. (tm)
-          text.gsub!( /\(tm\)|\(тм\)/ui, self.glyph[:trade]) if @settings["(tm)"]
+          text.gsub!( /\(tm\)|\(тм\)/ui, "&#153;") if @settings["(tm)"]
           # 4c. (p)   
-          text.gsub!( /\(p\)/ui, self.glyph[:sect]) if @settings["(p)"]
+          text.gsub!( /\(p\)/ui, "&#167;") if @settings["(p)"]
         end
 
 
         # 5. +/-
-        text.gsub!(/[^+]\+\-/ui, self.glyph[:plusmn]) if @settings["+-"]
+        text.gsub!(/[^+]\+\-/ui, "&#177;") if @settings["+-"]
 
 
         # 5a. 12^C
         if @settings["degrees"]
-          text.gsub!( /-([0-9])+\^([FCС])/, self.glyph[:ndash]+'\1'+self.glyph[:deg]+'\2') #deg
-          text.gsub!( /\+([0-9])+\^([FCС])/, '+\1'+self.glyph[:deg]+'\2')
-          text.gsub!( /\^([FCС])/, self.glyph[:deg]+'\1')
+          text.gsub!( /-([0-9])+\^([FCС])/, "&ndash;\\1&#176\\2")
+          text.gsub!( /\+([0-9])+\^([FCС])/, "+\\1&#176\\2")
+          text.gsub!( /\^([FCС])/, "&#176\\1")
         end
 
 
@@ -295,22 +245,22 @@ module RuTils
 
 
       # 7. Короткие слова и &nbsp;
-      if @settings["wordglue"]
+      if (@settings["wordglue"])
 
         text = " " + text + " ";
         _text = " " + text + " ";
         until _text == text
            _text = text
-           text.gsub!( /(\s+)([a-zа-яА-Я]{1,2})(\s+)([^\\s$])/ui, '\1\2'+self.glyph[:nbsp]+'\4')
-           text.gsub!( /(\s+)([a-zа-яА-Я]{3})(\s+)([^\\s$])/ui,   '\1\2'+self.glyph[:nbsp]+'\4')
+           text.gsub!( /(\s+)([a-zа-яА-Я]{1,2})(\s+)([^\\s$])/ui, '\1\2&nbsp;\4')
+           text.gsub!( /(\s+)([a-zа-яА-Я]{3})(\s+)([^\\s$])/ui,   '\1\2&nbsp;\4')
         end
 
         for i in @glueleft
-           text.gsub!( /(\s)(#{i})(\s+)/sui, '\1\2'+self.glyph[:nbsp])
+           text.gsub!( /(\s)(#{i})(\s+)/sui, '\1\2&nbsp;')
         end
 
         for i in @glueright 
-           text.gsub!( /(\s)(#{i})(\s+)/sui, self.glyph[:nbsp]+'\2\3')
+           text.gsub!( /(\s)(#{i})(\s+)/sui, '&nbsp;\2\3')
         end
       end
 
@@ -364,12 +314,11 @@ module RuTils
       # БОНУС: прокручивание ссылок через A(...)
       # --- для ваки не портировано ---
       # --- для ваки не портировано ---
-      
+
       # фуф, закончили.
-      if @settings["de_nobr"]
-        text.gsub!(/<nobr>/, '<span class="nobr">')
-        text.gsub!(/<\/nobr>/, '</span>')
-      end
+   #   text.gsub!(/<nobr>/, "<span class=\"nobr\">").gsub(/<\/nobr>/, "</span>") if (@de_nobr)
+
+#    text.gsub!(/<nobr>/, "<span class=\"nobr\">").gsub(/<\/nobr>/, "</span>") if (@de_nobr)
 
       text.gsub(/(\s)+$/, "").gsub(/^(\s)+/, "")
 
