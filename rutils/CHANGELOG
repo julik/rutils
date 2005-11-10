@@ -1,4 +1,7 @@
 CVS
+* Все entities в Гиленсоне заменены на UTF-эквиваленты (&nbsp; => &#160;).
+  Введён attr_accessor "glyph", содержащий "номерные" entities.
+  В тексте на входе производится замена &entity_name; на &#entity_nomber; (mash)
 * Код приведён к "2 spaces - no tabs", частично полетели дифы (mash)
 * Изменены константы дат, используемые в lib/integration/rails_date_helper_override.rb:
   Было: RuTils::DateTime::ABBR_MONTHNAMES, RuTils::DateTime::INFLECTED_MONTHNAMES
