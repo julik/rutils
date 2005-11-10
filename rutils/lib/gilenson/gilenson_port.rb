@@ -199,7 +199,7 @@ module RuTils
 
         # 2b. одновременно ёлочки и лапки
         if (@settings["quotes"] && (@settings["laquo"] or @settings["farlaquo"]))
-          text.gsub!(/(\&\#147\;(([A-Za-z0-9'!\.?,\-&;:]|\s|\xF0\xF0\xF0\xF0|\201)*)&laquo;(.*)&raquo;)&raquo;/ui,"\\1&#148;");
+          text.gsub!(/(\&\#147;\;(([A-Za-z0-9'!\.?,\-&;:]|\s|\xF0\xF0\xF0\xF0|\201)*)&laquo;(.*)&raquo;)&raquo;/ui,"\\1&#148;");
         end
 
 
@@ -230,9 +230,9 @@ module RuTils
 
         # 5a. 12^C
         if @settings["degrees"]
-          text.gsub!( /-([0-9])+\^([FCС])/, "&ndash;\\1&#176\\2")
-          text.gsub!( /\+([0-9])+\^([FCС])/, "+\\1&#176\\2")
-          text.gsub!( /\^([FCС])/, "&#176\\1")
+          text.gsub!( /-([0-9])+\^([FCС])/, "&ndash;\\1&#176;\\2")
+          text.gsub!( /\+([0-9])+\^([FCС])/, "+\\1&#176;\\2")
+          text.gsub!( /\^([FCС])/, "&#176;\\1")
         end
 
 

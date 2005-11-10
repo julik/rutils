@@ -20,7 +20,7 @@ class TypograficaComplianceTest < Test::Unit::TestCase
 
   def test_specials
     assert_equal '&copy; 2002, &copy; 2003, &copy; 2004, &copy; 2005 &mdash; тоже без&nbsp;пробелов: &copy;2002, &copy;Кукуц. однако: варианты (а) и&nbsp;(с)', '(с) 2002, (С) 2003, (c) 2004, (C) 2005 -- тоже без пробелов: (с)2002, (c)Кукуц. однако: варианты (а) и (с)'.gilensize
-    assert_equal '+5&#176С, +7&#176C, &ndash;5&#176F', '+5^С, +17^C, -275^F'.gilensize
+    assert_equal '+5&#176;С, +7&#176;C, &ndash;5&#176;F', '+5^С, +17^C, -275^F'.gilensize
     assert_equal 'об&nbsp;этом подробнее &mdash; читай &#167;25', 'об этом подробнее -- читай (p)25'.gilensize
     assert_equal 'один же&nbsp;минус &ndash; краткое тире', 'один же минус - краткое тире'.gilensize
     assert_equal 'Sharpdesign&#153;, Microsoft<sup>&#174;</sup>', 'Sharpdesign(tm), Microsoft(r)'.gilensize
