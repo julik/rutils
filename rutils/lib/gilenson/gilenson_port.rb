@@ -75,23 +75,32 @@ module RuTils
                     :reg        => "&#174;",    # registered sign = registered trade mark sign
                     :deg        => "&#176;",    # degree sign
                     :plusmn     => "&#177;",    # plus-minus sign = plus-or-minus sign
+                    :middot     => "&#183;",    # middle dot = Georgian comma = Greek middle dot
                     :raquo      => "&#187;",    # right-pointing double angle quotation mark = right pointing guillemet
-                    :ndash      => "&#8211;",   # en dash (aka 150)
-                    :mdash      => "&#8212;",   # em dash (aka 151)
+                    :ndash      => "&#8211;",   # en dash
+                    :mdash      => "&#8212;",   # em dash
                     :lsquo      => "&#8216;",   # left single quotation mark
                     :rsquo      => "&#8217;",   # right single quotation mark
-                    :ldquo      => "&#8220;",   # left double quotation mark (aka 147)
-                    :rdquo      => "&#8221;",   # right double quotation mark (aka 148)
+                    :ldquo      => "&#8220;",   # left double quotation mark
+                    :rdquo      => "&#8221;",   # right double quotation mark
+                    :bdquo      => "&#8222;",   # double low-9 quotation mark
                     :hellip     => "&#8230;",   # horizontal ellipsis = three dot leader
                     :trade      => "&#8482;",   # trade mark sign
+                    :minus      => "&#8722;",   # minus sign
                }
       
       # Кто придумал &#147;? Не учите людей плохому...
+      # Привет А.Лебедеву http://www.artlebedev.ru/kovodstvo/62/
       @glyph_ugly = {
+                    '132'       => @glyph[:bdquo],
+                    '133'       => @glyph[:hellip],
+                    '146'       => @glyph[:apos],
                     '147'       => @glyph[:ldquo],
                     '148'       => @glyph[:rdquo],
+                    '149'       => @glyph[:middot],
                     '150'       => @glyph[:ndash],
                     '151'       => @glyph[:mdash],
+                    '153'       => @glyph[:trade],
                }
       
       @phonemasks = [[  /([0-9]{4})\-([0-9]{2})\-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})/,
@@ -138,7 +147,7 @@ module RuTils
       # Замена &entity_name; на входе ('&nbsp;' => '&#160;' и т.д.)
       @glyph.each {|key,value| text.gsub!(/&#{key};/, value)}
       
-      # Никогда (вы слышите?!) не пущать лабуду &#not_correct_number;. Привет А.Лебедеву.
+      # Никогда (вы слышите?!) не пущать лабуду &#not_correct_number;
       @glyph_ugly.each {|key,value| text.gsub!(/&##{key};/, value)}
 
 
