@@ -66,7 +66,7 @@ RuTils на данный момент реализует простейший т
   "WebРазработка/Скрипты".bidi_translify     => "Web+Razrabotka+/+Skripty"
   "+Ustanovka__+mod_perl".bidi_detranslify   => "Установка mod_perl"
   "WebРазработка/Мимо".bidi_translify(false) => "Web+RazrabotkaMimo"
-  "+PKHP+/Scripts".bidi_translify(false)     => "ПХПScripts"
+  "+PKHP+/Scripts".bidi_detranslify(false)     => "ПХПScripts"
 
 == Обработка русской типографики в HTML
 
