@@ -84,6 +84,7 @@ module RuTils
                     :ldquo      => "&#8220;",   # left double quotation mark
                     :rdquo      => "&#8221;",   # right double quotation mark
                     :bdquo      => "&#8222;",   # double low-9 quotation mark
+                    :bull       => "&#8226;",   # bullet = black small circle
                     :hellip     => "&#8230;",   # horizontal ellipsis = three dot leader
                     :trade      => "&#8482;",   # trade mark sign
                     :minus      => "&#8722;",   # minus sign
@@ -97,7 +98,7 @@ module RuTils
                     '146'       => @glyph[:apos],
                     '147'       => @glyph[:ldquo],
                     '148'       => @glyph[:rdquo],
-                    '149'       => @glyph[:middot],
+                    '149'       => @glyph[:bull],
                     '150'       => @glyph[:ndash],
                     '151'       => @glyph[:mdash],
                     '153'       => @glyph[:trade],
