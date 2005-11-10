@@ -11,7 +11,7 @@ class GilensonOwnTest < Test::Unit::TestCase
   # характерно что пока мы не рефакторнули все как следует можно проверять
   # только конечный результат трансформации - что глючно до безобразия
   def test_tag_lift
-    assert_equal "Вот&nbsp;такие<tag some='foo>' />  <tagmore></tagmore> дела", "Вот такие<tag some='foo>' />  <tagmore></tagmore> дела".gilensize
+    assert_equal "Вот&#160;такие<tag some='foo>' />  <tagmore></tagmore> дела", "Вот такие<tag some='foo>' />  <tagmore></tagmore> дела".gilensize
   end
   
   def test_byte_pass
