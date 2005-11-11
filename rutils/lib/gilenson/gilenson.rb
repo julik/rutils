@@ -237,6 +237,10 @@ module RuTils
         # 8. Склейка ласт. Тьфу! дефисов.
         text.gsub!( /([a-zа-яА-Я0-9]+(\-[a-zа-яА-Я0-9]+)+)/ui, '<nobr>\1</nobr>') if @settings["dashglue"]
 
+        # 8a. Инициалы
+        if @settings['initials']
+          process_initials(text)
+        end
 
         # БЕСКОНЕЧНОСТЬ. Вставляем таги обратно.
         tags.each do |tag|
@@ -279,6 +283,7 @@ module RuTils
                          "quotes"    => true,    # кавычки-английские лапки
                          "dash"      => true,    # короткое тире (150)
                          "emdash"    => true,    # длинное тире двумя минусами (151)
+                         "initials"   => true,   # тонкие шпации в инициалах
                          "(c)"       => true,
                          "(r)"       => true,
                          "(tm)"      => true,
@@ -388,6 +393,7 @@ module RuTils
           ret
         end
 
+        # Выполняет блок, временно включая настройки переданные в +hash+
         def with_configuration(hash, &block)
           old_settings, old_glyphs = @settings.dup, @glyph.dup
           accept_configuration_arguments!(hash)
@@ -411,6 +417,12 @@ module RuTils
               @settings[key.to_s] = (value ? true : false)
             end
           end
+        end
+        
+        def process_initials(text)
+          initials = /([А-Я])[\.]*?[\s]*?([А-Я])[\.]*[\s]*?([А-Я])([а-я])/u
+          replacement = substitute_glyphs_in_string('\1.\2.:thinsp\3\4')
+          text.gsub!(initials, replacement)
         end
     end
   end #end Gilenson

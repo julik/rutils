@@ -83,6 +83,10 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal '&#171;multilanguage кавычки&#187;', '"multilanguage кавычки"'.n_gilensize
   end
 
+
+  def test_initials
+    assert_equal 'Это&#160;нам сказал П.И.&#8201;Петров', 'Это нам сказал П. И. Петров'.n_gilensize
+  end
 end
 
 
