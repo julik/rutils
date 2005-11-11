@@ -91,7 +91,8 @@ class GilensonConfigurationTest < Test::Unit::TestCase
     @gilenson = RuTils::GilensonNew::Formatter.new
   end
   
-  def test_config_override
+  def test_settings_as_tail_arguments
+
     assert_equal "Ну&#160;и куда вот&#160;&#8212; да&#160;туда!", 
       @gilenson.process("Ну и куда вот -- да туда!")
 
@@ -99,6 +100,21 @@ class GilensonConfigurationTest < Test::Unit::TestCase
       @gilenson.process("Ну и куда вот -- да туда!", :dash => false, :dashglue => false, :wordglue => false)
 
     assert_equal "Ну&#160;и куда вот&#160;&#8212; да&#160;туда!", 
+      @gilenson.process("Ну и куда вот -- да туда!")
+      
+    @gilenson.configure!(:dash => false, :dashglue => false, :wordglue => false)
+
+    assert_equal "Ну и куда вот &#8212; да туда!", 
+      @gilenson.process("Ну и куда вот -- да туда!")    
+
+    @gilenson.configure!(:all => true)
+
+    assert_equal "Ну&#160;и куда вот&#160;&#8212; да&#160;туда!", 
+      @gilenson.process("Ну и куда вот -- да туда!")
+
+    @gilenson.configure!(:all => false)
+
+    assert_equal "Ну и куда вот -- да туда!", 
       @gilenson.process("Ну и куда вот -- да туда!")
   end
   
