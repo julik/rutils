@@ -1,4 +1,7 @@
 CVS
+* Новый Гиленсон - введен DOUBLE PRIME (&#8243;) для знаков дюйма - 
+    http://en.wikipedia.org/wiki/Prime_%28mark%29(julik)
+    Согласно изощренным правилам скошенный prime правильней чем "
 * Новый Гиленсон lib/gilenson/gilenson.rb (mash)
     RuTils::GilensonNew::Typografica.new('какой-то текст')
     %q{"какой-то текст"}.n_gilensize

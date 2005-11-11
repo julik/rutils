@@ -65,12 +65,12 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal 'english &#8220;quotes&#8221; should be&#160;quite like this', 'english "quotes" should be quite like this'.n_gilensize
     assert_equal 'русские же&#160;&#171;оформляются&#187; подобным образом', 'русские же "оформляются" подобным образом'.n_gilensize
     assert_equal 'кавычки &#171;расставлены&#187; &#8220;in a&#160;chaotic order&#8221;', 'кавычки "расставлены" "in a chaotic order"'.n_gilensize
-    assert_equal 'диагональ моего монитора &#8212; 17&#34;, а&#160;размер пениса &#8212; 1,5&#34;', 'диагональ моего монитора -- 17", а размер пениса -- 1,5"'.n_gilensize
+    assert_equal 'диагональ моего монитора &#8212; 17&#8243;, а&#160;размер пениса &#8212; 1,5&#8243;', 'диагональ моего монитора -- 17", а размер пениса -- 1,5"'.n_gilensize
     assert_equal 'в&#160;толщину, &#171;вложенные &#8220;quotes&#8221; вот&#160;так&#187;, &#8220;or it&#160;&#171;будет вложено&#187; elsewhere&#8221;', 'в толщину, "вложенные "quotes" вот так", "or it "будет вложено" elsewhere"'.n_gilensize
     assert_equal '&#8220;complicated &#171;кавычки&#187;, &#171;странные &#8220;includements&#8221; кавычек&#187;', '"complicated "кавычки", "странные "includements" кавычек"'.n_gilensize
     assert_equal '&#8220;double &#8220;quotes&#8221;', '"double "quotes"'.n_gilensize
     assert_equal '&#171;дважды вложенные &#171;кавычки&#187;', '"дважды вложенные "кавычки"'.n_gilensize
-    assert_equal '&#171;01/02/03&#187;, дискеты в&#160;5.25&#34;', '"01/02/03", дискеты в 5.25"'.n_gilensize
+    assert_equal '&#171;01/02/03&#187;, дискеты в&#160;5.25&#8243;', '"01/02/03", дискеты в 5.25"'.n_gilensize
     assert_equal 'после троеточия правая кавычка &#8212; &#171;Вот...&#187;', 'после троеточия правая кавычка -- "Вот..."'.n_gilensize
     assert_equal 'setlocale(LC_ALL, &#8220;ru_RU.UTF8&#8221;);', 'setlocale(LC_ALL, "ru_RU.UTF8");'.n_gilensize
     assert_equal '&#8220;read, write, delete&#8221; с&#160;флагом &#8220;only_mine&#8221;', '"read, write, delete" с флагом "only_mine"'.n_gilensize

@@ -28,7 +28,7 @@ module RuTils
       @glueright = ['руб.', 'коп.', 'у.е.', 'мин.']
 
       @settings = {
-                    "inches"    => true,    # преобразовывать дюймы в &quot;
+                    "inches"    => true,    # преобразовывать дюймы в знак дюйма;
                     "laquo"     => true,    # кавычки-ёлочки
                     "farlaquo"  => false,   # кавычки-ёлочки для фара (знаки "больше-меньше")
                     "quotes"    => true,    # кавычки-английские лапки
@@ -81,6 +81,7 @@ module RuTils
                     :hellip     => "&#8230;",   # horizontal ellipsis = three dot leader
                     :trade      => "&#8482;",   # trade mark sign
                     :minus      => "&#8722;",   # minus sign
+                    :inch       => "&#8243;",   # inch/second sign (u0x2033) (не путать с кавычками!)
                }
       
       # Кто придумал &#147;? Не учите людей плохому...
@@ -206,7 +207,8 @@ module RuTils
 
       # 3. Спецсимволы
       # 0. дюймы с цифрами
-      text.gsub!(/\s([0-9]{1,2}([\.,][0-9]{1,2})?)\"/ui, ' \1'+self.glyph[:quot]) if @settings["inches"]
+      # заменено на инчи
+      text.gsub!(/\s([0-9]{1,2}([\.,][0-9]{1,2})?)\"/ui, ' \1'+self.glyph[:inch]) if @settings["inches"]
 
       # 1. лапки
       if @settings["quotes"]
