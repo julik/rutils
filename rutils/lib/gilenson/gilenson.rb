@@ -82,10 +82,13 @@ module RuTils
                     :trade      => "&#8482;",   # trade mark sign
                     :minus      => "&#8722;",   # minus sign
                     :inch       => "&#8243;",   # inch/second sign (u0x2033) (не путать с кавычками!)
+                    :thinsp     => "&#8201;",   # полукруглая шпация (тонкий пробел)
                }
       
       # Кто придумал &#147;? Не учите людей плохому...
       # Привет А.Лебедеву http://www.artlebedev.ru/kovodstvo/62/
+      # Используем Proc потому что надо получить значение из обьекта после того как
+      # определены эти значения
       @glyph_ugly = {
                     '132'       => Proc.new { |gil| gil.glyph[:bdquo] },
                     '133'       => Proc.new { |gil| gil.glyph[:hellip] },
@@ -140,7 +143,7 @@ module RuTils
 
 
       # Никогда (вы слышите?!) не пущать лабуду &#not_correct_number;
-      @glyph_ugly.each {|key,value| text.gsub!(/&##{key};/, value.call(self))}
+      @glyph_ugly.each { | key, proc | text.gsub!(/&##{key};/, proc.call(self))}
       
       # Замена &entity_name; на входе ('&nbsp;' => '&#160;' и т.д.)
       self.glyph.each {|key,value| text.gsub!(/&#{key};/, value)}
@@ -184,13 +187,13 @@ module RuTils
       #                                  ")?"+
       #                            ")*\/?>|\xA2\xA2[^\n]*?==/i;
 
-        re =  /(<\/?[a-z0-9]+(\s+([a-z]+(=((\'[^\']*\')|(\"[^\"]*\")|([0-9@\-_a-z:\/?&=\.]+)))?)?)*\/?>)/ui
+      re =  /(<\/?[a-z0-9]+(\s+([a-z]+(=((\'[^\']*\')|(\"[^\"]*\")|([0-9@\-_a-z:\/?&=\.]+)))?)?)*\/?>)/ui
 
       # по-хорошему атрибуты тоже нужно типографить. Или не нужно? бугага...
 
-        tags = text.scan(re).map{|tag| tag[0] }
-#            match = "&lt;" + match if @settings["html"]
-        text.gsub!(re, @mark_tag) #маркер тега, мы используем Invalid UTF-sequence для него
+      tags = text.scan(re).map{|tag| tag[0] }
+  #            match = "&lt;" + match if @settings["html"]
+      text.gsub!(re, @mark_tag) #маркер тега, мы используем Invalid UTF-sequence для него
     
 #    puts "matched #{tags.size} tags"
       end
