@@ -13,9 +13,9 @@ module RuTils
     #
     #
     # Настройки регулируются через методы
-    #  formatter.dashglue = true
+    #   formatter.dashglue = true
     # или ассоциированным хешем
-    #  formatter.configure!(:dash=>true, :quotes=>false)
+    #   formatter.configure!(:dash=>true, :quotes=>false)
     #
     # Хеш также можно передавать как последний аргумент методам process и to_html,
     # в таком случае настройки будут применены только при этом вызове
@@ -285,7 +285,6 @@ module RuTils
                          "(p)"       => true,
                          "+-"        => true,    # спецсимволы, какие - понятно
                          "degrees"   => true,    # знак градуса
-                         "<-->"      => true,    # отступы $Indent*
                          "dashglue"  => true, "wordglue" => true, # приклеивание предлогов и дефисов
                          "spacing"   => true,    # запятые и пробелы, перестановка
                          "phones"    => true,    # обработка телефонов
