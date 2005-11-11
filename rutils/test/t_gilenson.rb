@@ -85,6 +85,21 @@ class GilensonOwnTest < Test::Unit::TestCase
 
 end
 
+class GilensonConfigurationTest < Test::Unit::TestCase
+  def setup
+    @gilenson = RuTils::GilensonNew::Formatter.new
+  end
+  
+  def test_glyph_override
+    assert_equal 'скажи, мне, ведь не&#160;даром! Москва, клеймённая пожаром. Французу отдана',
+      @gilenson.process('скажи ,мне, ведь не даром !Москва, клеймённая пожаром .Французу отдана')
+
+    @gilenson.glyph[:nbsp] = '&nbsp;'
+    assert_equal 'скажи, мне, ведь не&nbsp;даром! Москва, клеймённая пожаром. Французу отдана',
+      @gilenson.process('скажи ,мне, ведь не даром !Москва, клеймённая пожаром .Французу отдана')
+  end
+end
+
 # class TypograficaTrakoEntries < Test::Unit::TestCase
 #     def test_cpp
 #       assert_equal "C++-API", "C++-API".gilensize
