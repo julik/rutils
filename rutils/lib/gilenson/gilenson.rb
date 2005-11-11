@@ -86,15 +86,15 @@ module RuTils
       # Кто придумал &#147;? Не учите людей плохому...
       # Привет А.Лебедеву http://www.artlebedev.ru/kovodstvo/62/
       @glyph_ugly = {
-                    '132'       => @glyph[:bdquo],
-                    '133'       => @glyph[:hellip],
-                    '146'       => @glyph[:apos],
-                    '147'       => @glyph[:ldquo],
-                    '148'       => @glyph[:rdquo],
-                    '149'       => @glyph[:bull],
-                    '150'       => @glyph[:ndash],
-                    '151'       => @glyph[:mdash],
-                    '153'       => @glyph[:trade],
+                    '132'       => Proc.new { |gil|gil.glyph[:bdquo]},
+                    '133'       => Proc.new { |gil|gil.glyph[:hellip]},
+                    '146'       => Proc.new { |gil|gil.glyph[:apos]},
+                    '147'       => Proc.new { |gil|gil.glyph[:ldquo]},
+                    '148'       => Proc.new { |gil|gil.glyph[:rdquo]},
+                    '149'       => Proc.new { |gil|gil.glyph[:bull]},
+                    '150'       => Proc.new { |gil|gil.glyph[:ndash]},
+                    '151'       => Proc.new { |gil|gil.glyph[:mdash]},
+                    '153'       => Proc.new { |gil|gil.glyph[:trade]},
                }
       
       @phonemasks = [[  /([0-9]{4})\-([0-9]{2})\-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})/,
@@ -139,7 +139,7 @@ module RuTils
 
 
       # Никогда (вы слышите?!) не пущать лабуду &#not_correct_number;
-      @glyph_ugly.each {|key,value| text.gsub!(/&##{key};/, value)}
+      @glyph_ugly.each {|key,value| text.gsub!(/&##{key};/, value.call(self))}
       
       # Замена &entity_name; на входе ('&nbsp;' => '&#160;' и т.д.)
       self.glyph.each {|key,value| text.gsub!(/&#{key};/, value)}
