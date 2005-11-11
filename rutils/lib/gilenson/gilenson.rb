@@ -1,156 +1,53 @@
 module RuTils
   module GilensonNew  
-    # Это - бывший прямой порт Тыпографицы от pixelapes.
-    # Настройки можно регулировать через методы, т.е.
+    # Обработчик типографицы согласно общепринятым правилам. Пока присутствует только в CVS.
+    # Создается сразу с текстом предназначенным к обработке
     #
     #   typ = RuTils::GilensonNew::Typografica.new('Эти "так называемые" великие деятели')
-    #   typ.html = false     => "false"
-    #   typ.dash = true      => "true"
     #   typ.to_html => 'Эти &#171;так называемые&#187; великие деятели'
+    # 
+    #  или как фильтр
+    #   formatter = RuTils::GilensonNew::Formatter.new
+    #   for string in strings
+    #     puts formatter.process(string)
+    #
+    #
+    # Настройки регулируются через методы
+    #  formatter.dashglue = true
+    # или ассоциированным хешем
+    #  formatter.configure!(:dash=>true, :quotes=>false)
+    #
+    # Хеш также можно передавать как последний аргумент методам process и to_html,
+    # в таком случае настройки будут применены только при этом вызове
+    #
+    #   beautified = formatter.process(my_text, :dash=>true)
+    #
     class Formatter
       attr_accessor :glyph
     
-      # Позволяет получить значение глифа
-      def lookup(glyph_to_lookup)
-        gil = self
-        return Proc.new { gil.glyph[glyph_to_lookup] }
-      end
-    
-      # Подставляет "символы" (двоеточие + имя глифа) на нужное значение глифа заданное в данном форматтере
-      def substitute_glyphs_in_string(str)
-        ret = str.dup
-        @glyph.each_pair do | key, subst |
-          ret.gsub!(":#{key.to_s}", subst)
-        end
-        ret
-      end
 
       # Обрабатывает text_to_process Гиленсоном с сохранением настроек, присвоенных форматтеру
-      # Дополнительные аргументы передаются как параметры форматтера
+      # Дополнительные аргументы передаются как параметры форматтера и не сохраняются после прогона.
       def process(text_to_process, *args)
         @_text = text_to_process
-        to_html
-      end
-    
-      def accept_configuration_arguments!(*args)
-        return unless args[0].is_a?(Hash)
-        args[0].each_pair do | key, value |
-          @settings[key.to_s] = (value ? true : false)
+        if args.last.is_a?(Hash)
+          with_configuration(args.last) { self.to_html }
+        else
+          self.to_html
         end
       end
+    
     
       # Создает новый экземпляр форматтера. Если первый аргумент - текст, форматтер вернет этот текст
       # отформатированным при вызове to_html.
       def initialize(*args)
-
         @_text = args[0].is_a?(String) ? args[0] : ''
-        
-        @skip_tags = true;
-        @ignore = /notypo/ # regex, который игнорируется. Этим надо воспользоваться для обработки pre и code
-
-        @glueleft =  ['рис.', 'табл.', 'см.', 'им.', 'ул.', 'пер.', 'кв.', 'офис', 'оф.', 'г.']
-        @glueright = ['руб.', 'коп.', 'у.е.', 'мин.']
-
-        @settings = {
-                      "inches"    => true,    # преобразовывать дюймы в знак дюйма;
-                      "laquo"     => true,    # кавычки-ёлочки
-                      "farlaquo"  => false,   # кавычки-ёлочки для фара (знаки "больше-меньше")
-                      "quotes"    => true,    # кавычки-английские лапки
-                      "dash"      => true,    # короткое тире (150)
-                      "emdash"    => true,    # длинное тире двумя минусами (151)
-                      "(c)"       => true,
-                      "(r)"       => true,
-                      "(tm)"      => true,
-                      "(p)"       => true,
-                      "+-"        => true,    # спецсимволы, какие - понятно
-                      "degrees"   => true,    # знак градуса
-                      "<-->"      => true,    # отступы $Indent*
-                      "dashglue"  => true, "wordglue" => true, # приклеивание предлогов и дефисов
-                      "spacing"   => true,    # запятые и пробелы, перестановка
-                      "phones"    => true,    # обработка телефонов
-                      "fixed"     => false,   # подгон под фиксированную ширину
-                      "html"      => false,   # запрет тагов html
-                      "de_nobr"   => false,   # при true все <nobr/> заменяются на <span class="nobr"/>
-                     }
+        setup_default_settings!
+        accept_configuration_arguments!(args.last) if args.last.is_a?(Hash)
+      end
       
-        # note: именно в одиночных кавычках, важно для регэкспов
-        # дальше делаем to_s там, где это понадобится
-        @mark_tag = '\xF0\xF0\xF0\xF0' # Подстановочные маркеры тегов
-        @mark_ignored = '\201' # Подстановочные маркеры неизменяемых групп - надо заменить!
-      
-        # XHTML... Даёшь!
-        @glyph = {
-                      :quot       => "&#34;",     # quotation mark
-                      :amp        => "&#38;",     # ampersand
-                      :apos       => "&#39;",     # apos
-                      :gt         => "&#62;",     # greater-than sign
-                      :lt         => "&#60;",     # less-than sign
-                      :nbsp       => "&#160;",    # non-breaking space
-                      :sect       => "&#167;",    # section sign
-                      :copy       => "&#169;",    # copyright sign
-                      :laquo      => "&#171;",    # left-pointing double angle quotation mark = left pointing guillemet
-                      :reg        => "&#174;",    # registered sign = registered trade mark sign
-                      :deg        => "&#176;",    # degree sign
-                      :plusmn     => "&#177;",    # plus-minus sign = plus-or-minus sign
-                      :middot     => "&#183;",    # middle dot = Georgian comma = Greek middle dot
-                      :raquo      => "&#187;",    # right-pointing double angle quotation mark = right pointing guillemet
-                      :ndash      => "&#8211;",   # en dash
-                      :mdash      => "&#8212;",   # em dash
-                      :lsquo      => "&#8216;",   # left single quotation mark
-                      :rsquo      => "&#8217;",   # right single quotation mark
-                      :ldquo      => "&#8220;",   # left double quotation mark
-                      :rdquo      => "&#8221;",   # right double quotation mark
-                      :bdquo      => "&#8222;",   # double low-9 quotation mark
-                      :bull       => "&#8226;",   # bullet = black small circle
-                      :hellip     => "&#8230;",   # horizontal ellipsis = three dot leader
-                      :trade      => "&#8482;",   # trade mark sign
-                      :minus      => "&#8722;",   # minus sign
-                      :inch       => "&#8243;",   # inch/second sign (u0x2033) (не путать с кавычками!)
-                      :thinsp     => "&#8201;",   # полукруглая шпация (тонкий пробел)
-                      :nob_open   => '<nobr>',    # открывающий блок без переноса слов
-                      :nob_close   => '</nobr>',    # открывающий блок без переноса слов
-                 }
-      
-        # Кто придумал &#147;? Не учите людей плохому...
-        # Привет А.Лебедеву http://www.artlebedev.ru/kovodstvo/62/
-        # Используем Proc потому что надо получить значение из обьекта после того как
-        # определены эти значения
-        @glyph_ugly = {
-                      '132'       => lookup(:bdquo),
-                      '133'       => lookup(:hellip),
-                      '146'       => lookup(:apos),
-                      '147'       => lookup(:ldquo),
-                      '148'       => lookup(:rdquo),
-                      '149'       => lookup(:bull),
-                      '150'       => lookup(:ndash),
-                      '151'       => lookup(:mdash),
-                      '153'       => lookup(:trade),
-                 }
-      
-        @phonemasks = [[  /([0-9]{4})\-([0-9]{2})\-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})/,
-                          /([0-9]{4})\-([0-9]{2})\-([0-9]{2})/,
-                          /(\([0-9\+\-]+\)) ?([0-9]{3})\-([0-9]{2})\-([0-9]{2})/,
-                          /(\([0-9\+\-]+\)) ?([0-9]{2})\-([0-9]{2})\-([0-9]{2})/,
-                          /(\([0-9\+\-]+\)) ?([0-9]{3})\-([0-9]{2})/,
-                          /(\([0-9\+\-]+\)) ?([0-9]{2})\-([0-9]{3})/,
-                          /([0-9]{3})\-([0-9]{2})\-([0-9]{2})/,
-                          /([0-9]{2})\-([0-9]{2})\-([0-9]{2})/,
-                          /([0-9]{1})\-([0-9]{2})\-([0-9]{2})/,
-                          /([0-9]{2})\-([0-9]{3})/,
-                          /([0-9]+)\-([0-9]+)/,
-                        ],[    
-                         ':nob_open\1:ndash\2:ndash\3:nbsp\4:\5:\6:nob_close',
-                         ':nob_open\1:ndash\2:ndash\3:nob_close',
-                         ':nob_open\1:nbsp\2:ndash\3:ndash\4:nob_close',
-                         ':nob_open\1:nbsp\2:ndash\3:ndash\4:nob_close',
-                         ':nob_open\1:nbsp\2:ndash\3:nob_close',
-                         ':nob_open\1:nbsp\2:ndash\3:nob_close',
-                         ':nob_open\1:ndash\2:ndash\3:nob_close',
-                         ':nob_open\1:ndash\2:ndash\3:nob_close',
-                         ':nob_open\1:ndash\2:ndash\3:nob_close',
-                         ':nob_open\1:ndash\2:nob_close',
-                         ':nob_open\1:ndash\2:nob_close'
-                      ]]
+      def configure!(*config)
+        accept_configuration_arguments!(config.last) if config.last.is_a?(Hash)
       end
     
       # Proxy unknown method calls as setting switches. Methods with = will set settings, methods without - fetch them
@@ -364,9 +261,158 @@ module RuTils
         end
 
         text.gsub(/(\s)+$/, "").gsub(/^(\s)+/, "")
-
       end
+      
+      private
+      
+        def setup_default_settings!
+          @skip_tags = true;
+           @ignore = /notypo/ # regex, который игнорируется. Этим надо воспользоваться для обработки pre и code
 
+           @glueleft =  ['рис.', 'табл.', 'см.', 'им.', 'ул.', 'пер.', 'кв.', 'офис', 'оф.', 'г.']
+           @glueright = ['руб.', 'коп.', 'у.е.', 'мин.']
+
+           @settings = {
+                         "inches"    => true,    # преобразовывать дюймы в знак дюйма;
+                         "laquo"     => true,    # кавычки-ёлочки
+                         "farlaquo"  => false,   # кавычки-ёлочки для фара (знаки "больше-меньше")
+                         "quotes"    => true,    # кавычки-английские лапки
+                         "dash"      => true,    # короткое тире (150)
+                         "emdash"    => true,    # длинное тире двумя минусами (151)
+                         "(c)"       => true,
+                         "(r)"       => true,
+                         "(tm)"      => true,
+                         "(p)"       => true,
+                         "+-"        => true,    # спецсимволы, какие - понятно
+                         "degrees"   => true,    # знак градуса
+                         "<-->"      => true,    # отступы $Indent*
+                         "dashglue"  => true, "wordglue" => true, # приклеивание предлогов и дефисов
+                         "spacing"   => true,    # запятые и пробелы, перестановка
+                         "phones"    => true,    # обработка телефонов
+                         "fixed"     => false,   # подгон под фиксированную ширину
+                         "html"      => false,   # запрет тагов html
+                         "de_nobr"   => false,   # при true все <nobr/> заменяются на <span class="nobr"/>
+                        }
+
+           # note: именно в одиночных кавычках, важно для регэкспов
+           # дальше делаем to_s там, где это понадобится
+           @mark_tag = '\xF0\xF0\xF0\xF0' # Подстановочные маркеры тегов
+           @mark_ignored = '\201' # Подстановочные маркеры неизменяемых групп - надо заменить!
+
+           # XHTML... Даёшь!
+           @glyph = {
+                         :quot       => "&#34;",     # quotation mark
+                         :amp        => "&#38;",     # ampersand
+                         :apos       => "&#39;",     # apos
+                         :gt         => "&#62;",     # greater-than sign
+                         :lt         => "&#60;",     # less-than sign
+                         :nbsp       => "&#160;",    # non-breaking space
+                         :sect       => "&#167;",    # section sign
+                         :copy       => "&#169;",    # copyright sign
+                         :laquo      => "&#171;",    # left-pointing double angle quotation mark = left pointing guillemet
+                         :reg        => "&#174;",    # registered sign = registered trade mark sign
+                         :deg        => "&#176;",    # degree sign
+                         :plusmn     => "&#177;",    # plus-minus sign = plus-or-minus sign
+                         :middot     => "&#183;",    # middle dot = Georgian comma = Greek middle dot
+                         :raquo      => "&#187;",    # right-pointing double angle quotation mark = right pointing guillemet
+                         :ndash      => "&#8211;",   # en dash
+                         :mdash      => "&#8212;",   # em dash
+                         :lsquo      => "&#8216;",   # left single quotation mark
+                         :rsquo      => "&#8217;",   # right single quotation mark
+                         :ldquo      => "&#8220;",   # left double quotation mark
+                         :rdquo      => "&#8221;",   # right double quotation mark
+                         :bdquo      => "&#8222;",   # double low-9 quotation mark
+                         :bull       => "&#8226;",   # bullet = black small circle
+                         :hellip     => "&#8230;",   # horizontal ellipsis = three dot leader
+                         :trade      => "&#8482;",   # trade mark sign
+                         :minus      => "&#8722;",   # minus sign
+                         :inch       => "&#8243;",   # inch/second sign (u0x2033) (не путать с кавычками!)
+                         :thinsp     => "&#8201;",   # полукруглая шпация (тонкий пробел)
+                         :nob_open   => '<nobr>',    # открывающий блок без переноса слов
+                         :nob_close   => '</nobr>',    # открывающий блок без переноса слов
+                    }
+
+           # Кто придумал &#147;? Не учите людей плохому...
+           # Привет А.Лебедеву http://www.artlebedev.ru/kovodstvo/62/
+           # Используем Proc потому что надо получить значение из обьекта после того как
+           # определены эти значения
+           @glyph_ugly = {
+                         '132'       => lookup(:bdquo),
+                         '133'       => lookup(:hellip),
+                         '146'       => lookup(:apos),
+                         '147'       => lookup(:ldquo),
+                         '148'       => lookup(:rdquo),
+                         '149'       => lookup(:bull),
+                         '150'       => lookup(:ndash),
+                         '151'       => lookup(:mdash),
+                         '153'       => lookup(:trade),
+                    }
+
+           @phonemasks = [[  /([0-9]{4})\-([0-9]{2})\-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})/,
+                             /([0-9]{4})\-([0-9]{2})\-([0-9]{2})/,
+                             /(\([0-9\+\-]+\)) ?([0-9]{3})\-([0-9]{2})\-([0-9]{2})/,
+                             /(\([0-9\+\-]+\)) ?([0-9]{2})\-([0-9]{2})\-([0-9]{2})/,
+                             /(\([0-9\+\-]+\)) ?([0-9]{3})\-([0-9]{2})/,
+                             /(\([0-9\+\-]+\)) ?([0-9]{2})\-([0-9]{3})/,
+                             /([0-9]{3})\-([0-9]{2})\-([0-9]{2})/,
+                             /([0-9]{2})\-([0-9]{2})\-([0-9]{2})/,
+                             /([0-9]{1})\-([0-9]{2})\-([0-9]{2})/,
+                             /([0-9]{2})\-([0-9]{3})/,
+                             /([0-9]+)\-([0-9]+)/,
+                           ],[    
+                            ':nob_open\1:ndash\2:ndash\3:nbsp\4:\5:\6:nob_close',
+                            ':nob_open\1:ndash\2:ndash\3:nob_close',
+                            ':nob_open\1:nbsp\2:ndash\3:ndash\4:nob_close',
+                            ':nob_open\1:nbsp\2:ndash\3:ndash\4:nob_close',
+                            ':nob_open\1:nbsp\2:ndash\3:nob_close',
+                            ':nob_open\1:nbsp\2:ndash\3:nob_close',
+                            ':nob_open\1:ndash\2:ndash\3:nob_close',
+                            ':nob_open\1:ndash\2:ndash\3:nob_close',
+                            ':nob_open\1:ndash\2:ndash\3:nob_close',
+                            ':nob_open\1:ndash\2:nob_close',
+                            ':nob_open\1:ndash\2:nob_close'
+                         ]]
+        end
+        
+        # Позволяет получить значение глифа
+        def lookup(glyph_to_lookup)
+          gil = self
+          return Proc.new { gil.glyph[glyph_to_lookup] }
+        end
+
+        # Подставляет "символы" (двоеточие + имя глифа) на нужное значение глифа заданное в данном форматтере
+        def substitute_glyphs_in_string(str)
+          ret = str.dup
+          @glyph.each_pair do | key, subst |
+            ret.gsub!(":#{key.to_s}", subst)
+          end
+          ret
+        end
+
+        def with_configuration(hash, &block)
+          old_settings, old_glyphs = @settings.dup, @glyph.dup
+          accept_configuration_arguments!(hash)
+            txt = yield
+          @settings, @glyph = old_settings, old_glyphs
+          
+          return txt
+        end
+        
+        def accept_configuration_arguments!(args_hash)
+          
+          # Специальный случай - :all=>true
+          if args_hash.has_key?(:all)
+            if args_hash[:all]
+              @settings.each_pair {|k, v| @settings[k] = true}
+            else
+              @settings.each_pair {|k, v| @settings[k] = false}
+            end
+          else          
+            args_hash.each_pair do | key, value |
+              @settings[key.to_s] = (value ? true : false)
+            end
+          end
+        end
     end
   end #end Gilenson
 end #end RuTils

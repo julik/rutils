@@ -85,9 +85,21 @@ class GilensonOwnTest < Test::Unit::TestCase
 
 end
 
+
 class GilensonConfigurationTest < Test::Unit::TestCase
   def setup
     @gilenson = RuTils::GilensonNew::Formatter.new
+  end
+  
+  def test_config_override
+    assert_equal "Ну&#160;и куда вот&#160;&#8212; да&#160;туда!", 
+      @gilenson.process("Ну и куда вот -- да туда!")
+
+    assert_equal "Ну и куда вот &#8212; да туда!", 
+      @gilenson.process("Ну и куда вот -- да туда!", :dash => false, :dashglue => false, :wordglue => false)
+
+    assert_equal "Ну&#160;и куда вот&#160;&#8212; да&#160;туда!", 
+      @gilenson.process("Ну и куда вот -- да туда!")
   end
   
   def test_glyph_override
