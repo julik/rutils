@@ -8,8 +8,10 @@ module RuTils
     # 
     #  или как фильтр
     #   formatter = RuTils::GilensonNew::Formatter.new
+    #   formatter.configure(:dash=>true)
     #   for string in strings
     #     puts formatter.process(string)
+    #   end
     #
     #
     # Настройки регулируются через методы
