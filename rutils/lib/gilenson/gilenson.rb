@@ -65,8 +65,11 @@ module RuTils
 
 
         # Никогда (вы слышите?!) не пущать лабуду &#not_correct_number;
-        @glyph_ugly.each { | key, proc | text.gsub!(/&##{key};/, proc.call(self))}
-      
+        @glyph_ugly.each {|key,proc| text.gsub!(/&##{key};/, proc.call(self))}
+        
+        # Чистим copy&paste
+        @glyph_copy_paste.each {|key,value| text.gsub!(/#{key}/, value.call(self))}
+        
         # Замена &entity_name; на входе ('&nbsp;' => '&#160;' и т.д.)
         self.glyph.each {|key,value| text.gsub!(/&#{key};/, value)}
 
@@ -317,6 +320,7 @@ module RuTils
                          :reg        => "&#174;",    # registered sign = registered trade mark sign
                          :deg        => "&#176;",    # degree sign
                          :plusmn     => "&#177;",    # plus-minus sign = plus-or-minus sign
+                         :para       => "&#182;",    # pilcrow sign = paragraph sign
                          :middot     => "&#183;",    # middle dot = Georgian comma = Greek middle dot
                          :raquo      => "&#187;",    # right-pointing double angle quotation mark = right pointing guillemet
                          :ndash      => "&#8211;",   # en dash
@@ -328,6 +332,7 @@ module RuTils
                          :bdquo      => "&#8222;",   # double low-9 quotation mark
                          :bull       => "&#8226;",   # bullet = black small circle
                          :hellip     => "&#8230;",   # horizontal ellipsis = three dot leader
+                         :numero     => "&#8470;",   # numero
                          :trade      => "&#8482;",   # trade mark sign
                          :minus      => "&#8722;",   # minus sign
                          :inch       => "&#8243;",   # inch/second sign (u0x2033) (не путать с кавычками!)
@@ -350,6 +355,34 @@ module RuTils
                          '150'       => lookup(:ndash),
                          '151'       => lookup(:mdash),
                          '153'       => lookup(:trade),
+                    }
+
+           # чистим copy&paste
+           @glyph_copy_paste = {
+                         ' '         => lookup(:nbsp),# alt+0160 (NBSP here)
+                         '«'         => lookup(:laquo),
+                         '»'         => lookup(:raquo),
+                         '§'         => lookup(:sect),
+                         '©'         => lookup(:copy),
+                         '®'         => lookup(:reg),
+                         '°'         => lookup(:deg),
+                         '±'         => lookup(:plusmn),
+                         '¶'         => lookup(:para),
+                         '·'         => lookup(:middot),
+                         '–'         => lookup(:ndash),
+                         '—'         => lookup(:mdash),
+                         '‘'         => lookup(:lsquo),
+                         '’'         => lookup(:rsquo),
+                         '“'         => lookup(:ldquo),
+                         '”'         => lookup(:rdquo),
+                         '„'         => lookup(:bdquo),
+                         '•'         => lookup(:bull),
+                         '…'         => lookup(:hellip),
+                         '№'         => lookup(:numero),
+                         '™'         => lookup(:trade),
+                         '−'         => lookup(:minus),
+                         ' '         => lookup(:thinsp),
+                         '″'         => lookup(:inch),
                     }
 
            @phonemasks = [[  /([0-9]{4})\-([0-9]{2})\-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})/,
