@@ -42,8 +42,13 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal '&#34; &#38; &#39; &#62; &#60; &#160; &#167; &#169; &#171; &#174; &#176; &#177; &#183; &#187; &#8211; &#8212; &#8216; &#8217; &#8220; &#8221; &#8222; &#8226; &#8230; &#8482; &#8722;', '&quot; &amp; &apos; &gt; &lt; &nbsp; &sect; &copy; &laquo; &reg; &deg; &plusmn; &middot; &raquo; &ndash; &mdash; &lsquo; &rsquo; &ldquo; &rdquo; &bdquo; &bull; &hellip; &trade; &minus;'.n_gilensize
   end
 
-  def test_ugly_entities_replace
+  def test_ugly_entities_replace1 # not_correct_number
     assert_equal '&#8222; &#8230; &#39; &#8220; &#8221; &#8226; &#8211; &#8212; &#8482;', '&#132; &#133; &#146; &#147; &#148; &#149; &#150; &#151; &#153;'.n_gilensize
+  end
+  
+  def test_ugly_entities_replace2 # copy&paste
+    # alt+0160 (NBSP here)
+    assert_equal '&#160; &#171; &#187; &#167; &#169; &#174; &#176; &#177; &#182; &#183; &#8211; &#8212; &#8216; &#8217; &#8220; &#8221; &#8222; &#8226; &#8230; &#8470; &#8482; &#8722; &#8201; &#8243;', '  « » § © ® ° ± ¶ · – — ‘ ’ “ ” „ • … № ™ −   ″'.n_gilensize
   end
 
   def test_specials
