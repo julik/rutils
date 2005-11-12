@@ -1,4 +1,5 @@
 CVS
+* Gilenson - фильтры выносятся в методы типа process_фильтр и их можно применять по отдельности через Formatter#apply (julik)
 * Gilenson - добавлены &para; и &numero; (последний - не стандарт, но нужен для преобразований символа "номер") (mash)
 * Gilenson - добавлен хэш @glyph_copy_paste для вычистки текста на входе от некоторых entities,
   попадающих туда через copy&paste (опционально, через @settings :copypaste => true) (mash)

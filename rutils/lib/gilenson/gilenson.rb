@@ -110,7 +110,7 @@ module RuTils
         text.gsub!(@ignore, @mark_ignored)  # маркер игнора
 
         # -1. запрет тагов html
-        text.gsub!(/&/, self.glyph[:amp]) if @settings["html"]
+        process_ampersands(text) if @settings["html"]
 
 
         # 0. Вырезаем таги
@@ -145,13 +145,11 @@ module RuTils
     #            match = "&lt;" + match if @settings["html"]
         text.gsub!(re, @mark_tag) #маркер тега, мы используем Invalid UTF-sequence для него
     
-  #    puts "matched #{tags.size} tags"
         end
 
         # 1. Запятые и пробелы
         if @settings["spacing"]
-          text.gsub!( /(\s*)([,]*)/sui, '\2\1');
-          text.gsub!( /(\s*)([\.?!]*)(\s*[ЁА-ЯA-Z])/su, '\2\1\3');
+          process_spacing(text)
         end
 
         # 2. Разбиение на строки длиной не более ХХ символов
@@ -242,28 +240,10 @@ module RuTils
 
 
         # 7. Короткие слова и &nbsp;
-        if @settings["wordglue"]
-
-          text = " " + text + " ";
-          _text = " " + text + " ";
-          until _text == text
-             _text = text
-             text.gsub!( /(\s+)([a-zа-яА-Я]{1,2})(\s+)([^\\s$])/ui, '\1\2'+self.glyph[:nbsp]+'\4')
-             text.gsub!( /(\s+)([a-zа-яА-Я]{3})(\s+)([^\\s$])/ui,   '\1\2'+self.glyph[:nbsp]+'\4')
-          end
-
-          for i in @glueleft
-             text.gsub!( /(\s)(#{i})(\s+)/sui, '\1\2'+self.glyph[:nbsp])
-          end
-
-          for i in @glueright 
-             text.gsub!( /(\s)(#{i})(\s+)/sui, self.glyph[:nbsp]+'\2\3')
-          end
-        end
-
+        process_wordglue(text) if @settings["wordglue"]
 
         # 8. Склейка ласт. Тьфу! дефисов.
-        text.gsub!( /([a-zа-яА-Я0-9]+(\-[a-zа-яА-Я0-9]+)+)/ui, '<nobr>\1</nobr>') if @settings["dashglue"]
+        process_dashglue(text) if @settings["dashglue"]
 
         # 8a. Инициалы
         if @settings['initials']
@@ -287,12 +267,18 @@ module RuTils
 
 
         # фуф, закончили.
-        if @settings["de_nobr"]
-          text.gsub!(/<nobr>/, '<span class="nobr">')
-          text.gsub!(/<\/nobr>/, '</span>')
-        end
+        process_span_instead_of_nobr(text) if @settings["de_nobr"]
 
         text.gsub(/(\s)+$/, "").gsub(/^(\s)+/, "")
+      end
+      
+      # Применяет отдельный фильтр к text и возвращает результат. Например:
+      #  formatter.apply(:wordglue, "Вот так") => "Вот&#160;так"
+      # Удобно применять когда вам нужно задействовать отдельный фильтр Гиленсона, но не нужна остальная механика
+      def apply(filter, text)
+        copy = text.dup
+        self.send("process_#{filter}".to_sym, copy)
+        copy
       end
       
       private
@@ -465,6 +451,45 @@ module RuTils
         def process_copy_paste_clearing(text)
           # Чистим copy&paste
           @glyph_copy_paste.each {|key,value| text.gsub!(/#{key}/, value.call(self))}
+        end
+        
+        def process_spacing(text)
+          text.gsub!( /(\s*)([,]*)/sui, '\2\1');
+          text.gsub!( /(\s*)([\.?!]*)(\s*[ЁА-ЯA-Z])/su, '\2\1\3');
+        end
+        
+        def process_dashglue(text)
+          text.gsub!( /([a-zа-яА-Я0-9]+(\-[a-zа-яА-Я0-9]+)+)/ui, '<nobr>\1</nobr>')
+        end
+        
+        def process_ampersands(text)
+          text.gsub!(/&/, self.glyph[:amp])
+        end
+        
+        def process_span_instead_of_nobr(text)
+          text.gsub!(/<nobr>/, '<span class="nobr">')
+          text.gsub!(/<\/nobr>/, '</span>')
+        end
+        
+        def process_wordglue(text)
+          text.replace(" " + text + " ")
+          _text = " " + text + " "
+          
+          until _text == text
+             _text = text
+             text.gsub!( /(\s+)([a-zа-яА-Я]{1,2})(\s+)([^\\s$])/ui, '\1\2'+self.glyph[:nbsp]+'\4')
+             text.gsub!( /(\s+)([a-zа-яА-Я]{3})(\s+)([^\\s$])/ui,   '\1\2'+self.glyph[:nbsp]+'\4')
+          end
+
+          for i in @glueleft
+             text.gsub!( /(\s)(#{i})(\s+)/sui, '\1\2' + self.glyph[:nbsp])
+          end
+
+          for i in @glueright 
+             text.gsub!( /(\s)(#{i})(\s+)/sui, self.glyph[:nbsp]+'\2\3')
+          end
+          
+          text.strip!
         end
     end
   end #end Gilenson
