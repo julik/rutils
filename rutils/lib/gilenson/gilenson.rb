@@ -68,7 +68,9 @@ module RuTils
         @glyph_ugly.each {|key,proc| text.gsub!(/&##{key};/, proc.call(self))}
         
         # Чистим copy&paste
-        @glyph_copy_paste.each {|key,value| text.gsub!(/#{key}/, value.call(self))}
+        if @settings['copypaste']
+          process_copy_paste_clearing(text)
+        end
         
         # Замена &entity_name; на входе ('&nbsp;' => '&#160;' и т.д.)
         self.glyph.each {|key,value| text.gsub!(/&#{key};/, value)}
@@ -286,7 +288,8 @@ module RuTils
                          "quotes"    => true,    # кавычки-английские лапки
                          "dash"      => true,    # короткое тире (150)
                          "emdash"    => true,    # длинное тире двумя минусами (151)
-                         "initials"   => true,   # тонкие шпации в инициалах
+                         "initials"  => true,    # тонкие шпации в инициалах
+                         "copypaste" => false,   # вычистка "copy&paste" символов
                          "(c)"       => true,
                          "(r)"       => true,
                          "(tm)"      => true,
@@ -456,6 +459,11 @@ module RuTils
           initials = /([А-Я])[\.]*?[\s]*?([А-Я])[\.]*[\s]*?([А-Я])([а-я])/u
           replacement = substitute_glyphs_in_string('\1.\2.:thinsp\3\4')
           text.gsub!(initials, replacement)
+        end
+    
+        def process_copy_paste_clearing(text)
+          # Чистим copy&paste
+          @glyph_copy_paste.each {|key,value| text.gsub!(/#{key}/, value.call(self))}
         end
     end
   end #end Gilenson
