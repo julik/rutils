@@ -65,7 +65,7 @@ module RuTils
 
 
         # Никогда (вы слышите?!) не пущать лабуду &#not_correct_number;
-        @glyph_ugly.each {|key,proc| text.gsub!(/&##{key};/, proc.call(self))}
+        @glyph_ugly.each { | key, proc | text.gsub!(/&##{key};/, proc.call) }
         
         # Чистим copy&paste
         if @settings['copypaste']
@@ -73,12 +73,11 @@ module RuTils
         end
         
         # Замена &entity_name; на входе ('&nbsp;' => '&#160;' и т.д.)
-        self.glyph.each {|key,value| text.gsub!(/&#{key};/, value)}
+        self.glyph.each { |key, value| text.gsub!(/&#{key};/, value)}
 
 
         # -2. игнорируем ещё регексп
         ignored = []
-
   
         text.scan(@ignore) do |result|
           ignored << result
@@ -441,7 +440,7 @@ module RuTils
         
         def accept_configuration_arguments!(args_hash)
           
-          # Специальный случай - :all=>true
+          # Специальный случай - :all=>true|false
           if args_hash.has_key?(:all)
             if args_hash[:all]
               @settings.each_pair {|k, v| @settings[k] = true}
