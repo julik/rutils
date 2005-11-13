@@ -433,10 +433,11 @@ class RuTils::Gilenson::Formatter
       
       def reinsert_fragments(text, fragments)
         fragments.each { |fragment|
-          fragment.gsub!(/&(?!#0*38;)/, self.glyph[:amp]) if !@settings['raw_output']
+          #~ пока непонятно
+          #~ fragment.gsub!(/&(?!(#0*38|(amp);)/, self.glyph[:amp]) if (!@settings['raw_output'] || !@settings["html"])
           fragment.gsub!(/ (title|alt)=((?:(\')([^\']*)(\'))|(?:(\")([^\"]*)(\")))/uim) {
             " #{$1}=#{$3}" + self.process($4.to_s) + "#{$5}#{$6}" + self.process($7.to_s) + "#{$8}"
-          } if !@settings['skip_attr']
+          } unless @settings['skip_attr']
           text.sub!(@mark_tag, fragment)
         }
       end
