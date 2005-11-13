@@ -27,7 +27,7 @@ end
 #   typ.to_html => 'Эти &#171;так называемые&#187; великие деятели'
 # 
 # или как фильтр
-#   formatter = RuTils::GilensonNew::Formatter.new
+#   formatter = RuTils::Gilenson.new
 #   formatter.configure(:dash=>true)
 #   for string in strings
 #     puts formatter.process(string)
@@ -162,7 +162,7 @@ class RuTils::Gilenson::Formatter
       
       # Для маркера мы применяем invalid UTF-sequence чтобы его НЕЛЬЗЯ было перепутать с частью
       # любого другого мультибайтного глифа. Thanks to huNter.
-      REPLACEMENT_MARKER = '\xF0\xF0\xF0\xF0'
+      REPLACEMENT_MARKER = '\xF0\xF0\xF0\xF0' #:nodoc:
 
      # Кто придумал &#147;? Не учите людей плохому...
      # Привет А.Лебедеву http://www.artlebedev.ru/kovodstvo/62/
@@ -295,7 +295,7 @@ class RuTils::Gilenson::Formatter
       unless lift_ignored_elements
         self.send("process_#{filter}".to_sym, copy)
       else
-        lifting_fragments { self.send("process_#{filter}".to_sym, cp) }
+        lifting_fragments(copy) { self.send("process_#{filter}".to_sym, copy) }
       end
       copy
     end

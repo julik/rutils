@@ -1,7 +1,5 @@
 if defined?(Object::ActionView)
-  module Object::ActionView
-    module Helpers
-      module DateHelper
+  module Object::ActionView::Helpers::DateHelper
 
         # Заменяет ActionView::Helpers::DateHelper::distance_of_time_in_words на русское сообщение.
         #
@@ -42,7 +40,5 @@ if defined?(Object::ActionView)
 
           select_html(options[:field_name] || 'month', month_options, options[:prefix], options[:include_blank], options[:discard_type], options[:disabled])
         end
-      end
-    end
   end
 end #endif

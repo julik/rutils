@@ -14,5 +14,5 @@ require File.dirname(__FILE__) + '/../lib/rutils'
 #   Julik <me@julik.nl>
 
 while st = gets do
-  puts RuTils::Gilenson::Formatter.new(st).to_html
+  puts RuTils::Gilenson.new(st).to_html
 end

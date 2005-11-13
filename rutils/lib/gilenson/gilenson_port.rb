@@ -1,14 +1,17 @@
 module RuTils
   module Gilenson
+    def new(*args) # :nodoc:
+      RuTils::Gilenson::Obsolete.new(*args)
+    end
   end
 end
 
 module RuTils::Gilenson::ObsoleteStringFormatting
-  # Форматирует строку с помощью Gilenson. Всп дополнительные опции передаются форматтеру.
+  # Форматирует строку с помощью Gilenson. Всe дополнительные опции передаются форматтеру.
   def gilensize(*args)
-    args = {} unless args.is_a?(Hash)
-    RuTils::Gilenson::Obsolete.new(self, *args).to_html
-  end  
+    opts = args.last.is_a?(Hash) ? args.last : {}
+    RuTils::Gilenson::Obsolete.new(self, *opts).to_html
+  end
   alias :old_gilensize :gilensize
 end
   
