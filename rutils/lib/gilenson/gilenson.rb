@@ -13,8 +13,14 @@ end
 # Посвящается П.Г.Гиленсону[http://www.rudtp.ru/lib.php?book=172], благодаря которому русские правила тех.
 # редактуры еще как минимум 20 лет останутся столь-же старомодными и строгими.
 #
-# Использует *только* Unicode-entities, что позволяет использовать его не только в HTML,
-# но и в RSS, Atom и других XML-средах без необходимости определения entities в вашем DTD или XSD.
+# Gilenson базируется на коде Typografica[http://pixel-apes.com/typografica] от PixelApes,
+# который был приведен к положенному в Ruby стандарту
+# и реафкторен. Основные отличия Gilenson от Typografica на PHP:
+#   * работа только и полностью в UTF-8 (включая entities, применимые в XML)
+#   * поддержка "raw"-вывода (символов вместо entities) - текст выводимый GIlenson можно верстать на бумаге
+#
+# Если вам нужно получать идентичный Typografica вывод, пользуйтесь RuTils::Gilenson::Obsolete
+# вместо RuTils::Gilenson::Formatter.
 #
 # ==Использование
 # Быстрее всего - через метод ++gilensize++ для любой строковой переменной
@@ -195,6 +201,8 @@ class RuTils::Gilenson::Formatter
     def configure!(*config)
       accept_configuration_arguments!(config.last) if config.last.is_a?(Hash)
     end
+    
+    alias :configure :configure! #Дружественный API
   
     # Неизвестные методы - настройки. С = - установка ключа, без - получение значения
     def method_missing(meth, *args) #:nodoc:

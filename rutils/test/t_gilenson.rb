@@ -145,7 +145,10 @@ class GilensonConfigurationTest < Test::Unit::TestCase
     assert_equal '&#38442; Это просто «кавычки»',
       @gilenson.process('&#38442; Это просто "кавычки"')    
   end
-
+  
+  def test_configure
+    assert @gilenson.configure(:raw_output=>true)    
+  end
 end
 
 # class TypograficaTrakoEntries < Test::Unit::TestCase
