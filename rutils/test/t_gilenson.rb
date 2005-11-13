@@ -210,6 +210,25 @@ class GilensonConfigurationTest < Test::Unit::TestCase
       @gilenson.process('мы напишем title="test -- me" и alt=\'test -- me\', вот')
   end
 
+  def test_apmersand_in_tags
+    @gilenson.configure!(:raw_output=>true)
+    
+    assert_equal "<a href='test?test1=1&test2=2'>test</a>",
+      @gilenson.process("<a href='test?test1=1&test2=2'>test</a>")
+    
+    @gilenson.configure!(:raw_output=>false)
+    
+    assert_equal "<a href='test?test1=1&#38;test2=2'>test</a>",
+      @gilenson.process("<a href='test?test1=1&#38;test2=2'>test</a>")
+    
+    assert_equal "<a href='test?test1=1&#038;test2=2'>test</a>",
+      @gilenson.process("<a href='test?test1=1&#038;test2=2'>test</a>")
+    
+    assert_equal "<a href='test?test1=1&#38;test2=2'>test</a>",
+      @gilenson.process("<a href='test?test1=1&amp;test2=2'>test</a>")
+    
+  end
+
 end
 
 # class TypograficaTrakoEntries < Test::Unit::TestCase
