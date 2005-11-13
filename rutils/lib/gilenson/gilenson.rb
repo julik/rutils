@@ -71,6 +71,7 @@ end
 #   "phones" - обработка телефонов
 #   "html" - запрет тагов html
 #   "de_nobr" - при true все <nobr/> заменяются на <span class="nobr"/>
+#   "raw_output" - (по умолчанию false) - при true вместо entities выводятся UTF-символы
   
 class RuTils::Gilenson::Formatter
     attr_accessor :glyph
@@ -94,6 +95,7 @@ class RuTils::Gilenson::Formatter
        "phones"    => true,    # обработка телефонов
        "html"      => false,   # запрет тагов html
        "de_nobr"   => false,   # при true все <nobr/> заменяются на <span class="nobr"/>
+       "raw_output" => false,  # выводить UTF-8 вместо entities
      } #:nodoc:
      
      # Глифы, использующиеся в подстановках по-умолчанию
@@ -179,6 +181,8 @@ class RuTils::Gilenson::Formatter
        '151'       => :mdash,
        '153'       => :trade,
     } #:nodoc:
+    
+    PROTECTED_SETTINGS = [ :raw_output ] #:nodoc:
          
     def initialize(*args)
       @_text = args[0].is_a?(String) ? args[0] : ''
@@ -281,6 +285,9 @@ class RuTils::Gilenson::Formatter
       # фуф, закончили.
       process_span_instead_of_nobr(text) if @settings["de_nobr"]
 
+      # заменяем entities на истинные символы
+      process_raw_output(text) if @settings["raw_output"]
+      
       text.strip
     end
 
@@ -372,11 +379,16 @@ class RuTils::Gilenson::Formatter
         # Специальный случай - :all=>true|false
         if args_hash.has_key?(:all)
           if args_hash[:all]
-            @settings.each_pair {|k, v| @settings[k] = true}
+            @settings.each_pair {|k, v| @settings[k] = true unless PROTECTED_SETTINGS.include?(k.to_sym)}
           else
-            @settings.each_pair {|k, v| @settings[k] = false}
+            @settings.each_pair {|k, v| @settings[k] = false unless PROTECTED_SETTINGS.include?(k.to_sym)}
           end
-        else          
+        else     
+          
+          # Кинуть ошибку если настройка нам неизвестна
+          unknown_settings = args_hash.keys.collect{|k|k.to_s} - @settings.keys.collect { |k| k.to_s } 
+          raise RuTils::Gilenson::UnknownSetting, unknown_settings unless unknown_settings.empty?
+               
           args_hash.each_pair do | key, value |
             @settings[key.to_s] = (value ? true : false)
           end
@@ -532,7 +544,26 @@ class RuTils::Gilenson::Formatter
       def process_plusmin(text)
         text.gsub!(/[^+]\+\-/ui, self.glyph[:plusmn]) 
       end
+
+      # Подменяет все юникодные entities в тексте на истинные UTF-8-символы
+      def process_raw_output(text)
+        # Все глифы
+        @glyph.values.each do | entity | 
+          next unless entity =~ /^&#(\d+);/
+          
+          text.gsub!(/#{entity}/, entity_to_raw_utf8(entity))
+        end
+      end
+      
+      # Конвертирует юникодные entities в UTF-8-codepoints
+      def entity_to_raw_utf8(entity)
+        entity =~ /^&#(\d+);/
+        $1 ? [$1.to_i].pack("U") : entity 
+      end
 end #end Gilenson
+
+class RuTils::Gilenson::UnknownSetting < RuntimeError
+end
 
 module RuTils::Gilenson::StringFormatting #:nodoc:
   # Форматирует строку с помощью GilensonNew. Все дополнительные опции передаются форматтеру.

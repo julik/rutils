@@ -1,4 +1,5 @@
 CVS
+* Gilenson - добавлен :raw_output=>true для вывода обычных UTF-8 chars вместо entities (julik)
 * Смена структуры модулей Gilenson (julik)
     RuTils::Gilenson::Obsolete - старый класс форматтера
     RuTils::Gilenson::Formatter - новый класс форматтера

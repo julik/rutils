@@ -135,6 +135,16 @@ class GilensonConfigurationTest < Test::Unit::TestCase
     @gilenson.configure!(:copypaste => true)
     assert_equal '&#160; &#171; &#187; &#167; &#169; &#174; &#176; &#177; &#182; &#183; &#8211; &#8212; &#8216; &#8217; &#8220; &#8221; &#8222; &#8226; &#8230; &#8470; &#8482; &#8722; &#8201; &#8243;', @gilenson.process('  « » § © ® ° ± ¶ · – — ‘ ’ “ ” „ • … № ™ −   ″')
   end
+  
+  def test_raise_on_unknown_setting
+    assert_raise(RuTils::Gilenson::UnknownSetting) { @gilenson.configure!(:bararara => true) }
+  end
+  
+  def test_raw_utf8_output
+    @gilenson.configure!(:raw_output=>true)
+    assert_equal 'Это просто «кавычки»',
+      @gilenson.process('Это просто "кавычки"')    
+  end
 
 end
 
