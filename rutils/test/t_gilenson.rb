@@ -150,6 +150,66 @@ class GilensonConfigurationTest < Test::Unit::TestCase
     assert @gilenson.configure(:raw_output=>true)    
     assert @gilenson.configure!(:raw_output=>true)    
   end
+
+  def test_skip_code
+    @gilenson.configure!(:all => true)
+    
+    @gilenson.configure!(:skip_code => true)
+    
+    assert_equal "<code>Скип -- скип!</code>",
+      @gilenson.process("<code>Скип -- скип!</code>")
+    
+    assert_equal '<code attr="test -- attr">Скип -- скип!</code>',
+      @gilenson.process('<code attr="test -- attr">Скип -- скип!</code>')
+    
+    assert_equal "<tt>Скип -- скип!</tt> test &#8212; test <tt attr='test -- attr'>Скип -- скип!</tt>",
+      @gilenson.process("<tt>Скип -- скип!</tt> test -- test <tt attr='test -- attr'>Скип -- скип!</tt>")
+    
+    assert_equal "<TT>Скип -- скип!</TT><TT>Скип -- скип!</TT> &#8212; <CoDe attr='test -- attr'>Скип -- скип!</cOdE>",
+      @gilenson.process("<TT>Скип -- скип!</TT><TT>Скип -- скип!</TT> -- <CoDe attr='test -- attr'>Скип -- скип!</cOdE>")
+    
+    assert_equal "<ttt>Скип &#8212; скип!</tt>",
+      @gilenson.process("<ttt>Скип -- скип!</tt>")
+    
+    assert_equal "<tt>Скип &#8212; скип!</ttt>",
+      @gilenson.process("<tt>Скип -- скип!</ttt>")
+    
+    assert_equal "Ах, &#8212; <code>var x = j // -- тест</code>",
+      @gilenson.process("Ах, -- <code>var x = j // -- тест</code>")
+    
+    assert_equal "<![CDATA[ CDATA -- ]]> &#8212; CDATA",
+      @gilenson.process("<![CDATA[ CDATA -- ]]> -- CDATA")
+    
+    assert_equal "<![CDATA[ CDATA -- >] -- CDATA ]]> &#8212; <![CDATA[ CDATA ]> -- CDATA ]]>",
+      @gilenson.process("<![CDATA[ CDATA -- >] -- CDATA ]]> -- <![CDATA[ CDATA ]> -- CDATA ]]>")
+    
+    assert_equal "<![CDATA[ CDATA -- >] -- CDATA ]]> &#8212; <![CDATA[ CDATA ]> -- CDATA ]]>  &#8212; CDATA ]]>",
+      @gilenson.process("<![CDATA[ CDATA -- >] -- CDATA ]]> -- <![CDATA[ CDATA ]> -- CDATA ]]>  -- CDATA ]]>")
+    
+    @gilenson.configure!(:skip_code => false)
+    
+    assert_equal "Ах, &#8212; <code>var x&#160;= j&#160;// &#8212; тест</code>",
+      @gilenson.process("Ах, -- <code>var x = j // -- тест</code>")
+  end
+
+  def test_skip_attr
+    @gilenson.configure!(:skip_attr => true)
+    
+    assert_equal "<a href='#' title='test -- me'>just &#8212; test</a>",
+      @gilenson.process("<a href='#' title='test -- me'>just -- test</a>")
+    
+    assert_equal 'мы&#160;напишем title="test &#8212; me" и&#160;alt=\'test &#8212; me\', вот',
+      @gilenson.process('мы напишем title="test -- me" и alt=\'test -- me\', вот')
+    
+    @gilenson.configure!(:skip_attr => false)
+    
+    assert_equal "<a href='#' title='test &#8212; me'>just &#8212; test</a>",
+      @gilenson.process("<a href='#' title='test -- me'>just -- test</a>")
+    
+    assert_equal 'мы&#160;напишем title="test &#8212; me" и&#160;alt=\'test &#8212; me\', вот',
+      @gilenson.process('мы напишем title="test -- me" и alt=\'test -- me\', вот')
+  end
+
 end
 
 # class TypograficaTrakoEntries < Test::Unit::TestCase

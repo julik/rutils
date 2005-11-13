@@ -78,6 +78,8 @@ end
 #   "html" - запрет тагов html
 #   "de_nobr" - при true все <nobr/> заменяются на <span class="nobr"/>
 #   "raw_output" - (по умолчанию false) - при true вместо entities выводятся UTF-символы
+#   "skip_attr" - (по умолчанию false) - при true не отрабатывать типографику в атрибутах тегов
+#   "skip_code" - (по умолчанию true) - при true не отрабатывать типографику внутри <code/>, <tt/>, CDATA
   
 class RuTils::Gilenson::Formatter
     attr_accessor :glyph
@@ -102,6 +104,8 @@ class RuTils::Gilenson::Formatter
        "html"      => false,   # запрет тагов html
        "de_nobr"   => false,   # при true все <nobr/> заменяются на <span class="nobr"/>
        "raw_output" => false,  # выводить UTF-8 вместо entities
+       "skip_attr" => false,   # при true не отрабатывать типографику в атрибутах тегов
+       "skip_code" => true,    # при true не отрабатывать типографику внутри <code/>, <tt/>, CDATA
      } #:nodoc:
      
      # Глифы, использующиеся в подстановках по-умолчанию
@@ -420,14 +424,20 @@ class RuTils::Gilenson::Formatter
         #                                  ")?"+
         #                            ")*\/?>|\xA2\xA2[^\n]*?==/i;
 
-        re =  /(<\/?[a-z0-9]+(\s+([a-z]+(=((\'[^\']*\')|(\"[^\"]*\")|([0-9@\-_a-z:\/?&=\.]+)))?)?)*\/?>)/ui
+        re_skipcode = '((<(code|tt)[ >](.*?)<\/(code|tt)>)|(<!\[CDATA\[(.*?)\]\]>))|' if @settings['skip_code']
+        re =  /(#{re_skipcode}<\/?[a-z0-9]+(\s+([a-z]+(=((\'[^\']*\')|(\"[^\"]*\")|([0-9@\-_a-z:\/?&=\.]+)))?)?)*\/?>)/uim
         tags = text.scan(re).map{ |tag| tag[0] } # первая группа!
         text.gsub!(re, @mark_tag) #маркер тега, мы используем Invalid UTF-sequence для него
         return tags
       end
       
       def reinsert_fragments(text, fragments)
-        fragments.each { |fragment| text.sub!(@mark_tag, fragment) }
+        fragments.each { |fragment|
+          fragment.gsub!(/ (title|alt)=((?:(\')([^\']*)(\'))|(?:(\")([^\"]*)(\")))/uim) {
+            " #{$1}=#{$3}" + self.process($4.to_s) + "#{$5}#{$6}" + self.process($7.to_s) + "#{$8}"
+          } if !@settings['skip_attr']
+          text.sub!(@mark_tag, fragment)
+        }
       end
 
       ### Имплементации фильтров
