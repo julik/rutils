@@ -78,7 +78,7 @@ end
 #   "html" - запрет тагов html
 #   "de_nobr" - при true все <nobr/> заменяются на <span class="nobr"/>
 #   "raw_output" - (по умолчанию false) - при true вместо entities выводятся UTF-символы
-#   "skip_attr" - (по умолчанию false) - при true не отрабатывать типографику в атрибутах тегов
+#   "skip_attr" - (по умолчанию false) - при true не отрабатывать типографику в атрибутах тегов (title, alt)
 #   "skip_code" - (по умолчанию true) - при true не отрабатывать типографику внутри <code/>, <tt/>, CDATA
   
 class RuTils::Gilenson::Formatter
