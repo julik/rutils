@@ -1,5 +1,5 @@
 if defined?(Object::ActionView)
-  module Object::ActionView  #:nodoc:
+  module Object::ActionView
     module Helpers
       module DateHelper
 
@@ -11,11 +11,6 @@ if defined?(Object::ActionView)
         alias :stock_distance_of_time_in_words :distance_of_time_in_words
         def distance_of_time_in_words(*args)
           RuTils::overrides_enabled? ? RuTils::DateTime::distance_of_time_in_words(*args) : stock_distance_of_time_in_words
-        end
-
-        # Like distance_of_time_in_words, but where <tt>to_time</tt> is fixed to <tt>Time.now</tt>.
-        def time_ago_in_words(from_time, include_seconds = false)
-          distance_of_time_in_words(from_time, Time.now, include_seconds)
         end
 
         # Заменяет ActionView::Helpers::DateHelper::select_month меню выбора русской даты.

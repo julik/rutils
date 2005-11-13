@@ -1,14 +1,20 @@
 CVS
+* Смена структуры модулей Gilenson (julik)
+    RuTils::Gilenson::Obsolete - старый класс форматтера
+    RuTils::Gilenson::Formatter - новый класс форматтера
+    При вызове RuTils::Gilenson.new возвращается новый Formatter
+* Gilenson - документация (julik)
+* Gilenson - основные группы настроек "по-умолчанию" выносятся в константы (julik)
 * Gilenson - фильтры выносятся в методы типа process_фильтр и их можно применять по отдельности через Formatter#apply (julik)
 * Gilenson - добавлены &para; и &numero; (последний - не стандарт, но нужен для преобразований символа "номер") (mash)
-* Gilenson - добавлен хэш @glyph_copy_paste для вычистки текста на входе от некоторых entities,
-  попадающих туда через copy&paste (опционально, через @settings :copypaste => true) (mash)
+* Gilenson - добавлен хэш @glyph_copy_paste для подмены юникодных типографских символов на entities
+  (опционально, через @settings :copypaste => true) (mash)
 * Gilenson - добавлена "склейка" инициалов полукруглой шпацией (thin space)
-* Gilenson - добавлен Formatter#process чтобы обрабатывать строки поточно, и сделан удобный доступ к настрйокам
+* Gilenson - добавлен Formatter#process чтобы обрабатывать строки поточно, и сделан удобный доступ к настройкам
   через "хвост" метода (julik)
 * Во всех внутренних строковых подстановках Gilenson используются указатели на глифы с двоеточием в начале (julik)
-* Gilenson - введен DOUBLE PRIME (&#8243;) для знаков дюйма - 
-    http://en.wikipedia.org/wiki/Prime_%28mark%29(julik)
+* Gilenson - введен DOUBLE PRIME (&#8243;) для знаков дюйма (julik) 
+    http://en.wikipedia.org/wiki/Prime_%28mark%29
     Согласно изощренным правилам скошенный prime правильней чем "
 * Новый Гиленсон lib/gilenson/gilenson.rb (mash)
     RuTils::GilensonNew::Typografica.new('какой-то текст')

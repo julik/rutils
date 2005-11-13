@@ -5,13 +5,16 @@ require 'jcode' # вот от этого надо бы избавиться - с
 # Главный контейнер модуля
 module RuTils
   # Папка, куда установлен модуль RuTils. Нужно чтобы автоматически копировать RuTils в другие приложения.
-  INSTALLATION_DIRECTORY = File.expand_path(File.dirname(__FILE__) + '/../')
-  MAJOR = 0
-  MINOR = 1
-  TINY = 3
+  INSTALLATION_DIRECTORY = File.expand_path(File.dirname(__FILE__) + '/../') #:nodoc:
+  MAJOR = 0 #:nodoc:
+  MINOR = 1 #:nodoc:
+  TINY = 3 #:nodoc:
 
   # Версия RuTils
   VERSION = [MAJOR, MINOR ,TINY].join('.')
+  
+  # Стандартный маркер для подстановок
+  SUBSTITUTION_MARKER = "\xFF\xFF\xFF\xFF" #:nodoc:
   
   def self.load_component(name) #:nodoc:
     require RuTils::INSTALLATION_DIRECTORY + "/lib/#{name}/#{name}"

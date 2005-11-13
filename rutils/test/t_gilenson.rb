@@ -92,7 +92,7 @@ end
 
 class GilensonConfigurationTest < Test::Unit::TestCase
   def setup
-    @gilenson = RuTils::GilensonNew::Formatter.new
+    @gilenson = RuTils::Gilenson::Formatter.new
   end
   
   def test_settings_as_tail_arguments

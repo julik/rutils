@@ -32,7 +32,7 @@ module RuTils
        end
     end
     
-    @@ignored = "\xFF\xFF\xFF\xFF"# %% == Literal "%" character 
+    @@ignored = "\xFF\xFF\xFF\xFF" # %% == Literal "%" character 
     
     def self.ru_strftime(date='%d.%m.%Y', time='')
       date.gsub!(/%%/, @@ignored)
