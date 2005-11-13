@@ -1,4 +1,5 @@
 CVS
+* Gilenson - добавлены :skip_attr=>false и :skip_code=>true для управления обработкой типографики атрибутов тегов title, alt и содержимого <code/>, <tt/>, <![CDATA[...]]>(mash)
 * Gilenson - добавлен :raw_output=>true для вывода обычных UTF-8 chars вместо entities (julik)
 * Смена структуры модулей Gilenson (julik)
     RuTils::Gilenson::Obsolete - старый класс форматтера
