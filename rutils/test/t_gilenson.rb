@@ -142,8 +142,8 @@ class GilensonConfigurationTest < Test::Unit::TestCase
   
   def test_raw_utf8_output
     @gilenson.configure!(:raw_output=>true)
-    assert_equal 'Это просто «кавычки»',
-      @gilenson.process('Это просто "кавычки"')    
+    assert_equal '&#38442; Это просто «кавычки»',
+      @gilenson.process('&#38442; Это просто "кавычки"')    
   end
 
 end
