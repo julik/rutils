@@ -146,8 +146,9 @@ class GilensonConfigurationTest < Test::Unit::TestCase
       @gilenson.process('&#38442; Это просто "кавычки"')    
   end
   
-  def test_configure
+  def test_configure_alternate_names
     assert @gilenson.configure(:raw_output=>true)    
+    assert @gilenson.configure!(:raw_output=>true)    
   end
 end
 
