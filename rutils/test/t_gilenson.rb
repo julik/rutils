@@ -211,7 +211,6 @@ class GilensonConfigurationTest < Test::Unit::TestCase
   end
 
   def test_escape_html
-    
     assert_equal "Используйте &#38; вместо &#38;amp;",
       @gilenson.process("Используйте &#38; вместо &#38;amp;")
     
