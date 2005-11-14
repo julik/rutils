@@ -240,7 +240,7 @@ class RuTils::Gilenson::Formatter
     def to_html()
       return '' unless @_text
       
-      text = @_text
+      text = @_text.strip
 
       # -4. запрет тагов html
       process_escape_html(text) unless @settings["html"]
