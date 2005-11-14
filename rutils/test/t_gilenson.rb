@@ -58,7 +58,7 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal 'скажи, мне, ведь не&#160;даром! Москва, клеймённая пожаром. Французу отдана', 'скажи ,мне, ведь не даром !Москва, клеймённая пожаром .Французу отдана'.gilensize
     assert_equal 'so&#160;be it, my&#160;liege. Tiny dwellers roam thru midnight! Hell raised, the&#160;Balrog is&#160;hiding in&#160;your backyard!', 'so be it ,my liege .Tiny dwellers roam thru midnight !Hell raised, the Balrog is hiding in your backyard!'.gilensize
     assert_equal 'при&#160;установке командой строки в&#160;?page=help <nobr>бла-бла-бла-бла</nobr>', 'при установке командой строки в ?page=help бла-бла-бла-бла'.gilensize
-    assert_equal 'как&#160;интересно будет переноситься со&#160;строки на&#160;строку <nobr>что-то</nobr> разделённое дефисом, ведь дефис тот&#160;тоже ведь из&#160;наших. <nobr>Какие-то</nobr> браузеры думают, что&#160;следует переносить и&#160;его...', 'как интересно будет переноситься со строки на строку что-то разделённое дефисом, ведь дефис тот тоже ведь из наших. Какие-то браузеры думают, что следует переносить и его...'.gilensize
+    assert_equal 'как&#160;интересно будет переноситься со&#160;строки на&#160;строку <nobr>что-то</nobr> разделённое дефисом, ведь дефис тот&#160;тоже ведь из&#160;наших. <nobr>Какие-то</nobr> браузеры думают, что&#160;следует переносить и&#160;его&#8230;', 'как интересно будет переноситься со строки на строку что-то разделённое дефисом, ведь дефис тот тоже ведь из наших. Какие-то браузеры думают, что следует переносить и его...'.gilensize
   end
 
   def test_quotes  
@@ -71,7 +71,7 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal '&#8220;double &#8220;quotes&#8221;', '"double "quotes"'.gilensize
     assert_equal '&#171;дважды вложенные &#171;кавычки&#187;', '"дважды вложенные "кавычки"'.gilensize
     assert_equal '&#171;01/02/03&#187;, дискеты в&#160;5.25&#8243;', '"01/02/03", дискеты в 5.25"'.gilensize
-    assert_equal 'после троеточия правая кавычка &#8212; &#171;Вот...&#187;', 'после троеточия правая кавычка -- "Вот..."'.gilensize
+    assert_equal 'после троеточия правая кавычка &#8212; &#171;Вот&#8230;&#187;', 'после троеточия правая кавычка -- "Вот..."'.gilensize
     assert_equal 'setlocale(LC_ALL, &#8220;ru_RU.UTF8&#8221;);', 'setlocale(LC_ALL, "ru_RU.UTF8");'.gilensize
     assert_equal '&#8220;read, write, delete&#8221; с&#160;флагом &#8220;only_mine&#8221;', '"read, write, delete" с флагом "only_mine"'.gilensize
     assert_equal '&#171;Двоеточие:&#187;, &#171;такую умную тему должен писать чувак умеющий скрипты скриптить.&#187;', '"Двоеточие:", "такую умную тему должен писать чувак умеющий скрипты скриптить."'.gilensize
@@ -100,8 +100,8 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal  "сказал&#160;я", "сказал я".gilensize
     assert_equal  "сказал&#160;я!", "сказал я!".gilensize
     assert_equal  "сказал&#160;я?", "сказал я?".gilensize
-    assert_equal  "сказал&#160;я...", "сказал я...".gilensize
-    assert_equal  "сказал&#160;он...", "сказал он...".gilensize
+    assert_equal  "сказал&#160;я&#8230;", "сказал я...".gilensize
+    assert_equal  "сказал&#160;он&#8230;", "сказал он...".gilensize
     assert_equal  "сказали&#160;мы?..", "сказали мы?..".gilensize
     assert_equal  "сказали&#160;мы?!", "сказали мы?!".gilensize
     assert_equal  "сказали мы?!!!", "сказали мы?!!!".gilensize

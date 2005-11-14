@@ -1,4 +1,5 @@
 CVS
+* Gilenson - замена троеточий на ellipsis (julik)
 * Gilenson - теперь пробел, идущий перед одной или двумя буквами на конце слова
   меняется на glyph[:nbsp]. Сделано через регексп-костыль в #process_wordglue:
   text.gsub!(/(\s+)([a-zа-яА-Я]{1,2}[\)\]\!\?,\.;]{0,3}\s$)/ui, self.glyph[:nbsp]+'\2') (mash)

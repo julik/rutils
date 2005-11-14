@@ -149,7 +149,7 @@ class RuTils::Gilenson::Formatter
        :inch       => "&#8243;",   # inch/second sign (u0x2033) (не путать с кавычками!)
        :thinsp     => "&#8201;",   # полукруглая шпация (тонкий пробел)
        :nob_open   => '<nobr>',    # открывающий блок без переноса слов
-       :nob_close   => '</nobr>',    # открывающий блок без переноса слов
+       :nob_close  => '</nobr>',    # открывающий блок без переноса слов
      } #:nodoc:
      
      # Нормальные "типографские" символы в UTF-виде. Браузерами обрабатываются плохонько, поэтому
@@ -300,6 +300,9 @@ class RuTils::Gilenson::Formatter
       # 8a. Инициалы
       process_initials(text) if @settings['initials']
 
+      # 8b. Троеточия
+      process_ellipsises(text) if @settings["wordglue"]
+      
       # БЕСКОНЕЧНОСТЬ. Вставляем таги обратно.
       reinsert_fragments(text, tags) if @skip_tags
 
@@ -503,6 +506,10 @@ class RuTils::Gilenson::Formatter
         text.gsub!( /\(tm\)|\(тм\)/ui, self.glyph[:trade]) if @settings["(tm)"]
         # 4c. (p)   
         text.gsub!( /\(p\)/ui, self.glyph[:sect]) if @settings["(p)"]
+      end
+      
+      def process_ellipsises(text)
+        text.gsub!( '...', self.glyph[:hellip])
       end
       
       def process_laquo(text)
