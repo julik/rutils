@@ -195,45 +195,74 @@ class GilensonConfigurationTest < Test::Unit::TestCase
   def test_skip_attr
     @gilenson.configure!(:skip_attr => true)
     
-    assert_equal "<a href='#' title='test -- me'>just &#8212; test</a>",
-      @gilenson.process("<a href='#' title='test -- me'>just -- test</a>")
+    assert_equal "<a href='#' attr='смотри -- смотри' title='test -- me' alt=\"смотри -- смотри\">just &#8212; test</a>",
+      @gilenson.process("<a href='#' attr='смотри -- смотри' title='test -- me' alt=\"смотри -- смотри\">just -- test</a>")
     
     assert_equal 'мы&#160;напишем title="test &#8212; me" и&#160;alt=\'test &#8212; me\', вот',
       @gilenson.process('мы напишем title="test -- me" и alt=\'test -- me\', вот')
     
     @gilenson.configure!(:skip_attr => false)
     
-    assert_equal "<a href='#' title='test &#8212; me'>just &#8212; test</a>",
-      @gilenson.process("<a href='#' title='test -- me'>just -- test</a>")
+    assert_equal "<a href='#' attr='смотри -- смотри' title='test &#8212; me' alt=\"смотри &#8212; смотри\">just &#8212; test</a>",
+      @gilenson.process("<a href='#' attr='смотри -- смотри' title='test -- me' alt=\"смотри -- смотри\">just -- test</a>")
     
     assert_equal 'мы&#160;напишем title="test &#8212; me" и&#160;alt=\'test &#8212; me\', вот',
       @gilenson.process('мы напишем title="test -- me" и alt=\'test -- me\', вот')
   end
 
-  def test_apmersand_in_tags
-    #~ @gilenson.configure!(:raw_output=>true)
+  def test_escape_html
     
-    #~ assert_equal "<a href='test?test1=1&test2=2'>test</a>",
-      #~ @gilenson.process("<a href='test?test1=1&test2=2'>test</a>")
+    assert_equal "Используйте &#38; вместо &#38;amp;",
+      @gilenson.process("Используйте &#38; вместо &#38;amp;")
     
-    #~ @gilenson.configure!(:raw_output=>false)
+    @gilenson.configure!(:html => false)
     
-    #~ assert_equal "<a href='test?test3=3&#38;test4=4'>test</a>",
-      #~ @gilenson.process("<a href='test?test3=3&#38;test4=4'>test</a>")
+    assert_equal "&#38;#38; &#8212; &#38;amp; &#60;code/&#62; &#60;some_tag&#62;таги не&#160;пройдут!&#60;/some_tag&#62;. Ну&#160;и?..",
+      @gilenson.process("&#38; -- &amp; <code/> <some_tag>таги не пройдут!</some_tag>. Ну и?..")
     
-    #~ assert_equal "<a href='test?test5=5&#038;test6=6'>test</a>",
-      #~ @gilenson.process("<a href='test?test5=5&#038;test6=6'>test</a>")
+    assert_equal "Используйте &#38;#38; вместо &#38;amp;",
+      @gilenson.process("Используйте &#38; вместо &amp;")
     
-    #~ assert_equal "<a href='test?test7=7&#38;test8=8'>test&#38;</a>",
-      #~ @gilenson.process("<a href='test?test7=7&amp;test8=8'>test&amp;</a>")
+  end
+
+  def test_ampersand_in_urls
     
-    #~ @gilenson.configure!(:html=>true)
+    @gilenson.configure!(:html=>false)
     
-    #~ assert_equal "<a href='test?test7=7&#38;&#38;test8=8'>test&#38;&#38;</a>",
-      #~ @gilenson.process("<a href='test?test7=7&#38;test8=8'>test&#38;</a>")
+    assert_equal "&#60;a href='test?test5=5&#38;#38;test6=6'&#62;test&#38;#38;&#60;/a&#62;",
+      @gilenson.process("<a href='test?test5=5&#38;test6=6'>test&#38;</a>")
     
-    #~ assert_equal "<a href='test?test7=7&#38;&#38;test8=8'>test&#38;&#38;</a>",
-      #~ @gilenson.process("<a href='test?test7=7&amp;test8=8'>test&amp;</a>")
+    @gilenson.configure!(:html=>true)
+    
+    assert_equal "<a href='test?test7=7&#38;test8=8'>test&#38;</a>",
+      @gilenson.process("<a href='test?test7=7&#38;test8=8'>test&#38;</a>")
+    
+    assert_equal "<a href='test?test9=9&#038;test10=10'>test&#038;</a>",
+      @gilenson.process("<a href='test?test9=9&#038;test10=10'>test&#038;</a>")
+    
+    assert_equal "<a href='test?test11=11&#38;test12=12'>test&</a>",
+      @gilenson.process("<a href='test?test11=11&test12=12'>test&</a>")
+    
+    assert_equal "<a href='test?test12=12&#38;'>test</a>",
+      @gilenson.process("<a href='test?test12=12&amp;'>test</a>")
+    
+    assert_equal "<a href='test?x=1&#38;y=2' title='&#38;-amp, &#8230;-hellip'>test</a>",
+      @gilenson.process("<a href='test?x=1&y=2' title='&#38;-amp, &#8230;-hellip'>test</a>")
+    
+    assert_equal "<a href='test?x=3&#38;#039;y=4'>test</a>",
+      @gilenson.process("<a href='test?x=3&#039;y=4'>test</a>")
+    
+    
+    @gilenson.glyph[:amp] = '&amp;'
+    
+    assert_equal "<a href='test?test11=11&amp;test12=12'>test&</a>",
+      @gilenson.process("<a href='test?test11=11&test12=12'>test&</a>")
+    
+    assert_equal "<a href='test?test13=13&amp;test14=14'>test&</a>",
+      @gilenson.process("<a href='test?test13=13&amp;test14=14'>test&</a>")
+    
+    assert_equal "<a href='test?test15=15&amp;amppp;test16=16'>test&</a>",
+      @gilenson.process("<a href='test?test15=15&amppp;test16=16'>test&</a>")
     
   end
 
