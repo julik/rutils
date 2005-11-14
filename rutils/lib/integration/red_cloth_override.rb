@@ -12,7 +12,7 @@ if defined?(Object::RedCloth)
     # Вместо того чтобы влезать в таблицы мы просто заменим Textile Glyphs - и все будут рады.  
     alias_method  :stock_pgl, :pgl
     def pgl(text) #:nodoc:
-      RuTils::overrides_enabled? ?  text.replace(RuTils::Gilenson::Obsolete.new(text).to_html) :  stock_pgl(text)
+      RuTils::overrides_enabled? ?  text.replace(RuTils::Gilenson::Formatter.new(text).to_html) :  stock_pgl(text)
     end
   end 
 end

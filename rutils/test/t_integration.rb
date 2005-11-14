@@ -28,7 +28,7 @@ class TextileIntegrationTest < Test::Unit::TestCase
   def test_integration_textile
     RuTils::overrides = true
     assert RuTils.overrides_enabled?
-    assert_equal "<p>И&nbsp;вот &laquo;они пошли туда&raquo;, и&nbsp;шли шли&nbsp;шли</p>", 
+    assert_equal "<p>И&#160;вот &#171;они пошли туда&#187;, и&#160;шли шли&#160;шли</p>", 
       RedCloth.new('И вот "они пошли туда", и шли шли шли').to_html
 
     RuTils::overrides = false
@@ -44,7 +44,7 @@ class MarkdownIntegrationTest < Test::Unit::TestCase
   def test_integration_markdown
     RuTils::overrides = true
     assert RuTils.overrides_enabled?
-    assert_equal "<p>И вот&nbsp;&laquo;они пошли туда&raquo;, и&nbsp;шли шли&nbsp;шли</p>", 
+    assert_equal "<p>И вот&#160;&#171;они пошли туда&#187;, и&#160;шли шли&#160;шли</p>", 
       BlueCloth.new('И вот "они пошли туда", и шли шли шли').to_html
       
     RuTils::overrides = false

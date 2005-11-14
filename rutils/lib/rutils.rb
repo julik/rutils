@@ -27,8 +27,7 @@ end
 
 
 RuTils::load_component :pluralizer #Выбор числительного и сумма прописью
-require File.dirname(__FILE__) + '/gilenson/gilenson_port'
-RuTils::load_component :gilenson # новый Гиленсон
+RuTils::load_component :gilenson # Гиленсон
 RuTils::load_component :datetime # Дата и время без локалей
 RuTils::load_component :transliteration # Транслит
 RuTils::load_component :integration # Интеграция с rails, textile и тд

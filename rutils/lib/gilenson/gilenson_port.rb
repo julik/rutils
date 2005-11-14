@@ -1,20 +1,8 @@
 module RuTils
   module Gilenson
-    def new(*args) # :nodoc:
-      RuTils::Gilenson::Obsolete.new(*args)
-    end
   end
 end
 
-module RuTils::Gilenson::ObsoleteStringFormatting
-  # Форматирует строку с помощью Gilenson. Всe дополнительные опции передаются форматтеру.
-  def gilensize(*args)
-    opts = args.last.is_a?(Hash) ? args.last : {}
-    RuTils::Gilenson::Obsolete.new(self, *opts).to_html
-  end
-  alias :old_gilensize :gilensize
-end
-  
 # Это - прямой порт Тыпографицы от pixelapes.
 # Настройки можно регулировать через методы, т.е.
 #
@@ -331,5 +319,3 @@ class RuTils::Gilenson::Obsolete
   end
 
 end
-
-Object::String.send(:include, RuTils::Gilenson::ObsoleteStringFormatting)

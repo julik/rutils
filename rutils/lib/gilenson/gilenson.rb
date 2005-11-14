@@ -5,6 +5,13 @@ module RuTils
     def self.new(*args) #:nodoc:
       RuTils::Gilenson::Formatter.new(*args)
     end
+    
+    # Загружаем "старый" Гиленсон если он будет нужен
+    def self.const_missing(const) #:nodoc:
+      super(const) unless const == :Obsolete
+      require File.dirname(__FILE__) + '/gilenson_port'
+      return RuTils::Gilenson::Obsolete
+    end
   end
 end
 
@@ -13,9 +20,11 @@ end
 # Посвящается П.Г.Гиленсону[http://www.rudtp.ru/lib.php?book=172], благодаря которому русские правила тех.
 # редактуры еще как минимум 20 лет останутся столь-же старомодными и строгими.
 #
+# Gilenson расставит в тексте "умные" правильные кавычки (русские - для кириллицы, английские - для латиницы),
+# заменит "хитрые" пунктуационные символы на entities и отформатирует знаки типа (c), (tm), телефоны и адреса.
+#
 # Gilenson базируется на коде Typografica[http://pixel-apes.com/typografica] от PixelApes,
-# который был приведен к положенному в Ruby стандарту
-# и реафкторен. Основные отличия Gilenson от Typografica на PHP:
+# который был приведен к положенному в Ruby стандарту. Основные отличия Gilenson от Typografica на PHP:
 #   * работа только и полностью в UTF-8 (включая entities, применимые в XML)
 #   * поддержка "raw"-вывода (символов вместо entities) - текст выводимый GIlenson можно верстать на бумаге
 #
@@ -590,10 +599,16 @@ class RuTils::Gilenson::UnknownSetting < RuntimeError
 end
 
 module RuTils::Gilenson::StringFormatting #:nodoc:
-  # Форматирует строку с помощью GilensonNew. Все дополнительные опции передаются форматтеру.
-  def n_gilensize(*args)
+  # Форматирует строку с помощью Gilenson::Formatter. Все дополнительные опции передаются форматтеру.
+  def gilensize(*args)
     opts = args.last.is_a?(Hash) ? args.last : {}
     RuTils::Gilenson::Formatter.new(self, opts).to_html
+  end
+  
+  # Форматирует строку с помощью Gilenson::Obsolete. Всe дополнительные опции передаются форматтеру.
+  def o_gilensize(*args)
+    opts = args.last.is_a?(Hash) ? args.last : {}
+    RuTils::Gilenson::Obsolete.new(self, *opts).to_html
   end
 end
 
