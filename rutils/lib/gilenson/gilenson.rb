@@ -511,11 +511,11 @@ class RuTils::Gilenson::Formatter
         # nb: wacko only regexp follows:
         # text.gsub!( /(^|\s|#{@mark_tag}|>|\()\"((#{#{@mark_tag}|\/#{self.glyph[:nbsp]}|\/|\!)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, '\1'+self.glyph[:laquo]+'\2')
         _text = '""';
-        while (_text != text) do
+        until _text == text do
           _text = text;
-          text.gsub!( /(#{self.glyph[:laquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](#{@mark_tag})*)\"/sui, '\1'+self.glyph[:raquo])
+          text.gsub!( /(#{self.glyph[:laquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/\?\!](#{@mark_tag})*)\"/sui, '\1'+self.glyph[:raquo])
           # nb: wacko only regexps follows:
-          # text.gsub!( /(#{self.glyph[:laquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](#{@mark_tag})*\?(#{#{@mark_tag})*)\"/sui, '\1'+self.glyph[:raquo])
+          #text.gsub!( /(#{self.glyph[:laquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](#{@mark_tag})*\?(#{#{@mark_tag})*)\"/sui, '\1'+self.glyph[:raquo])
           # text.gsub!( /(#{self.glyph[:raquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](#{@mark_tag}|\/|\!)*)\"/sui, '\1'+self.glyph[:raquo])
         end
       end
@@ -602,7 +602,7 @@ module RuTils::Gilenson::StringFormatting #:nodoc:
   # Форматирует строку с помощью Gilenson::Formatter. Все дополнительные опции передаются форматтеру.
   def gilensize(*args)
     opts = args.last.is_a?(Hash) ? args.last : {}
-    RuTils::Gilenson::Formatter.new(self, opts).to_html
+    RuTils::Gilenson::Formatter.new(self, *opts).to_html
   end
   
   # Форматирует строку с помощью Gilenson::Obsolete. Всe дополнительные опции передаются форматтеру.
