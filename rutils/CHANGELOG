@@ -1,4 +1,6 @@
 CVS
+* Gilenson - дополнительная фича, не связанная с типографикой: замена амперсанда в следующих атрибутах тагов: href, src, data. Пример: <a href="?x=1&y=2&#38;z=3"> => <a href="?x=1&#38;y=2&#38;z=3"> (mash)
+* Gilenson - изменён метод process_ampersands (стало process_escape_html), меняющий &,<,> на глифы :amp,:lt,:gt при запрете HTML (@settings[:html]=>false). По-умолчанию Гиленсон разрешает использование HTML. В иерархии метод выставлен первым для корректной обработки случаев вида %{Используйте &#38; вместо &amp;}.gilensize(:html=>false) (mash)
 * Gilenson - добавлены :skip_attr=>false и :skip_code=>true для управления обработкой типографики атрибутов тегов title, alt и содержимого <code/>, <tt/>, <![CDATA[...]]> (mash)
 * Gilenson - добавлен :raw_output=>true для вывода обычных UTF-8 chars вместо entities (julik)
 * Смена структуры модулей Gilenson (julik)
@@ -10,7 +12,7 @@ CVS
 * Gilenson - фильтры выносятся в методы типа process_фильтр и их можно применять по отдельности через Formatter#apply (julik)
 * Gilenson - добавлены &para; и &numero; (последний - не стандарт, но нужен для преобразований символа "номер") (mash)
 * Gilenson - добавлен хэш @glyph_copy_paste для подмены юникодных типографских символов на entities
-  (опционально, через @settings :copypaste => true) (mash)
+  (опционально, через @settings[:copypaste]=>true) (mash)
 * Gilenson - добавлена "склейка" инициалов полукруглой шпацией (thin space)
 * Gilenson - добавлен Formatter#process чтобы обрабатывать строки поточно, и сделан удобный доступ к настройкам
   через "хвост" метода (julik)
