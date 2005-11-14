@@ -75,7 +75,7 @@ end
 #   "dashglue", "wordglue" - приклеивание предлогов и дефисов
 #   "spacing" - запятые и пробелы, перестановка
 #   "phones" - обработка телефонов
-#   "html" - запрет тагов html
+#   "html" - при false - запрет использования тагов html
 #   "de_nobr" - при true все <nobr/> заменяются на <span class="nobr"/>
 #   "raw_output" - (по умолчанию false) - при true вместо entities выводятся UTF-символы
 #   "skip_attr" - (по умолчанию false) - при true не отрабатывать типографику в атрибутах тегов (title, alt)
@@ -101,7 +101,7 @@ class RuTils::Gilenson::Formatter
        "dashglue"  => true, "wordglue" => true, # приклеивание предлогов и дефисов
        "spacing"   => true,    # запятые и пробелы, перестановка
        "phones"    => true,    # обработка телефонов
-       "html"      => false,   # запрет тагов html
+       "html"      => true,    # разрешение использования тагов html
        "de_nobr"   => false,   # при true все <nobr/> заменяются на <span class="nobr"/>
        "raw_output" => false,  # выводить UTF-8 вместо entities
        "skip_attr" => false,   # при true не отрабатывать типографику в атрибутах тегов
@@ -233,19 +233,19 @@ class RuTils::Gilenson::Formatter
       
       text = @_text
 
-      # Никогда (вы слышите?!) не пущать лабуду &#not_correct_number;
+      # -4. запрет тагов html
+      process_escape_html(text) unless @settings["html"]
+
+      # -3. Никогда (вы слышите?!) не пущать лабуду &#not_correct_number;
       FORBIDDEN_NUMERIC_ENTITIES.dup.each_pair do | key, rep |
         text.gsub!(/&##{key};/, glyph[rep])
       end
 
-      # Чистим copy&paste
+      # -2. Чистим copy&paste
       process_copy_paste_clearing(text) if @settings['copypaste']
 
-      # Замена &entity_name; на входе ('&nbsp;' => '&#160;' и т.д.)
+      # -1. Замена &entity_name; на входе ('&nbsp;' => '&#160;' и т.д.)
       process_html_entities(text)
-
-      # -1. запрет тагов html
-      process_ampersands(text) if @settings["html"]
 
       # 0. Вырезаем таги
       tags = lift_ignored_elements(text) if @skip_tags
@@ -433,8 +433,10 @@ class RuTils::Gilenson::Formatter
       
       def reinsert_fragments(text, fragments)
         fragments.each { |fragment|
-          #~ пока непонятно
-          #~ fragment.gsub!(/&(?!(#0*38|(amp);)/, self.glyph[:amp]) if (!@settings['raw_output'] || !@settings["html"])
+          fragment.gsub!(/ (href|src|data)=((?:(\')([^\']*)(\'))|(?:(\")([^\"]*)(\")))/uim) {
+            " #{$1}=" + $2.gsub(/&(?!(#0*38)|(amp);)/, self.glyph[:amp])
+          } # unless @settings['raw_output'] -- делать это надо всегда (mash)
+          
           fragment.gsub!(/ (title|alt)=((?:(\')([^\']*)(\'))|(?:(\")([^\"]*)(\")))/uim) {
             " #{$1}=#{$3}" + self.process($4.to_s) + "#{$5}#{$6}" + self.process($7.to_s) + "#{$8}"
           } unless @settings['skip_attr']
@@ -466,8 +468,10 @@ class RuTils::Gilenson::Formatter
         text.gsub!( /([a-zа-яА-Я0-9]+(\-[a-zа-яА-Я0-9]+)+)/ui, '<nobr>\1</nobr>')
       end
       
-      def process_ampersands(text)
+      def process_escape_html(text)
         text.gsub!(/&/, self.glyph[:amp])
+        text.gsub!(/</, self.glyph[:lt])
+        text.gsub!(/>/, self.glyph[:gt])
       end
       
       def process_span_instead_of_nobr(text)
