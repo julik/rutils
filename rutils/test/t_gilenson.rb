@@ -95,6 +95,20 @@ class GilensonOwnTest < Test::Unit::TestCase
   def test_initials
     assert_equal 'Это&#160;нам сказал П.И.&#8201;Петров', 'Это нам сказал П. И. Петров'.gilensize
   end
+
+  def test_nbsp_last_letters
+    assert_equal  "сказал&#160;я", "сказал я".gilensize
+    assert_equal  "сказал&#160;я!", "сказал я!".gilensize
+    assert_equal  "сказал&#160;я?", "сказал я?".gilensize
+    assert_equal  "сказал&#160;я...", "сказал я...".gilensize
+    assert_equal  "сказал&#160;он...", "сказал он...".gilensize
+    assert_equal  "сказали&#160;мы?..", "сказали мы?..".gilensize
+    assert_equal  "сказали&#160;мы?!", "сказали мы?!".gilensize
+    assert_equal  "сказали мы?!!!", "сказали мы?!!!".gilensize
+    assert_equal  "сказали нам", "сказали нам".gilensize
+    assert_equal  "(сказали&#160;им)", "(сказали им)".gilensize
+  end
+
 end
 
 

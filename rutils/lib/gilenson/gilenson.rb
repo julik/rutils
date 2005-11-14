@@ -552,7 +552,7 @@ class RuTils::Gilenson::Formatter
            text.gsub!( /(\s+)([a-zа-яА-Я]{3})(\s+)([^\\s$])/ui,   '\1\2'+self.glyph[:nbsp]+'\4')
         end
 
-        text.gsub!(/(\s+)([a-zа-яА-Я]{1,2}\s$)/ui, self.glyph[:nbsp]+'\2')
+        text.gsub!(/(\s+)([a-zа-яА-Я]{1,2}[\)\]\!\?,\.;]{0,3}\s$)/ui, self.glyph[:nbsp]+'\2')
 
         for i in @glueleft
            text.gsub!( /(\s)(#{i})(\s+)/sui, '\1\2' + self.glyph[:nbsp])
