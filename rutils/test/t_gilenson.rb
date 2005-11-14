@@ -87,7 +87,7 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal  "&#171;И это&#160;называется языком?&#187;, &#8212; таков был&#160;его вопрос", 
                       %q{ "И это называется языком?", -- таков был его вопрос }.gilensize
 
-    assert_equal  "&#171;Он &#8212; сволочь!&#187;, сказал я", 
+    assert_equal  "&#171;Он &#8212; сволочь!&#187;, сказал&#160;я", 
                       %q{ "Он -- сволочь!", сказал я }.gilensize
 
   end
@@ -211,7 +211,7 @@ class GilensonConfigurationTest < Test::Unit::TestCase
     
     @gilenson.configure!(:skip_attr => false)
     
-    assert_equal "<a href='#' attr='смотри -- смотри' title='test &#8212; me' alt=\"смотри &#8212; смотри\">just &#8212; test</a>",
+    assert_equal "<a href='#' attr='смотри -- смотри' title='test &#8212;&#160;me' alt=\"смотри &#8212; смотри\">just &#8212; test</a>",
       @gilenson.process("<a href='#' attr='смотри -- смотри' title='test -- me' alt=\"смотри -- смотри\">just -- test</a>")
     
     assert_equal 'мы&#160;напишем title="test &#8212; me" и&#160;alt=\'test &#8212; me\', вот',
