@@ -6,12 +6,12 @@ require 'jcode' # вот от этого надо бы избавиться - с
 module RuTils
   # Папка, куда установлен модуль RuTils. Нужно чтобы автоматически копировать RuTils в другие приложения.
   INSTALLATION_DIRECTORY = File.expand_path(File.dirname(__FILE__) + '/../') #:nodoc:
-  MAJOR = 0 #:nodoc:
-  MINOR = 1 #:nodoc:
-  TINY = 3 #:nodoc:
+  MAJOR = 0
+  MINOR = 1
+  TINY = 3
 
   # Версия RuTils
-  VERSION = [MAJOR, MINOR ,TINY].join('.')
+  VERSION = [MAJOR, MINOR ,TINY].join('.') #:nodoc:
   
   # Стандартный маркер для подстановок
   SUBSTITUTION_MARKER = "\xFF\xFF\xFF\xFF" #:nodoc:

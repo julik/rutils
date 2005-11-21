@@ -1,4 +1,4 @@
-if defined?(Object::RedCloth)
+if defined?(Object::RedCloth) and (!RedCloth.instance_methods.include?(:stock_pgl))
   # RuTils выполняет перегрузку Textile Glyphs в RedCloth, перенося форматирование спецсимволов на Gilenson.
   class Object::RedCloth  < String #:nodoc:
 

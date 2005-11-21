@@ -14,7 +14,7 @@ PKG_NAME      = 'rutils'
 PKG_VERSION   = RuTils::VERSION
 PKG_FILE_NAME   = "#{PKG_NAME}-#{PKG_VERSION}"
 PKG_DESTINATION = "../#{PKG_NAME}"
-PKG_SUMMARY  = %q{ Simple processing of russian strings }
+PKG_SUMMARY	= %q{ Simple processing of russian strings }
 PKG_DESCRIPTION = %q{ Allows simple processing of russian strings - transliteration, numerals as text and HTML beautification }
 PKG_HOMEPAGE = 'http://rubyforge.org/projects/rutils'
 PKG_EMAIL = 'me@julik.nl'
@@ -23,10 +23,9 @@ PKG_MAINTAINER = 'Julian "Julik" Tarkhanov'
 RELEASE_NAME  = "rutils-#{PKG_VERSION}"
 
 RUBY_FORGE_PROJECT = "rutils"
-RUBY_FORGE_USER    = ENV['RUBY_FORGE_USER'] ? ENV['RUBY_FORGE_USER'] : (ENV['USER'] ? ENV['USER'] : "julik")
+RUBY_FORGE_USER    = ENV['RUBY_FORGE_USER'] ? ENV['RUBY_FORGE_USER'] : "julik"
 
 # нам нужна документация в Юникоде. А вы думали?
-# Rubydoc вызванный из RubyGems поддерживает значения опций только через знак равенства
 PKG_RDOC_OPTS = ['--main=README',
                  '--line-numbers',
                  '--webcvs=http://rubyforge.org/cgi-bin/viewcvs.cgi/rutils/%s?cvsroot=rutils',
@@ -75,16 +74,16 @@ spec = Gem::Specification.new do |s|
   s.homepage = PKG_HOMEPAGE
 
   s.has_rdoc = true
-  s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").exclude(".DS_Store").exclude("gilenson.rb").to_a
-  s.files << ["Rakefile.rb", "README", "TODO", "CHANGELOG", "init.rb"]
-  s.require_path = "lib"
-  s.autorequire = "rutils"
-  s.test_file = "test/run_tests.rb"
-  s.has_rdoc = true
-  s.extra_rdoc_files = ["README", "TODO", "CHANGELOG"]
-  s.rdoc_options = PKG_RDOC_OPTS
-  s.executables << 'gilensize'
-  s.executables << 'rutilize'
+	s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").exclude(".DS_Store").exclude("gilenson.rb").to_a
+	s.files << ["Rakefile.rb", "README", "TODO", "CHANGELOG", "init.rb"]
+	s.require_path = "lib"
+	s.autorequire = "rutils"
+	s.test_file = "test/run_tests.rb"
+	s.has_rdoc = true
+	s.extra_rdoc_files = ["README", "TODO", "CHANGELOG"]
+	s.rdoc_options = PKG_RDOC_OPTS
+	s.executables << 'gilensize'
+	s.executables << 'rutilize'
 end
 
 Rake::GemPackageTask.new(spec) do |p|
@@ -93,9 +92,16 @@ Rake::GemPackageTask.new(spec) do |p|
   p.need_zip = true
 end
 
+
+desc "Remove packaging products (doc and pkg) - they are not source-managed"
+task :clobber do
+	`rm -rf ./doc`
+	`rm -rf ./pkg`
+end
+
 desc "Publish the docs to Rubyforge site"
 task :pubdocs=>[:clobber, :doc] do
-  raise "This is not implemented yet" and return
+	raise "This is not implemented yet" and return
 end
 
 
@@ -211,7 +217,6 @@ task :release => [:test, :clobber, :package] do
 
       first_file = false
     end
-    # Tag the release in SCM
     cvs_aware_rev = 'r_' + PKG_VERSION.gsub(/-|\./, '_')
     `cvs tag #{cvs_aware_rev} .`
   end

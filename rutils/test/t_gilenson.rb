@@ -7,9 +7,10 @@ require File.dirname(__FILE__) + '/../lib/rutils'
 # Когда у рутилей появятся собственные баги под каждый баг следует завести тест
 class GilensonOwnTest < Test::Unit::TestCase
   
-  # Проверка изъятия тагов и помещения их На Место©
-  # характерно что пока мы не рефакторнули все как следует можно проверять
-  # только конечный результат трансформации - что глючно до безобразия
+  def setup
+    @gilenson = RuTils::Gilenson::Formatter.new
+  end
+
   def test_tag_lift
     assert_equal "Вот&#160;такие<tag some='foo>' />  <tagmore></tagmore> дела", "Вот такие<tag some='foo>' />  <tagmore></tagmore> дела".gilensize
   end
@@ -89,7 +90,6 @@ class GilensonOwnTest < Test::Unit::TestCase
 
     assert_equal  "&#171;Он &#8212; сволочь!&#187;, сказал&#160;я", 
                       %q{ "Он -- сволочь!", сказал я }.gilensize
-
   end
 
   def test_initials
@@ -108,75 +108,13 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal  "сказали нам", "сказали нам".gilensize
     assert_equal  "(сказали&#160;им)", "(сказали им)".gilensize
   end
-
-end
-
-
-class GilensonConfigurationTest < Test::Unit::TestCase
-  def setup
-    @gilenson = RuTils::Gilenson::Formatter.new
+  
+  def test_marker_bypass
+    assert_equal "<p><nobr>МИЭЛЬ-Недвижимость</nobr></p>", "<p>МИЭЛЬ-Недвижимость</p>".gilensize
   end
   
-  def test_settings_as_tail_arguments
-
-    assert_equal "Ну&#160;и куда вот&#160;&#8212; да&#160;туда!", 
-      @gilenson.process("Ну и куда вот -- да туда!")
-
-    assert_equal "Ну и куда вот &#8212; да туда!", 
-      @gilenson.process("Ну и куда вот -- да туда!", :dash => false, :dashglue => false, :wordglue => false)
-
-    assert_equal "Ну&#160;и куда вот&#160;&#8212; да&#160;туда!", 
-      @gilenson.process("Ну и куда вот -- да туда!")
-      
-    @gilenson.configure!(:dash => false, :dashglue => false, :wordglue => false)
-
-    assert_equal "Ну и куда вот &#8212; да туда!", 
-      @gilenson.process("Ну и куда вот -- да туда!")    
-
-    @gilenson.configure!(:all => true)
-
-    assert_equal "Ну&#160;и куда вот&#160;&#8212; да&#160;туда!", 
-      @gilenson.process("Ну и куда вот -- да туда!")
-
-    @gilenson.configure!(:all => false)
-
-    assert_equal "Ну и куда вот -- да туда!", 
-      @gilenson.process("Ну и куда вот -- да туда!")
-  end
-  
-  def test_glyph_override
-    assert_equal 'скажи, мне, ведь не&#160;даром! Москва, клеймённая пожаром. Французу отдана',
-      @gilenson.process('скажи ,мне, ведь не даром !Москва, клеймённая пожаром .Французу отдана')
-
-    @gilenson.glyph[:nbsp] = '&nbsp;'
-    assert_equal 'скажи, мне, ведь не&nbsp;даром! Москва, клеймённая пожаром. Французу отдана',
-      @gilenson.process('скажи ,мне, ведь не даром !Москва, клеймённая пожаром .Французу отдана')
-  end
-  
-  def test_ugly_entities_replace2 # copy&paste
-    @gilenson.configure!(:copypaste => true)
-    assert_equal '&#160; &#171; &#187; &#167; &#169; &#174; &#176; &#177; &#182; &#183; &#8211; &#8212; &#8216; &#8217; &#8220; &#8221; &#8222; &#8226; &#8230; &#8470; &#8482; &#8722; &#8201; &#8243;', @gilenson.process('  « » § © ® ° ± ¶ · – — ‘ ’ “ ” „ • … № ™ −   ″')
-  end
-  
-  def test_raise_on_unknown_setting
-    assert_raise(RuTils::Gilenson::UnknownSetting) { @gilenson.configure!(:bararara => true) }
-  end
-  
-  def test_raw_utf8_output
-    @gilenson.configure!(:raw_output=>true)
-    assert_equal '&#38442; Это просто «кавычки»',
-      @gilenson.process('&#38442; Это просто "кавычки"')    
-  end
-  
-  def test_configure_alternate_names
-    assert @gilenson.configure(:raw_output=>true)    
-    assert @gilenson.configure!(:raw_output=>true)    
-  end
-
   def test_skip_code
-    @gilenson.configure!(:all => true)
-    
-    @gilenson.configure!(:skip_code => true)
+    @gilenson.configure!(:all => true, :skip_code => true)
     
     assert_equal "<code>Скип -- скип!</code>",
       @gilenson.process("<code>Скип -- скип!</code>")
@@ -285,6 +223,69 @@ class GilensonConfigurationTest < Test::Unit::TestCase
     assert_equal "<a href='test?test15=15&amp;amppp;test16=16'>test&</a>",
       @gilenson.process("<a href='test?test15=15&amppp;test16=16'>test&</a>")
     
+  end
+end
+
+
+class GilensonConfigurationTest < Test::Unit::TestCase
+  def setup
+    @gilenson = RuTils::Gilenson::Formatter.new
+  end
+  
+  def test_settings_as_tail_arguments
+
+    assert_equal "Ну&#160;и куда вот&#160;&#8212; да&#160;туда!", 
+      @gilenson.process("Ну и куда вот -- да туда!")
+
+    assert_equal "Ну и куда вот &#8212; да туда!", 
+      @gilenson.process("Ну и куда вот -- да туда!", :dash => false, :dashglue => false, :wordglue => false)
+
+    assert_equal "Ну&#160;и куда вот&#160;&#8212; да&#160;туда!", 
+      @gilenson.process("Ну и куда вот -- да туда!")
+      
+    @gilenson.configure!(:dash => false, :dashglue => false, :wordglue => false)
+
+    assert_equal "Ну и куда вот &#8212; да туда!", 
+      @gilenson.process("Ну и куда вот -- да туда!")    
+
+    @gilenson.configure!(:all => true)
+
+    assert_equal "Ну&#160;и куда вот&#160;&#8212; да&#160;туда!", 
+      @gilenson.process("Ну и куда вот -- да туда!")
+
+    @gilenson.configure!(:all => false)
+
+    assert_equal "Ну и куда вот -- да туда!", 
+      @gilenson.process("Ну и куда вот -- да туда!")
+  end
+  
+  def test_glyph_override
+    assert_equal 'скажи, мне, ведь не&#160;даром! Москва, клеймённая пожаром. Французу отдана',
+      @gilenson.process('скажи ,мне, ведь не даром !Москва, клеймённая пожаром .Французу отдана')
+
+    @gilenson.glyph[:nbsp] = '&nbsp;'
+    assert_equal 'скажи, мне, ведь не&nbsp;даром! Москва, клеймённая пожаром. Французу отдана',
+      @gilenson.process('скажи ,мне, ведь не даром !Москва, клеймённая пожаром .Французу отдана')
+  end
+  
+  def test_ugly_entities_replace2 # copy&paste
+    @gilenson.configure!(:copypaste => true)
+    assert_equal '&#160; &#171; &#187; &#167; &#169; &#174; &#176; &#177; &#182; &#183; &#8211; &#8212; &#8216; &#8217; &#8220; &#8221; &#8222; &#8226; &#8230; &#8470; &#8482; &#8722; &#8201; &#8243;', @gilenson.process('  « » § © ® ° ± ¶ · – — ‘ ’ “ ” „ • … № ™ −   ″')
+  end
+  
+  def test_raise_on_unknown_setting
+    assert_raise(RuTils::Gilenson::UnknownSetting) { @gilenson.configure!(:bararara => true) }
+  end
+  
+  def test_raw_utf8_output
+    @gilenson.configure!(:raw_output=>true)
+    assert_equal '&#38442; Это просто «кавычки»',
+      @gilenson.process('&#38442; Это просто "кавычки"')    
+  end
+  
+  def test_configure_alternate_names
+    assert @gilenson.configure(:raw_output=>true)    
+    assert @gilenson.configure!(:raw_output=>true)    
   end
 
 end

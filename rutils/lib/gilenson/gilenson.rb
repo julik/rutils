@@ -16,7 +16,7 @@ module RuTils
 end
 
 # ==Что такое Gilenson  
-# Обработчик типографских символов в HTML согласно общепринятым правилам. Пока присутствует только в CVS.
+# Обработчик типографских символов в HTML согласно общепринятым правилам.
 # Посвящается П.Г.Гиленсону[http://www.rudtp.ru/lib.php?book=172], благодаря которому русские правила тех.
 # редактуры еще как минимум 20 лет останутся столь-же бессмысленно старомодными и строгими.
 #
@@ -183,7 +183,7 @@ class RuTils::Gilenson::Formatter
       
       # Для маркера мы применяем invalid UTF-sequence чтобы его НЕЛЬЗЯ было перепутать с частью
       # любого другого мультибайтного глифа. Thanks to huNter.
-      REPLACEMENT_MARKER = '\xF0\xF0\xF0\xF0' #:nodoc:
+      REPLACEMENT_MARKER = "\xF0\xF0\xF0\xF0" #:nodoc:
 
      # Кто придумал &#147;? Не учите людей плохому...
      # Привет А.Лебедеву http://www.artlebedev.ru/kovodstvo/62/
@@ -444,16 +444,18 @@ class RuTils::Gilenson::Formatter
       end
       
       def reinsert_fragments(text, fragments)
-        fragments.each { |fragment|
-          fragment.gsub!(/ (href|src|data)=((?:(\')([^\']*)(\'))|(?:(\")([^\"]*)(\")))/uim) {
+        fragments.each do |fragment|
+          fragment.gsub!(/ (href|src|data)=((?:(\')([^\']*)(\'))|(?:(\")([^\"]*)(\")))/uim) do
             " #{$1}=" + $2.gsub(/&(?!(#0*38)|(amp);)/, self.glyph[:amp])
-          } # unless @settings['raw_output'] -- делать это надо всегда (mash)
+          end # unless @settings['raw_output'] -- делать это надо всегда (mash)
           
-          fragment.gsub!(/ (title|alt)=((?:(\')([^\']*)(\'))|(?:(\")([^\"]*)(\")))/uim) {
-            " #{$1}=#{$3}" + self.process($4.to_s) + "#{$5}#{$6}" + self.process($7.to_s) + "#{$8}"
-          } unless @settings['skip_attr']
+          unless @settings['skip_attr']
+            fragment.gsub!(/ (title|alt)=((?:(\')([^\']*)(\'))|(?:(\")([^\"]*)(\")))/uim) do
+              " #{$1}=#{$3}" + self.process($4.to_s) + "#{$5}#{$6}" + self.process($7.to_s) + "#{$8}"
+            end 
+          end
           text.sub!(@mark_tag, fragment)
-        }
+        end
       end
 
       ### Имплементации фильтров
@@ -604,7 +606,7 @@ class RuTils::Gilenson::Formatter
       end
 end #end Gilenson
 
-class RuTils::Gilenson::UnknownSetting < RuntimeError
+class RuTils::Gilenson::UnknownSetting < RuntimeError #:nodoc:
 end
 
 module RuTils::Gilenson::StringFormatting #:nodoc:
