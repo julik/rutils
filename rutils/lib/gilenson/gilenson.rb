@@ -181,9 +181,9 @@ class RuTils::Gilenson::Formatter
        '″'         => :inch,
       } #:nodoc:
       
-      # Для маркера мы применяем invalid UTF-sequence чтобы его НЕЛЬЗЯ было перепутать с частью
-      # любого другого мультибайтного глифа. Thanks to huNter.
-      REPLACEMENT_MARKER = "\xF0\xF0\xF0\xF0" #:nodoc:
+     # Для маркера мы применяем invalid UTF-sequence чтобы его НЕЛЬЗЯ было перепутать с частью
+     # любого другого мультибайтного глифа. Thanks to huNter.
+     REPLACEMENT_MARKER = "\xF0\xF0\xF0\xF0" #:nodoc:
 
      # Кто придумал &#147;? Не учите людей плохому...
      # Привет А.Лебедеву http://www.artlebedev.ru/kovodstvo/62/
@@ -535,9 +535,9 @@ class RuTils::Gilenson::Formatter
         _text = '""';
         until _text == text do  
           _text = text.dup
-          text.gsub!( /(^|\s|#{@mark_tag}|>)\"([0-9A-Za-z\'\!\s\.\?\,\-\&\;\:\_#{@mark_tag}]+(\"|#{self.glyph[:rdquo]}))/ui, '\1'+self.glyph[:ldquo]+'\2')
+          text.gsub!( /(^|\s|#{@mark_tag}|>)\"([0-9A-Za-z\'\!\s\.\?\,\-\&\;\:\_\#{@mark_tag}]+(\"|#{self.glyph[:rdquo]}))/ui, '\1'+self.glyph[:ldquo]+'\2')
           #this doesnt work in-place. somehow.
-          text.gsub!( /(#{self.glyph[:ldquo]}([A-Za-z0-9\'\!\s\.\?\,\-\&\;\:#{@mark_tag}\_]*).*[A-Za-z0-9][#{@mark_tag}\?\.\!\,]*)\"/ui, '\1'+self.glyph[:rdquo])
+          text.gsub!( /(#{self.glyph[:ldquo]}([A-Za-z0-9\'\!\s\.\?\,\-\&\;\:\#{@mark_tag}\_]*).*[A-Za-z0-9][\#{@mark_tag}\?\.\!\,]*)\"/ui, '\1'+self.glyph[:rdquo])
         end
       end
       
