@@ -125,8 +125,8 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal "<tt>Скип -- скип!</tt> test &#8212; test <tt attr='test -- attr'>Скип -- скип!</tt>",
       @gilenson.process("<tt>Скип -- скип!</tt> test -- test <tt attr='test -- attr'>Скип -- скип!</tt>")
     
-    assert_equal "<TT>Скип -- скип!</TT><TT>Скип -- скип!</TT> &#8212; <CoDe attr='test -- attr'>Скип -- скип!</cOdE>",
-      @gilenson.process("<TT>Скип -- скип!</TT><TT>Скип -- скип!</TT> -- <CoDe attr='test -- attr'>Скип -- скип!</cOdE>")
+    assert_equal "<tt>Скип -- скип!</tt><tt>Скип -- скип!</tt> &#8212; <code attr='test -- attr'>Скип -- скип!</code>",
+      @gilenson.process("<tt>Скип -- скип!</tt><tt>Скип -- скип!</tt> -- <code attr='test -- attr'>Скип -- скип!</code>")
     
     assert_equal "<ttt>Скип &#8212; скип!</tt>",
       @gilenson.process("<ttt>Скип -- скип!</tt>")
