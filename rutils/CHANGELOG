@@ -1,4 +1,5 @@
 CVS
+* Gilenson - в тестах произведена замена <cOdE> на <code> и <TT> на <tt> (mash)
 * Gilenson - в двух регулярных выражениях (в "def process_quotes") изменил #{@mark_tag} на
   \#{@mark_tag} для того, чтобы ruby 1.8.2 (2004-12-25) [i386-mswin32] не выдавал "Segmentation fault".
   Тесты проходит, в том числе и "test_marker_bypass". Прошу подтвердить. (mash)
