@@ -106,7 +106,7 @@ end
 
 
 desc "Publish the release files to RubyForge."
-task :release => [:test, :clobber, :package] do
+task :release => [:clobber, :package] do
   files = ["gem", "tgz", "zip"].map { |ext| "pkg/#{PKG_FILE_NAME}.#{ext}" }
 
   if RUBY_FORGE_PROJECT then
