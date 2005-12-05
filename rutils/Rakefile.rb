@@ -104,6 +104,11 @@ task :pubdocs=>[:clobber, :doc] do
 	raise "This is not implemented yet" and return
 end
 
+desc "Sends the new docs to julik.nl"
+task :publish_docs => [:doc] do
+  `rsync -arvz ./doc/ julik@julik.nl:~/public_html/code/rutils/`
+end
+
 
 desc "Publish the release files to RubyForge."
 task :release => [:clobber, :package] do
