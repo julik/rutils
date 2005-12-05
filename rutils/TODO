@@ -1,5 +1,9 @@
 =TODO
 
+==Даты
+
+* Применять INFLECTED_MONTHNAMES если имя месяца следует за днем
+
 ==Gilenson
 
 * Пара красивых примеров в README
