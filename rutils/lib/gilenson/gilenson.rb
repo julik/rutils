@@ -479,7 +479,7 @@ class RuTils::Gilenson::Formatter
       end
       
       def process_dashglue(text)
-        text.gsub!( /([a-zа-яА-Я0-9]+(\-[a-zа-яА-Я0-9]+)+)/ui, '<nobr>\1</nobr>')
+        text.gsub!( /([a-zа-яА-Я0-9]+(\-[a-zа-яА-Я0-9]+)+)/ui, glyph[:nob_open]+'\1'+glyph[:nob_close])
       end
       
       def process_escape_html(text)
