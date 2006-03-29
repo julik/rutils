@@ -7,7 +7,7 @@ module RuTils
   # Модуль Locale можно получить как часть Multilingual Rails.
   def self.overrides_enabled?
     if defined?(Locale) and Locale.respond_to?(:current)
-      return true if Locale.current.split('_').first == 'ru'
+      return true if Locale.current.to_s.split('_').first == 'ru'
     end
     @@overrides ? true : false
   end
