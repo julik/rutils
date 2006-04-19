@@ -1,3 +1,8 @@
+CVS
+* cp -r заменен на cp_r чтобы rutilize работал в Windows (anonimous)
+* Имена месяцев со строчной буквы (sgt - http://rubyforge.org/users/sgt)
+
+
 Версия 0.1.4 - 02.12.2005
 * Поправлен импорт Rails-плагина (julik)
 * Поправлен паттерн сбора тестируемых файлов (julik)

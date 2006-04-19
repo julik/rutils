@@ -11,7 +11,7 @@ if defined?(Object::ActionView)
           RuTils::overrides_enabled? ? RuTils::DateTime::distance_of_time_in_words(*args) : stock_distance_of_time_in_words
         end
 
-        # Заменяет ActionView::Helpers::DateHelper::select_month меню выбора русской даты.
+        # Заменяет ActionView::Helpers::DateHelper::select_month меню выбора русских месяцев.
         #
         #   select_month(Date.today)                             # Использует ключи "Январь", "Март"
         #   select_month(Date.today, :use_month_numbers => true) # Использует ключи "1", "3"
@@ -39,6 +39,17 @@ if defined?(Object::ActionView)
           end
 
           select_html(options[:field_name] || 'month', month_options, options[:prefix], options[:include_blank], options[:discard_type], options[:disabled])
+        end
+        
+        # Заменяет ActionView::Helpers::DateHelper::select_date меню выбора русской даты.
+        def select_date(date = Date.today, options = {})
+          select_day(date, options) + select_month(date, options) + select_year(date, options)
+        end
+
+        # Заменяет ActionView::Helpers::DateHelper::select_datetime меню выбора русской даты.
+        def select_datetime(datetime = Time.now, options = {})
+          select_day(datetime, options) + select_month(datetime, options) + select_year(datetime, options) +
+          select_hour(datetime, options) + select_minute(datetime, options)
         end
   end
 end #endif

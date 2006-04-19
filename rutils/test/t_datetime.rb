@@ -16,13 +16,13 @@ class StrftimeRuTest < Test::Unit::TestCase
     @@old_overrides = RuTils::overrides_enabled?
     
     RuTils::overrides = true
-      assert_equal "Сб, Суббота, Дек, Декабрь", Time.local(2005,"dec",31).strftime("%a, %A, %b, %B")
+      assert_equal "сб, суббота, дек, декабрь", Time.local(2005,"dec",31).strftime("%a, %A, %b, %B")
       assert_equal "%a, %A, %b, %B", Time.local(2005,"dec",31).strftime("%%a, %%A, %%b, %%B")
-      assert_equal "%Сб, %Суббота, %Дек, %Декабрь", Time.local(2005,"dec",31).strftime("%%%a, %%%A, %%%b, %%%B")
-      assert_equal "Сегодня: 31 Декабрь, Суббота, 2005 год", Time.local(2005,"dec",31).strftime("Сегодня: %d %B, %A, %Y год")
+      assert_equal "%сб, %суббота, %дек, %декабрь", Time.local(2005,"dec",31).strftime("%%%a, %%%A, %%%b, %%%B")
+      assert_equal "Сегодня: 31 декабрь, суббота, 2005 год", Time.local(2005,"dec",31).strftime("Сегодня: %d %B, %A, %Y год")
       
       date = Date.new(2005, 11, 9)
-      assert_equal "Ноя Ноябрь Ср Среда", "#{Date::RU_ABBR_MONTHNAMES[date.mon]} #{Date::RU_MONTHNAMES[date.mon]} #{Date::RU_ABBR_DAYNAMES[date.wday]} #{Date::RU_DAYNAMES[date.wday]}"
+      assert_equal "ноя ноябрь ср среда", "#{Date::RU_ABBR_MONTHNAMES[date.mon]} #{Date::RU_MONTHNAMES[date.mon]} #{Date::RU_ABBR_DAYNAMES[date.wday]} #{Date::RU_DAYNAMES[date.wday]}"
     
     RuTils::overrides = false
       assert_equal "Sat, Saturday, Dec, December", Time.local(2005,"dec",31).strftime("%a, %A, %b, %B")
