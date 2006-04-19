@@ -1,6 +1,7 @@
 CVS
 * cp -r заменен на cp_r чтобы rutilize работал в Windows (anonimous)
 * Имена месяцев со строчной буквы (sgt - http://rubyforge.org/users/sgt)
+* Поддерживаем оба класса Locale (из ruby-locale и gettext - они немного отличаются по семантике)  (julik)
 
 
 Версия 0.1.4 - 02.12.2005
