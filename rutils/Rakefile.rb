@@ -57,7 +57,7 @@ Rake::RDocTask.new("doc") do |rdoc|
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('CHANGELOG')
   rdoc.rdoc_files.include('TODO')
-  rdoc.options << PKG_RDOC_OPTS
+  rdoc.options = PKG_RDOC_OPTS
   rdoc.rdoc_files.include FileList['lib/*.rb', 'lib/**/*.rb']
 end
 
@@ -99,14 +99,16 @@ task :clobber do
 	`rm -rf ./pkg`
 end
 
-desc "Publish the docs to Rubyforge site"
-task :pubdocs=>[:clobber, :doc] do
-	raise "This is not implemented yet" and return
-end
-
-desc "Sends the new docs to julik.nl"
-task :publish_docs => [:doc] do
-  `rsync -arvz ./doc/ julik@julik.nl:~/public_html/code/rutils/`
+desc "Publish the new docs"
+task :publish_docs => [:clobber, :doc] do
+  user = "#{ENV['USER']}@rubyforge.org" 
+  project = '/var/www/gforge-projects/rutils'
+  local_dir = 'doc'
+  [ 
+    Rake::SshDirPublisher.new( user, project, local_dir),
+    Rake::SshDirPublisher.new('julik', '~/www/code/rutils', local_dir),
+  
+  ].each { |p| p.upload }
 end
 
 
@@ -222,7 +224,7 @@ task :release => [:clobber, :package] do
 
       first_file = false
     end
-    cvs_aware_rev = 'r_' + PKG_VERSION.gsub(/-|\./, '_')
-    `cvs tag #{cvs_aware_rev} .`
+    cvs_aware_revision = 'r_' + PKG_VERSION.gsub(/-|\./, '_')
+    `cvs tag #{cvs_aware_revision} .`
   end
 end
