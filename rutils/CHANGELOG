@@ -1,7 +1,7 @@
 CVS
-* Починен баг с передачей часа в нужном падеже в distance_of_time (anoniomous)
+* Починен баг с передачей часа в нужном падеже в distance_of_time (anonyomous)
 * Добавлены корректные методы публикации доков, сменены параметры их генерации (julik)
-* cp -r заменен на cp_r чтобы rutilize работал в Windows (anonimous)
+* cp -r заменен на cp_r чтобы rutilize работал в Windows (anonymous)
 * Имена месяцев со строчной буквы (sgt - http://rubyforge.org/users/sgt)
 * Поддерживаем оба класса Locale (из ruby-locale и gettext - они немного отличаются по семантике)  (julik)
 
