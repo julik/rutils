@@ -8,6 +8,7 @@ class DistanceOfTimeTest < Test::Unit::TestCase
     assert_equal "2 минуты", RuTils::DateTime::distance_of_time_in_words(0, 140)
     assert_equal "около 2 часов", RuTils::DateTime::distance_of_time_in_words(0, 60*114)
     assert_equal "около 3 часов", RuTils::DateTime::distance_of_time_in_words(0, 60*120+60*60)
+    assert_equal "около 5 часов", RuTils::DateTime.distance_of_time_in_words(60*60*5) 
   end
 end
 

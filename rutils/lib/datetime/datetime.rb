@@ -25,7 +25,7 @@ module RuTils
          when 46..90     then 'около часа'
          # исключение, сдвигаем на один влево чтобы соответствовать падежу
          when 90..1440   then "около " + (distance_in_minutes.to_f / 60.0).round.to_s + 
-                              " " + (distance_in_minutes.to_f / 60.0).round.items("часа", "часов", '')
+                              " " + (distance_in_minutes.to_f / 60.0).round.items("часа", 'часов', 'часов')
          when 1441..2880 then '1 день'
          else                  (distance_in_minutes / 1440).round.to_s + 
                               " " + (distance_in_minutes / 1440).round.items("день", "дня", "дней")
