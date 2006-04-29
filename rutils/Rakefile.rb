@@ -101,6 +101,11 @@ end
 
 desc "Publish the new docs"
 task :publish_docs => [:clobber, :doc] do
+  push_docs
+end
+
+desc "Push docs to servers"
+task :push_docs do
   user = "#{ENV['USER']}@rubyforge.org" 
   project = '/var/www/gforge-projects/rutils'
   local_dir = 'doc'
