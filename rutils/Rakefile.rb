@@ -123,16 +123,6 @@ end
 
 desc "Publish the release files to RubyForge."
 task :release => [:clobber, :package] do
-    files = ["gem", "tgz", "zip"].map { |ext| "pkg/#{PKG_FILE_NAME}.#{ext}" }
-    Rake::XForge::Release.new(MetaProject::Project::XForge::RubyForge.new('rutils')) do |release|
-       # If you omit user_name and/or password, you'll be prompted at the command line.
-       release.user_name = ENV['RUBYFORGE_USER']
-       release.password = gets
-       release.files = files
-       release.release_name = "RuTils #{PKG_VERSION}"
-       # The code below is for disabling parsing of CHANGES
-       release.changes_file = 'CHANGELOG'
-    end
     cvs_aware_revision = 'r_' + PKG_VERSION.gsub(/-|\./, '_')
     `cvs tag #{cvs_aware_revision} .`
 end
