@@ -9,7 +9,7 @@ require 'fileutils'
 require 'lib/rutils'
 
 begin
-  require 'rake/xforge'
+  require_gem 'xforge'
 rescue LoadError
 end
 
@@ -124,7 +124,7 @@ end
 desc "Publish the release files to RubyForge."
 task :release => [:clobber, :package] do
     files = ["gem", "tgz", "zip"].map { |ext| "pkg/#{PKG_FILE_NAME}.#{ext}" }
-    Rake::XForge::Release.new(MetaProject::Project::XForge::RubyForge.new('xforge')) do |release|
+    Rake::XForge::Release.new(MetaProject::Project::XForge::RubyForge.new('rutils')) do |release|
        # If you omit user_name and/or password, you'll be prompted at the command line.
        release.user_name = ENV['RUBYFORGE_USER']
        release.password = gets
@@ -135,5 +135,4 @@ task :release => [:clobber, :package] do
     end
     cvs_aware_revision = 'r_' + PKG_VERSION.gsub(/-|\./, '_')
     `cvs tag #{cvs_aware_revision} .`
-  end
 end
