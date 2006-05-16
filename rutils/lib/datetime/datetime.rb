@@ -39,6 +39,7 @@ module RuTils
       date.gsub!(/%a/, Date::RU_ABBR_DAYNAMES[time.wday])
       date.gsub!(/%A/, Date::RU_DAYNAMES[time.wday])
       date.gsub!(/%b/, Date::RU_ABBR_MONTHNAMES[time.mon])
+      date.gsub!(/%d(\s)*%B/, time.day.to_s + '\1' + Date::RU_INFLECTED_MONTHNAMES[time.mon])
       date.gsub!(/%B/, Date::RU_MONTHNAMES[time.mon])
       date.gsub!(@@ignored, '%%')
     end
