@@ -17,11 +17,11 @@ module RuTils
   SUBSTITUTION_MARKER = "\xF0\xF0\xF0\xF0" #:nodoc:
   
   def self.load_component(name) #:nodoc:
-    require RuTils::INSTALLATION_DIRECTORY + "/lib/#{name}/#{name}"
+    require File.join(RuTils::INSTALLATION_DIRECTORY, "lib", name.to_s, name.to_s)
   end
 
   def self.reload_component(name) #:nodoc:
-    load RuTils::INSTALLATION_DIRECTORY + "/lib/#{name}/#{name}.rb"
+    load File.join(RuTils::INSTALLATION_DIRECTORY, "lib", name.to_s, "#{name}.rb")
   end
 end
 

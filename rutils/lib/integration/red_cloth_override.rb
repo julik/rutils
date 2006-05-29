@@ -1,6 +1,6 @@
 if defined?(Object::RedCloth) and (!RedCloth.instance_methods.include?(:stock_pgl))
   # RuTils выполняет перегрузку Textile Glyphs в RedCloth, перенося форматирование спецсимволов на Gilenson.
-  class Object::RedCloth  < String #:nodoc:
+  class ::Object::RedCloth  < String #:nodoc:
 
     # Этот метод в RedCloth при наличии Гиленсона надо отключать    
     alias_method  :stock_htmlesc, :htmlesc
@@ -9,7 +9,7 @@ if defined?(Object::RedCloth) and (!RedCloth.instance_methods.include?(:stock_pg
     end
 
     # А этот метод обрабатывает Textile Glyphs - ту самую типографицу.
-    # Вместо того чтобы влезать в таблицы мы просто заменим Textile Glyphs - и все будут рады.  
+    # Вместо того чтобы влезать в чужие таблицы мы просто заменим Textile Glyphs на Gilenson - и все будут рады.  
     alias_method  :stock_pgl, :pgl
     def pgl(text) #:nodoc:
       RuTils::overrides_enabled? ?  text.replace(RuTils::Gilenson::Formatter.new(text).to_html) :  stock_pgl(text)
