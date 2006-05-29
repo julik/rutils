@@ -2,9 +2,23 @@ $KCODE = 'u'
 require 'test/unit'
 require 'rubygems'
 
-require 'action_view'
-require_gem 'RedCloth'
-require_gem 'BlueCloth'
+begin
+  require 'action_view' unless defined?(ActionView)
+rescue LoadError
+  $skip_rails = true
+end
+
+begin
+  require 'RedCloth' unless defined?(RedCloth)
+rescue LoadError
+  $skip_redcloth = true
+end
+
+begin
+  require 'BlueCloth' unless defined?(BlueCloth)
+rescue LoadError
+  $skip_bluecloth = true
+end
 
 require File.dirname(__FILE__) + '/../lib/rutils'
 load File.dirname(__FILE__) +  '/../lib/integration/integration.rb'
@@ -26,6 +40,8 @@ end
 # Нужно иметь в виду что Textile осуществляет свою обработку типографики, которую мы подменяем!
 class TextileIntegrationTest < Test::Unit::TestCase
   def test_integration_textile
+    raise "You must have RedCloth to test Textile integration" and return if $skip_redcloth
+
     RuTils::overrides = true
     assert RuTils.overrides_enabled?
     assert_equal "<p>И&#160;вот &#171;они пошли туда&#187;, и&#160;шли шли&#160;шли</p>", 
@@ -42,6 +58,8 @@ end
 # Сам Markdown никакой обработки типографики не производит (это делает RubyPants, но вряд ли его кто-то юзает на практике)
 class MarkdownIntegrationTest < Test::Unit::TestCase
   def test_integration_markdown
+    raise "You must have BlueCloth to test Markdown integration" and return if $skip_bluecloth
+
     RuTils::overrides = true
     assert RuTils.overrides_enabled?
     assert_equal "<p>И вот&#160;&#171;они пошли туда&#187;, и&#160;шли шли&#160;шли</p>", 
@@ -57,6 +75,8 @@ end
 # Перегрузка helper'ов Rails
 class RailsHelpersOverrideTest < Test::Unit::TestCase
   def test_distance_of_time_in_words
+    raise "You must have Rails to test ActionView integration" and return if $skip_rails
+    
     eval 'class Foo
             include ActionView::Helpers::DateHelper
             def get_dst
