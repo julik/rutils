@@ -13,7 +13,7 @@ module RuTils
   # Версия RuTils
   VERSION = [MAJOR, MINOR ,TINY].join('.') #:nodoc:
   
-  # Стандартный маркер для подстановок
+  # Стандартный маркер для подстановок - invalid UTF sequence
   SUBSTITUTION_MARKER = "\xF0\xF0\xF0\xF0" #:nodoc:
   
   def self.load_component(name) #:nodoc:
