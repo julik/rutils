@@ -183,7 +183,7 @@ class RuTils::Gilenson::Formatter
       
      # Для маркера мы применяем invalid UTF-sequence чтобы его НЕЛЬЗЯ было перепутать с частью
      # любого другого мультибайтного глифа. Thanks to huNter.
-     REPLACEMENT_MARKER = "\xF0\xF0\xF0\xF0" #:nodoc:
+     REPLACEMENT_MARKER = RuTils::SUBSTITUTION_MARKER #:nodoc:
 
      # Кто придумал &#147;? Не учите людей плохому...
      # Привет А.Лебедеву http://www.artlebedev.ru/kovodstvo/62/
@@ -375,8 +375,7 @@ class RuTils::Gilenson::Formatter
       
       # Позволяет получить процедуру, при вызове возвращающую значение глифа
       def lookup(glyph_to_lookup)
-        gil = self
-        return Proc.new { gil.glyph[glyph_to_lookup] }
+        return Proc.new { self.glyph[glyph_to_lookup] }
       end
 
       # Подставляет "символы" (двоеточие + имя глифа) на нужное значение глифа заданное в данном форматтере
@@ -411,7 +410,7 @@ class RuTils::Gilenson::Formatter
           
           # Кинуть ошибку если настройка нам неизвестна
           unknown_settings = args_hash.keys.collect{|k|k.to_s} - @settings.keys.collect { |k| k.to_s } 
-          raise RuTils::Gilenson::UnknownSetting, unknown_settings unless unknown_settings.empty?
+          raise RuTils::Gilenson::UnknownSetting, unknown_settings if unknown_settings.any?
                
           args_hash.each_pair do | key, value |
             @settings[key.to_s] = (value ? true : false)
@@ -517,15 +516,11 @@ class RuTils::Gilenson::Formatter
       def process_laquo(text)
         text.gsub!( /\"\"/ui, self.glyph[:quot]*2);
         text.gsub!( /(^|\s|#{@mark_tag}|>|\()\"((#{@mark_tag})*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, '\1'+self.glyph[:laquo]+'\2');
-        # nb: wacko only regexp follows:
-        # text.gsub!( /(^|\s|#{@mark_tag}|>|\()\"((#{#{@mark_tag}|\/#{self.glyph[:nbsp]}|\/|\!)*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, '\1'+self.glyph[:laquo]+'\2')
         _text = '""';
         until _text == text do
           _text = text;
-          text.gsub!( /(#{self.glyph[:laquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/\?\!](#{@mark_tag})*)\"/sui, '\1'+self.glyph[:raquo])
-          # nb: wacko only regexps follows:
-          #text.gsub!( /(#{self.glyph[:laquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](#{@mark_tag})*\?(#{#{@mark_tag})*)\"/sui, '\1'+self.glyph[:raquo])
-          # text.gsub!( /(#{self.glyph[:raquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/](#{@mark_tag}|\/|\!)*)\"/sui, '\1'+self.glyph[:raquo])
+          text.gsub!( /(#{self.glyph[:laquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/\?\!](#{@mark_tag})*)\"/sui, 
+            '\1'+self.glyph[:raquo])
         end
       end
              
@@ -563,13 +558,9 @@ class RuTils::Gilenson::Formatter
 
         text.gsub!(/(\s+)([a-zа-яА-Я]{1,2}[\)\]\!\?,\.;]{0,3}\s$)/ui, self.glyph[:nbsp]+'\2')
 
-        for i in @glueleft
-           text.gsub!( /(\s)(#{i})(\s+)/sui, '\1\2' + self.glyph[:nbsp])
-        end
+        @glueleft.each { | i |  text.gsub!( /(\s)(#{i})(\s+)/sui, '\1\2' + self.glyph[:nbsp]) }
 
-        for i in @glueright 
-           text.gsub!( /(\s)(#{i})(\s+)/sui, self.glyph[:nbsp]+'\2\3')
-        end
+        @glueright.each { | i | text.gsub!( /(\s)(#{i})(\s+)/sui, self.glyph[:nbsp]+'\2\3') }
         
         text.strip!
       end
@@ -594,7 +585,6 @@ class RuTils::Gilenson::Formatter
         # Все глифы
         @glyph.values.each do | entity | 
           next unless entity =~ /^&#(\d+);/
-          
           text.gsub!(/#{entity}/, entity_to_raw_utf8(entity))
         end
       end
@@ -606,10 +596,11 @@ class RuTils::Gilenson::Formatter
       end
 end #end Gilenson
 
-class RuTils::Gilenson::UnknownSetting < RuntimeError #:nodoc:
+# Выбрасывается если форматтеру задается неизвестная настройка
+class RuTils::Gilenson::UnknownSetting < RuntimeError
 end
 
-module RuTils::Gilenson::StringFormatting #:nodoc:
+module RuTils::Gilenson::StringFormatting
   # Форматирует строку с помощью Gilenson::Formatter. Все дополнительные опции передаются форматтеру.
   def gilensize(*args)
     opts = args.last.is_a?(Hash) ? args.last : {}

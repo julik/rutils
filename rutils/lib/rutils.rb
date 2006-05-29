@@ -14,7 +14,7 @@ module RuTils
   VERSION = [MAJOR, MINOR ,TINY].join('.') #:nodoc:
   
   # Стандартный маркер для подстановок
-  SUBSTITUTION_MARKER = "\xFF\xFF\xFF\xFF" #:nodoc:
+  SUBSTITUTION_MARKER = "\xF0\xF0\xF0\xF0" #:nodoc:
   
   def self.load_component(name) #:nodoc:
     require RuTils::INSTALLATION_DIRECTORY + "/lib/#{name}/#{name}"
