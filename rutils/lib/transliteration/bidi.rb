@@ -18,7 +18,7 @@ module RuTils::Transliteration::BiDi
     # " "=>"__","_"=>"__"
     # так сразу не получится, будут проблемы с "Ь"=>"_'"
   }.sort do |one, two|
-    two[1].jsize <=> one[1].jsize
+    two[1].split(//).size <=> one[1].split(//).size
   end
 
   TABLE_FROM = TABLE_TO.unshift([" ","__"]).clone
