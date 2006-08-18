@@ -2,16 +2,9 @@
 #   "вот мы и здесь".translify => "vot my i zdes"
 #   "vot my i zdes".detranslify => "вот мы и здесь"
 module RuTils::Transliteration::Simple
-  TABLE = {
-     "Ґ"=>"G","Ё"=>"YO","Є"=>"E","Ї"=>"YI","І"=>"I",
+  TABLE_LOWER = {
      "і"=>"i","ґ"=>"g","ё"=>"yo","№"=>"#","є"=>"e",
-     "ї"=>"yi","А"=>"A","Б"=>"B","В"=>"V","Г"=>"G",
-     "Д"=>"D","Е"=>"E","Ж"=>"ZH","З"=>"Z","И"=>"I",
-     "Й"=>"Y","К"=>"K","Л"=>"L","М"=>"M","Н"=>"N",
-     "О"=>"O","П"=>"P","Р"=>"R","С"=>"S","Т"=>"T",
-     "У"=>"U","Ф"=>"F","Х"=>"H","Ц"=>"TS","Ч"=>"CH",
-     "Ш"=>"SH","Щ"=>"SCH","Ъ"=>"'","Ы"=>"YI","Ь"=>"",
-     "Э"=>"E","Ю"=>"YU","Я"=>"YA","а"=>"a","б"=>"b",
+     "ї"=>"yi","а"=>"a","б"=>"b",
      "в"=>"v","г"=>"g","д"=>"d","е"=>"e","ж"=>"zh",
      "з"=>"z","и"=>"i","й"=>"y","к"=>"k","л"=>"l",
      "м"=>"m","н"=>"n","о"=>"o","п"=>"p","р"=>"r",
@@ -22,22 +15,49 @@ module RuTils::Transliteration::Simple
     two[1].size <=> one[1].size
   end
   
-  # Заменяет кириллицу в строке на латиницу      
-  def self.translify(str)
-    s = str.clone
-    TABLE.each do | translation |
-      s = s.gsub(/#{translation[0]}/, translation[1])
-    end
-    s
+  TABLE_UPPER =  {
+    "Ґ"=>"G","Ё"=>"YO","Є"=>"E","Ї"=>"YI","І"=>"I",
+    "А"=>"A","Б"=>"B","В"=>"V","Г"=>"G",
+     "Д"=>"D","Е"=>"E","Ж"=>"ZH","З"=>"Z","И"=>"I",
+     "Й"=>"Y","К"=>"K","Л"=>"L","М"=>"M","Н"=>"N",
+     "О"=>"O","П"=>"P","Р"=>"R","С"=>"S","Т"=>"T",
+     "У"=>"U","Ф"=>"F","Х"=>"H","Ц"=>"TS","Ч"=>"CH",
+     "Ш"=>"SH","Щ"=>"SCH","Ъ"=>"'","Ы"=>"YI","Ь"=>"",
+     "Э"=>"E","Ю"=>"YU","Я"=>"YA",
+  }.sort do | one, two|
+     two[1].size <=> one[1].size
   end
 
-  # Заменяет латиницу на кириллицу      
-  def self.detranslify(str)
-    s = str.clone
-    TABLE.each do | translation |
-      s.gsub!(/#{translation[1]}/, translation[0])
+  TABLE = TABLE_UPPER + TABLE_LOWER
+  
+  # Заменяет кириллицу в строке на латиницу
+  def self.translify(str)
+    chars = str.split(//)    
+    
+    lowers = TABLE_LOWER.map{|e| e[0] }
+    uppers = TABLE_UPPER.map{|e| e[0] }
+    
+    hashtable = {}
+    TABLE.each do | item |
+      hashtable[item[0]] = item[1]
     end
-    s
+    
+    result = ''
+    chars.each_with_index do | char, index |
+      if uppers.include?(char) && lowers.include?(chars[index+1])
+        # Combined case. Here we deal with Latin letters so there is no problem to use
+        # Ruby's builtin upcase_downcase
+        ch = hashtable[char].downcase.capitalize
+        result << ch
+      elsif uppers.include?(char)
+        result << hashtable[char]        
+      elsif lowers.include?(char)
+        result << hashtable[char]
+      else
+        result << char
+      end
+    end
+    return result
   end
 
   # Транслитерирует строку, делая ее пригодной для применения как имя директории или URL
