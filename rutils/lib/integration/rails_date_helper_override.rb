@@ -37,8 +37,8 @@ if defined?(Object::ActionView)
               %(<option value="#{month_number}">#{month_name}</option>\n)
             )
           end
-
-          select_html(options[:field_name] || 'month', month_options, options[:prefix], options[:include_blank], options[:discard_type], options[:disabled])
+          
+          select_html(options[:field_name] || 'month', month_options, options)
         end
         
         # Заменяет ActionView::Helpers::DateHelper::select_date меню выбора русской даты.

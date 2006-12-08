@@ -30,7 +30,8 @@ module RuTils::Transliteration::Simple
 
   TABLE = TABLE_UPPER + TABLE_LOWER
   
-  # Заменяет кириллицу в строке на латиницу
+  # Заменяет кириллицу в строке на латиницу. Немного специфично потому что поддерживает
+  # комби-регистр (Щука -> Shuka)
   def self.translify(str)
     chars = str.split(//)    
     

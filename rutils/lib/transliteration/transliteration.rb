@@ -10,12 +10,12 @@ require File.join(File.dirname(__FILE__), 'bidi')
 # Реализует транслитерацию любого объекта, реализующего String или to_s
 module RuTils::Transliteration::StringFormatting
   
-  #Транслитерирует строку в латиницу, и возвращает измененную строку
+  # Транслитерирует строку в латиницу, и возвращает измененную строку
   def translify
     RuTils::Transliteration::Simple::translify(self.to_s)
   end
 
-  #Транслитерирует строку, меняя объект  
+  # Транслитерирует строку, меняя объект  
   def translify!
     self.replace(self.translify)
   end
