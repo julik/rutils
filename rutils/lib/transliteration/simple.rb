@@ -40,6 +40,7 @@ module RuTils::Transliteration::Simple
     
     hashtable = {}
     TABLE.each do | item |
+      next unless item[0] && item[1]
       hashtable[item[0]] = item[1]
     end
     

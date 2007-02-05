@@ -17,9 +17,16 @@ if defined?(Object::ActionView)
         #   select_month(Date.today, :use_month_numbers => true) # Использует ключи "1", "3"
         #   select_month(Date.today, :add_month_numbers => true) # Использует ключи "1 - Январь", "3 - Март"
         def select_month(date, options = {})
-          month_options = []
+          month_options = [] 
           if RuTils::overrides_enabled?
-            month_names = options[:use_short_month] ? Date::RU_ABBR_MONTHNAMES : Date::RU_INFLECTED_MONTHNAMES
+            month_names = case true
+              when options[:use_short_month]
+                Date::RU_ABBR_MONTHNAMES
+              when options[:order] && options[:order].include?(:day) # использование в контексте date_select с днями требует родительный падеж
+                Date::RU_INFLECTED_MONTHNAMES
+              else
+                Date::RU_MONTHNAMES
+            end
           else
             month_names = options[:use_short_month] ? Date::ABBR_MONTHNAMES : Date::MONTHNAMES
           end
@@ -43,7 +50,14 @@ if defined?(Object::ActionView)
         
         # Заменяет ActionView::Helpers::DateHelper::select_date меню выбора русской даты.
         def select_date(date = Date.today, options = {})
-          select_day(date, options) + select_month(date, options) + select_year(date, options)
+          options[:order] ||= []
+          [:day, :month, :year].each { |o| options[:order].push(o) unless options[:order].include?(o) }
+          
+          select_date = ''
+          options[:order].each do |o|
+            select_date << self.send("select_#{o}", date, options)
+          end
+          select_date
         end
 
         # Заменяет ActionView::Helpers::DateHelper::select_datetime меню выбора русской даты.

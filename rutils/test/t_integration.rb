@@ -72,21 +72,40 @@ class MarkdownIntegrationTest < Test::Unit::TestCase
   end
 end
 
+TEST_DATE =  Date.parse("1983-10-15") # coincidentially...
+
 # Перегрузка helper'ов Rails
 class RailsHelpersOverrideTest < Test::Unit::TestCase
   def test_distance_of_time_in_words
     raise "You must have Rails to test ActionView integration" and return if $skip_rails
     
-    eval 'class Foo
+    eval 'class HelperTester
             include ActionView::Helpers::DateHelper
-            def get_dst
+            def get_distance
               distance_of_time_in_words(Time.now - 20.minutes, Time.now)
             end
+            
+            def get_select_month
+              select_month(TEST_DATE)
+            end
+            
+            def get_date_select
+              select_date(TEST_DATE)
+            end
+
+            def get_date_select_without_day
+              select_date(TEST_DATE, :order => [:month, :year])
+            end
+
           end'
           
     RuTils::overrides = true
-    foo = Foo.new
-    assert_equal "20 минут", foo.get_dst
+    stub = HelperTester.new
+    assert_equal "20 минут", stub.get_distance
+    assert_match /июль/, stub.get_select_month, "Месяц в выборе месяца должен быть указан в именительном падеже"
+    assert_match /декабря/, stub.get_date_select, "Имя месяца должно быть указано в родительном падеже"
+    assert_match /декабря/, stub.get_date_select_without_day,
+      "Хелпер select_date не позволяет опускать фрагменты, имя месяца должно быть указано в родительном падеже"
   end
 end
 
