@@ -94,6 +94,25 @@ class GilensonOwnTest < Test::Unit::TestCase
 
   def test_initials
     assert_equal 'Это&#160;нам сказал П.И.&#8201;Петров', 'Это нам сказал П. И. Петров'.gilensize
+
+    assert_equal "А&#160;Ефимов&#8230;",
+      @gilenson.process("А Ефимов...")
+
+    assert_equal "Обратился за&#160;ПО. К&#160;негодяям.",
+      @gilenson.process("Обратился за ПО. К негодяям.")
+
+    assert_equal "ГО&#160;Самарской обл.",
+      @gilenson.process("ГО Самарской обл.")
+
+    assert_equal "ГОР&#160;Самарской обл.",
+      @gilenson.process("ГОР Самарской обл.")
+    
+    assert_equal "КОШМАР Самарской обл.",
+      @gilenson.process("КОШМАР Самарской обл.")
+    
+    assert_equal "УФПС Самарской обл.",
+      @gilenson.process("УФПС Самарской обл.")
+
   end
 
   def test_nbsp_last_letters
@@ -169,7 +188,7 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal 'мы&#160;напишем title="test &#8212; me" и&#160;alt=\'test &#8212; me\', вот',
       @gilenson.process('мы напишем title="test -- me" и alt=\'test -- me\', вот')
   end
-
+  
   def test_escape_html
     assert_equal "Используйте &#38; вместо &#38;amp;",
       @gilenson.process("Используйте &#38; вместо &#38;amp;")

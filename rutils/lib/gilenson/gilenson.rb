@@ -463,7 +463,7 @@ class RuTils::Gilenson::Formatter
       end
 
       def process_initials(text)
-        initials = /([А-Я])[\.]*?[\s]*?([А-Я])[\.]*[\s]*?([А-Я])([а-я])/u
+        initials = /([А-Я])[\.]{1,2}[\s]*?([А-Я])[\.]*[\s]*?([А-Я])([а-я])/u
         replacement = substitute_glyphs_in_string('\1.\2.:thinsp\3\4')
         text.gsub!(initials, replacement)
       end
