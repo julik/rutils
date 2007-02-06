@@ -73,7 +73,7 @@ class MarkdownIntegrationTest < Test::Unit::TestCase
 end
 
 TEST_DATE =  Date.parse("1983-10-15") # coincidentially...
-
+TEST_TIME = Time.local(1983, 10, 15, 12, 15) # also coincidentially...
 # Перегрузка helper'ов Rails
 class RailsHelpersOverrideTest < Test::Unit::TestCase
   def test_distance_of_time_in_words
@@ -106,6 +106,7 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
     assert_match /декабря/, stub.get_date_select, "Имя месяца должно быть указано в родительном падеже"
     assert_match /декабря/, stub.get_date_select_without_day,
       "Хелпер select_date не позволяет опускать фрагменты, имя месяца должно быть указано в родительном падеже"
+    
   end
 end
 

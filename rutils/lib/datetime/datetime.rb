@@ -59,8 +59,27 @@ end
 class Time
   alias_method :strftime_norutils, :strftime
   
-  def strftime(date)
-    RuTils::DateTime::ru_strftime(date, self) if RuTils::overrides_enabled?
-    strftime_norutils(date)
+  def strftime(fmt)
+    RuTils::DateTime::ru_strftime(fmt, self) if RuTils::overrides_enabled?
+    strftime_norutils(fmt)
   end
+end
+
+class Date
+  
+  # Inside rails we have date formatting
+  if self.instance_methods.include?('strftime')
+    alias_method :strftime_norutils, :strftime
+    def strftime(fmt=nil)
+      RuTils::DateTime::ru_strftime(fmt, self) if RuTils::overrides_enabled?
+      strftime_norutils(fmt)
+    end
+
+  else
+    def strftime(fmt=nil)
+      RuTils::DateTime::ru_strftime(fmt, self) if RuTils::overrides_enabled?
+      self.to_time.strftime(fmt)
+    end
+  end
+  
 end
