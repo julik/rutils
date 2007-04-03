@@ -5,8 +5,8 @@ module RuTils
   # Папка, куда установлен модуль RuTils. Нужно чтобы автоматически копировать RuTils в другие приложения.
   INSTALLATION_DIRECTORY = File.expand_path(File.dirname(__FILE__) + '/../') #:nodoc:
   MAJOR = 0
-  MINOR = 1
-  TINY = 9
+  MINOR = 2
+  TINY = 0
 
   # Версия RuTils
   VERSION = [MAJOR, MINOR ,TINY].join('.') #:nodoc:

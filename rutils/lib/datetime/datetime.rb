@@ -66,17 +66,17 @@ class Time
 end
 
 class Date
-  
+
   # Inside rails we have date formatting
   if self.instance_methods.include?('strftime')
     alias_method :strftime_norutils, :strftime
-    def strftime(fmt=nil)
+    def strftime(fmt='%F')
       RuTils::DateTime::ru_strftime(fmt, self) if RuTils::overrides_enabled?
       strftime_norutils(fmt)
     end
 
   else
-    def strftime(fmt=nil)
+    def strftime(fmt='%F')
       RuTils::DateTime::ru_strftime(fmt, self) if RuTils::overrides_enabled?
       self.to_time.strftime(fmt)
     end

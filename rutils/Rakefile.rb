@@ -9,7 +9,7 @@ require 'fileutils'
 require 'lib/rutils'
 
 begin
-  require_gem 'xforge'
+  require 'xforge'
 rescue LoadError
 end
 

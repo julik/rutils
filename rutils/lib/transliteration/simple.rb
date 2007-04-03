@@ -69,6 +69,6 @@ module RuTils::Transliteration::Simple
     st.gsub!(/\W/, ' ')  #replace non-chars
     st.gsub!(/(_)$/, '') #trailing underscores
     st.gsub!(/^(_)/, '') #leading unders
-    st.strip.translify.gsub(/(\s)/,'-').downcase.squeeze
+    st.strip.translify.gsub(/(\s)/,'-').downcase.squeeze('-')
   end
 end

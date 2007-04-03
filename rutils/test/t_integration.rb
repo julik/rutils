@@ -3,6 +3,7 @@ require 'test/unit'
 require 'rubygems'
 
 begin
+  require 'action_controller' unless defined?(ActionController)
   require 'action_view' unless defined?(ActionView)
 rescue LoadError
   $skip_rails = true
