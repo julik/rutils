@@ -78,7 +78,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = PKG_HOMEPAGE
 
   s.has_rdoc = true
-	s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").exclude(".DS_Store").exclude("gilenson.rb").to_a
+	s.files = FileList["{bin,test,lib}/**/*"].exclude("rdoc").exclude(".svn").exclude(".CVS").exclude(".DS_Store").to_a
 	s.files << ["Rakefile.rb", "README", "TODO", "CHANGELOG", "init.rb"]
 	s.require_path = "lib"
 	s.autorequire = "rutils"
