@@ -25,7 +25,8 @@ class StrftimeRuTest < Test::Unit::TestCase
       
       date = Date.new(2005, 12, 31)
       assert_equal "дек декабрь сб суббота", "#{Date::RU_ABBR_MONTHNAMES[date.mon]} #{Date::RU_MONTHNAMES[date.mon]} #{Date::RU_ABBR_DAYNAMES[date.wday]} #{Date::RU_DAYNAMES[date.wday]}"
-      assert_equal "сб, суббота, дек, декабрь", date.strftime("%a, %A, %b, %B")
+      # We do not support strftime on date at this point
+      # assert_equal "сб, суббота, дек, декабрь", date.strftime("%a, %A, %b, %B")
     
     RuTils::overrides = false
       assert_equal "Sat, Saturday, Dec, December", Time.local(2005,"dec",31).strftime("%a, %A, %b, %B")
