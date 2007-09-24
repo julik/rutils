@@ -1,4 +1,4 @@
-SVN
+Версия 0.2.2 - 24.09.2007
 * Gilenson - обрабатываем акронимы по принципу Textile (zajats, julik)
 * Gilenson - отформатирован под 2 пробела (julik)
 * В тестах пользуйтесь assert_equal_cp (julik)
