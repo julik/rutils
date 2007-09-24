@@ -1,4 +1,7 @@
 SVN
+* Gilenson - обрабатываем акронимы по принципу Textile (zajats, julik)
+* Gilenson - отформатирован под 2 пробела (julik)
+* В тестах пользуйтесь assert_equal_cp (julik)
 * Welcome to subversion (julik)
 
 Версия 0.2.1 - 02.04.2007

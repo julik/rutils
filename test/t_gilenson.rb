@@ -34,6 +34,26 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal '<nobr>725&#8211;01&#8211;10</nobr>', '725-01-10'.gilensize
   end
 
+  def test_acronyms_with_html_output
+    assert_equal '<acronym title="Большая советская энциклопедия">БСЭ</acronym>', 'БСЭ(Большая советская энциклопедия)'.gilensize
+    assert_equal '<acronym title="Advanced Micro Devices">AMD</acronym>',
+      'AMD(Advanced Micro Devices)'.gilensize
+    assert_equal '<acronym title="Расширяемый язык разметки">XML</acronym>',
+      'XML(Расширяемый язык разметки)'.gilensize
+  end
+
+  def test_acronyms_should_escape_entities
+    @gilenson.configure(:raw_output => false)
+    assert_equal '<acronym title="Знак &#60;">БВГ</acronym>', 'БВГ(Знак <)'.gilensize
+  end
+  
+  def test_acronyms_with_text_output
+    @gilenson.configure(:raw_output => true)
+    thin_space = [8201].pack("U")
+    assert_equal_cp "так утверждает БСЭ#{thin_space}(Большая советская энциклопедия)",
+      @gilenson.process('так утверждает БСЭ(Большая советская энциклопедия)')
+  end
+  
   def test_address  
     assert_equal 'табл.&#160;2, рис.&#160;2.10', 'табл. 2, рис. 2.10'.gilensize
     assert_equal 'офис&#160;415, оф.340, д.5, ул.&#160;Народной Воли, пл. Малышева', 'офис 415, оф.340, д.5, ул. Народной Воли, пл. Малышева'.gilensize
@@ -243,6 +263,28 @@ class GilensonOwnTest < Test::Unit::TestCase
       @gilenson.process("<a href='test?test15=15&amppp;test16=16'>test&</a>")
     
   end
+  
+  private
+    # Проверить равны ли строки, и если нет то обьяснить какой кодпойнт отличается.
+    # Совершенно необходимо для работы с различными пробелами.
+    def assert_equal_cp(reference, actual, msg = nil)
+      (assert(true, msg); return) if (reference == actual)
+      
+      reference_cp, actual_cp = [reference, actual].map{|t| t.unpack("U*") }
+      reference_cp.each_with_index do | ref_codepoint, idx |
+        next unless actual_cp[idx] != ref_codepoint
+        beg, fin = idx - 2, idx + 2
+        beg = 0 if (beg < 0)
+        conflicting_piece = actual_cp[beg..fin].pack("U*")
+        msg = []
+        msg << "Expected #{actual.inspect} to be equal to #{reference.inspect}, but they were not, " +
+               "in fragment '#{beg > 0 ? '...' : ''}#{conflicting_piece}...'"
+        msg << "Non-matching codepoint #{actual[idx]} at offset #{idx}, " +
+               "expected codepoint #{ref_codepoint} instead"
+        flunk msg.join("\n"); return
+      end
+      raise "We should never get here"
+    end
 end
 
 
@@ -306,7 +348,6 @@ class GilensonConfigurationTest < Test::Unit::TestCase
     assert @gilenson.configure(:raw_output=>true)    
     assert @gilenson.configure!(:raw_output=>true)    
   end
-
 end
 
 # class TypograficaTrakoEntries < Test::Unit::TestCase
