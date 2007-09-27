@@ -26,7 +26,7 @@ end
 # Gilenson базируется на коде Typografica[http://pixel-apes.com/typografica] от PixelApes,
 # который был приведен к положенному в Ruby стандарту. Основные отличия Gilenson от Typografica на PHP:
 #   * работа только и полностью в UTF-8 (включая entities, применимые в XML)
-#   * поддержка "raw"-вывода (символов вместо entities) - текст выводимый GIlenson можно верстать на бумаге
+#   * поддержка "raw"-вывода (символов вместо entities) - текст выводимый Gilenson можно верстать на бумаге
 #
 # Если вам нужно получать идентичный Typografica вывод, пользуйтесь RuTils::Gilenson::Obsolete
 # вместо RuTils::Gilenson::Formatter.
