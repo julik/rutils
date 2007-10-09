@@ -87,30 +87,30 @@ end
 
 TEST_DATE =  Date.parse("1983-10-15") # coincidentially...
 TEST_TIME = Time.local(1983, 10, 15, 12, 15) # also coincidentially...
+
+class HelperTester
+  def get_distance
+    distance_of_time_in_words(Time.now - 20.minutes, Time.now)
+  end
+  
+  def get_select_month
+    select_month(TEST_DATE)
+  end
+  
+  def get_date_select
+    select_date(TEST_DATE)
+  end
+
+  def get_date_select_without_day
+    select_date(TEST_DATE, :order => [:month, :year])
+  end
+end
 # Перегрузка helper'ов Rails
 class RailsHelpersOverrideTest < Test::Unit::TestCase
   def test_distance_of_time_in_words
     raise "You must have Rails to test ActionView integration" and return if $skip_rails
     
-    eval 'class HelperTester
-            include ActionView::Helpers::DateHelper
-            def get_distance
-              distance_of_time_in_words(Time.now - 20.minutes, Time.now)
-            end
-            
-            def get_select_month
-              select_month(TEST_DATE)
-            end
-            
-            def get_date_select
-              select_date(TEST_DATE)
-            end
-
-            def get_date_select_without_day
-              select_date(TEST_DATE, :order => [:month, :year])
-            end
-
-          end'
+    HelperTester.class_eval { include ActionView::Helpers::DateHelper }
           
     RuTils::overrides = true
     stub = HelperTester.new

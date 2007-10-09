@@ -1,8 +1,12 @@
-if defined?(BlueCloth)
+if defined?(BlueCloth) && !BlueCloth.instance_methods.include?("to_html_without_rutils")
   class Object::BlueCloth < String  #:nodoc:
-    alias_method :old_to_html, :to_html
+    alias_method :to_html_without_rutils, :to_html
     def to_html(*opts)
-      RuTils::overrides_enabled? ? RuTils::Gilenson::Formatter.new(old_to_html(*opts)).to_html : old_to_html(*opts)
+      if RuTils::overrides_enabled?
+        RuTils::Gilenson::Formatter.new(to_html_without_rutils(*opts)).to_html
+      else
+        to_html_without_rutils(*opts)
+      end
     end
   end
 end

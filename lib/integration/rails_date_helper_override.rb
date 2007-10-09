@@ -22,7 +22,8 @@ if defined?(Object::ActionView)
             month_names = case true
               when options[:use_short_month]
                 Date::RU_ABBR_MONTHNAMES
-              when options[:order] && options[:order].include?(:day) # использование в контексте date_select с днями требует родительный падеж
+              # использование в контексте date_select с днями требует родительный падеж
+              when options[:order] && options[:order].include?(:day)
                 Date::RU_INFLECTED_MONTHNAMES
               else
                 Date::RU_MONTHNAMES
@@ -53,11 +54,7 @@ if defined?(Object::ActionView)
           options[:order] ||= []
           [:day, :month, :year].each { |o| options[:order].push(o) unless options[:order].include?(o) }
           
-          select_date = ''
-          options[:order].each do |o|
-            select_date << self.send("select_#{o}", date, options)
-          end
-          select_date
+          options[:order].map{ |o| self.send("select_#{o}", date, options) }.join
         end
 
         # Заменяет ActionView::Helpers::DateHelper::select_datetime меню выбора русской даты.
