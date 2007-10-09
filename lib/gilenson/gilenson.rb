@@ -154,8 +154,8 @@ class RuTils::Gilenson::Formatter
     :minus      => "&#8722;",   # minus sign
     :inch       => "&#8243;",   # inch/second sign (u0x2033) (не путать с кавычками!)
     :thinsp     => "&#8201;",   # полукруглая шпация (тонкий пробел)
-    :nob_open   => '<nobr>',    # открывающий блок без переноса слов
-    :nob_close  => '</nobr>',    # открывающий блок без переноса слов
+    :nob_open   => '<span class="nobr">',    # открывающий блок без переноса слов
+    :nob_close  => '</span>',    # закрывающий блок без переноса слов
   } #:nodoc:
   
   GLYPHS.freeze

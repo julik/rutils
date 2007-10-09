@@ -27,11 +27,11 @@ class GilensonOwnTest < Test::Unit::TestCase
   end
 
   def test_phones
-    assert_equal '<nobr>3&#8211;12&#8211;30</nobr>', '3-12-30'.gilensize
-    assert_equal '<nobr>12&#8211;34&#8211;56</nobr>', '12-34-56'.gilensize
-    assert_equal '<nobr>88&#8211;25&#8211;04</nobr>', '88-25-04'.gilensize
-    assert_equal '+7 <nobr>(99284)&#160;65&#8211;818</nobr>', '+7 (99284) 65-818'.gilensize
-    assert_equal '<nobr>725&#8211;01&#8211;10</nobr>', '725-01-10'.gilensize
+    assert_equal '<span class="nobr">3&#8211;12&#8211;30</span>', '3-12-30'.gilensize
+    assert_equal '<span class="nobr">12&#8211;34&#8211;56</span>', '12-34-56'.gilensize
+    assert_equal '<span class="nobr">88&#8211;25&#8211;04</span>', '88-25-04'.gilensize
+    assert_equal '+7 <span class="nobr">(99284)&#160;65&#8211;818</span>', '+7 (99284) 65-818'.gilensize
+    assert_equal '<span class="nobr">725&#8211;01&#8211;10</span>', '725-01-10'.gilensize
   end
 
   def test_acronyms_with_html_output
@@ -78,8 +78,8 @@ class GilensonOwnTest < Test::Unit::TestCase
   def test_breaking
     assert_equal 'скажи, мне, ведь не&#160;даром! Москва, клеймённая пожаром. Французу отдана', 'скажи ,мне, ведь не даром !Москва, клеймённая пожаром .Французу отдана'.gilensize
     assert_equal 'so&#160;be it, my&#160;liege. Tiny dwellers roam thru midnight! Hell raised, the&#160;Balrog is&#160;hiding in&#160;your backyard!', 'so be it ,my liege .Tiny dwellers roam thru midnight !Hell raised, the Balrog is hiding in your backyard!'.gilensize
-    assert_equal 'при&#160;установке командой строки в&#160;?page=help <nobr>бла-бла-бла-бла</nobr>', 'при установке командой строки в ?page=help бла-бла-бла-бла'.gilensize
-    assert_equal 'как&#160;интересно будет переноситься со&#160;строки на&#160;строку <nobr>что-то</nobr> разделённое дефисом, ведь дефис тот&#160;тоже ведь из&#160;наших. <nobr>Какие-то</nobr> браузеры думают, что&#160;следует переносить и&#160;его&#8230;', 'как интересно будет переноситься со строки на строку что-то разделённое дефисом, ведь дефис тот тоже ведь из наших. Какие-то браузеры думают, что следует переносить и его...'.gilensize
+    assert_equal 'при&#160;установке командой строки в&#160;?page=help <span class="nobr">бла-бла-бла-бла</span>', 'при установке командой строки в ?page=help бла-бла-бла-бла'.gilensize
+    assert_equal 'как&#160;интересно будет переноситься со&#160;строки на&#160;строку <span class="nobr">что-то</span> разделённое дефисом, ведь дефис тот&#160;тоже ведь из&#160;наших. <span class="nobr">Какие-то</span> браузеры думают, что&#160;следует переносить и&#160;его&#8230;', 'как интересно будет переноситься со строки на строку что-то разделённое дефисом, ведь дефис тот тоже ведь из наших. Какие-то браузеры думают, что следует переносить и его...'.gilensize
   end
   
   def test_quotes  
@@ -149,7 +149,7 @@ class GilensonOwnTest < Test::Unit::TestCase
   end
   
   def test_marker_bypass
-    assert_equal "<p><nobr>МИЭЛЬ-Недвижимость</nobr></p>", "<p>МИЭЛЬ-Недвижимость</p>".gilensize
+    assert_equal "<p><span class=\"nobr\">МИЭЛЬ-Недвижимость</span></p>", "<p>МИЭЛЬ-Недвижимость</p>".gilensize
   end
   
   def test_skip_code
@@ -347,6 +347,12 @@ class GilensonConfigurationTest < Test::Unit::TestCase
   def test_configure_alternate_names
     assert @gilenson.configure(:raw_output=>true)    
     assert @gilenson.configure!(:raw_output=>true)    
+  end
+  
+  def test_explicit_nobr
+    @gilenson.glyph[:nob_open] = '[NOB]'
+    @gilenson.glyph[:nob_close] = '[NOBC]'
+    assert_equal '[NOB]3&#8211;12&#8211;30[NOBC]', @gilenson.process('3-12-30')
   end
 end
 
