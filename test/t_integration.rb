@@ -129,8 +129,16 @@ class HelperTester
     select_datetime(TEST_TIME)
   end
   
+  def get_datetime_no_options
+    select_datetime
+  end
+  
+  def get_datetime_now
+    select_datetime(Time.now)
+  end
+  
   def get_datetime_with_options
-    select_date(TEST_TIME, :add_month_numbers => true)
+    select_datetime(TEST_TIME, :add_month_numbers => true)
   end
 end
 
@@ -166,7 +174,6 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
     assert_equal expected_select_month_usm, @stub.get_select_month_use_short_month, "Хелпер select_month с использованием короткого имени месяца"
     
     # TODO HTML OPTIONS
-    # TODO Date.today
   end
 
   def test_select_date  
@@ -185,7 +192,10 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
   def test_select_datetime
     assert_match /date\_day.+date\_month.+date\_year.+date\_hour.+date\_minute/m, @stub.get_datetime, "Хелпер select_datetime должен выводить поля в следующем порядке: день, месяц, год, час, минута"
     
-    assert_match /10\ \-\ октября/, @stub.get_datetime_with_options, "Хелпер select_datetime должен передавать опции вспомогательным хелперам"
+    assert_match /10\ \-\ октябрь/, @stub.get_datetime_with_options, "Хелпер select_datetime должен передавать опции вспомогательным хелперам"
+
+    assert_match @stub.get_datetime_no_options, @stub.get_datetime_now, "Хелпер select_datetime без параметров работает с текущей датой"
+
     # TODO HTML options
   end
 end
