@@ -1,3 +1,4 @@
+# TODO синхронизироваться с AV::Helpers::DateHelper
 if defined?(Object::ActionView)
   module Object::ActionView::Helpers::DateHelper
 
