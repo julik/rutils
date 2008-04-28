@@ -3,6 +3,14 @@
 if defined?(Object::ActionView)
   module Object::ActionView::Helpers::DateHelper
 
+    # Несколько хаков для корректной работы модуля с Rails 1.2--2.0 одновременно с Rails Edge (2.1+)
+
+    # Нужно определить, понимают ли хелперы DateHelper параметр <tt>html_options</tt> (идет последним).
+    # В данном случае проверяем, принимает ли метод <tt>select_second</tt> три параметра 
+    # (третий как раз и есть <tt>html_options</tt>)
+    #
+    # Если отвечает (Rails Edge, Rails 2.1+), то во всех методах, которые 
+    # мы переопределяем, будем передавать <tt>html_options</tt> другим хелперам.
     begin
       class DateHelperHtmlOptionsTest; end;
       DateHelperHtmlOptionsTest.send :include, self
@@ -17,31 +25,6 @@ if defined?(Object::ActionView)
       class << ::Time
         def current; now; end
       end
-    end
-    
-
-    def self.included(base) #:nodoc:#
-      # Несколько хаков для корректной работы модуля с Rails 1.2--2.0 одновременно с Rails Edge (2.1+)
-      # 
-      # Нужно определить, понимают ли хелперы DateHelper параметр <tt>html_options</tt> (идет последним).
-      # В данном случае проверяем, принимает ли метод <tt>select_second</tt> три параметра 
-      # (третий как раз и есть <tt>html_options</tt>)
-      #
-      # Если отвечает (Rails Edge, Rails 2.1+), то во всех методах, которые 
-      # мы переопределяем, будем передавать <tt>html_options</tt> другим хелперам.
-      # begin
-      #   base.new.select_second(Time.now, {}, {})
-      #   define_method(:date_helper_receives_html_options) { true } 
-      # rescue ArgumentError
-      #   define_method(:date_helper_receives_html_options) { false }
-      # end
-      
-      # # В Rails Edge (2.1+) определяется <tt>Time.current</tt> для работы с временными зонами.
-      # unless Time.respond_to? :current
-      #   class << ::Time
-      #     def current; now; end
-      #   end
-      # end
     end
     
     # Заменяет <tt>ActionView::Helpers::DateHelper::distance_of_time_in_words</tt> на русское сообщение.
