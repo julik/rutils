@@ -3,6 +3,23 @@
 if defined?(Object::ActionView)
   module Object::ActionView::Helpers::DateHelper
 
+    begin
+      class DateHelperHtmlOptionsTest; end;
+      DateHelperHtmlOptionsTest.send :include, self
+      DateHelperHtmlOptionsTest.new.select_second(Time.now, {}, {})
+      DATE_HELPER_RECEIVES_HTML_OPTIONS = true
+    rescue ArgumentError
+      DATE_HELPER_RECEIVES_HTML_OPTIONS = false
+    end
+
+    # В Rails Edge (2.1+) определяется <tt>Time.current</tt> для работы с временными зонами.
+    unless Time.respond_to? :current
+      class << ::Time
+        def current; now; end
+      end
+    end
+    
+
     def self.included(base) #:nodoc:#
       # Несколько хаков для корректной работы модуля с Rails 1.2--2.0 одновременно с Rails Edge (2.1+)
       # 
@@ -12,19 +29,19 @@ if defined?(Object::ActionView)
       #
       # Если отвечает (Rails Edge, Rails 2.1+), то во всех методах, которые 
       # мы переопределяем, будем передавать <tt>html_options</tt> другим хелперам.
-      begin
-        base.new.select_second(Time.now, {}, {})
-        @@date_helper_receives_html_options = true
-      rescue ArgumentError
-        @@date_helper_receives_html_options = false
-      end
+      # begin
+      #   base.new.select_second(Time.now, {}, {})
+      #   define_method(:date_helper_receives_html_options) { true } 
+      # rescue ArgumentError
+      #   define_method(:date_helper_receives_html_options) { false }
+      # end
       
-      # В Rails Edge (2.1+) определяется <tt>Time.current</tt> для работы с временными зонами.
-      unless Time.respond_to? :current
-        class << ::Time
-          def current; now; end
-        end
-      end
+      # # В Rails Edge (2.1+) определяется <tt>Time.current</tt> для работы с временными зонами.
+      # unless Time.respond_to? :current
+      #   class << ::Time
+      #     def current; now; end
+      #   end
+      # end
     end
     
     # Заменяет <tt>ActionView::Helpers::DateHelper::distance_of_time_in_words</tt> на русское сообщение.
@@ -76,7 +93,7 @@ if defined?(Object::ActionView)
           )
           month_options << "\n"
         end
-        if @@date_helper_receives_html_options
+        if DATE_HELPER_RECEIVES_HTML_OPTIONS
           select_html(options[:field_name] || 'month', month_options.join, options, html_options)
         else
           select_html(options[:field_name] || 'month', month_options.join, options)
@@ -91,7 +108,7 @@ if defined?(Object::ActionView)
       
       select_date = ''
       options[:order].each do |o|
-        if @@date_helper_receives_html_options
+        if DATE_HELPER_RECEIVES_HTML_OPTIONS
           select_date << self.send("select_#{o}", date, options, html_options)
         else
           select_date << self.send("select_#{o}", date, options)
@@ -103,7 +120,7 @@ if defined?(Object::ActionView)
     # Заменяет ActionView::Helpers::DateHelper::select_datetime меню выбора русской даты.
     def select_datetime(datetime = Time.current, options = {}, html_options = {})
       separator = options[:datetime_separator] || ''
-      if @@date_helper_receives_html_options
+      if DATE_HELPER_RECEIVES_HTML_OPTIONS
         select_date(datetime, options, html_options) + separator + select_time(datetime, options, html_options)
       else
         select_date(datetime, options) + separator + select_time(datetime, options)
