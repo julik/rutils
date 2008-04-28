@@ -1,6 +1,7 @@
 $KCODE = 'u'
-require 'test/unit'
 require 'rubygems'
+require 'test/unit'
+require 'flexmock/test_unit'
 
 begin
   require 'action_controller' unless defined?(ActionController)
@@ -88,57 +89,48 @@ end
 TEST_DATE = Date.parse("1983-10-15") # coincidentially...
 TEST_TIME = Time.local(1983, 10, 15, 12, 15) # also coincidentially...
 
+# Вспомогательный класс для тестирования перегруженного DateHelper
 class HelperTester
-  def get_distance
-    distance_of_time_in_words(Time.now - 20.minutes, Time.now)
-  end
-  
-  def get_select_month
-    select_month(TEST_DATE)
-  end
+  include ActionView::Helpers::TagHelper
+end
 
-  def get_select_month_use_month_numbers
-    select_month(TEST_DATE, :use_month_numbers => true)
-  end
-
-  def get_select_month_add_month_numbers
-    select_month(TEST_DATE, :add_month_numbers => true)
-  end
-
-  def get_select_month_use_short_month
-    select_month(TEST_DATE, :use_short_month => true)
+# Вспомогательный класс для тестирования перегруженного DateHelper
+#
+# Пытается эмулировать DateHelper из Rails Edge (2.1+) за счет
+# поддержки в хелперах параметра html_options
+class HelperTesterHtmlOptions
+  include ActionView::Helpers::TagHelper
+  
+  # Taken from Rails Edge (2.1)
+  def select_second(datetime, options = {}, html_options = {})
+    val = datetime ? (datetime.kind_of?(Fixnum) ? datetime : datetime.sec) : ''
+    if options[:use_hidden]
+      options[:include_seconds] ? hidden_html(options[:field_name] || 'second', val, options) : ''
+    else
+      second_options = []
+      0.upto(59) do |second|
+        second_options << ((val == second) ?
+          content_tag(:option, leading_zero_on_single_digits(second), :value => leading_zero_on_single_digits(second), :selected => "selected") :
+          content_tag(:option, leading_zero_on_single_digits(second), :value => leading_zero_on_single_digits(second))
+        )
+        second_options << "\n"
+      end
+      select_html(options[:field_name] || 'second', second_options.join, options, html_options)
+    end
   end
   
-  def get_date_select
-    select_date(TEST_DATE)
-  end
+  private
   
-  def get_date_select_no_options
-    select_date
-  end
-
-  def get_date_select_today
-    select_date(Date.today)
-  end
-
-  def get_date_select_without_day
-    select_date(TEST_DATE, :order => [:month, :year])
-  end
-  
-  def get_datetime
-    select_datetime(TEST_TIME)
-  end
-  
-  def get_datetime_no_options
-    select_datetime
-  end
-  
-  def get_datetime_now
-    select_datetime(Time.now)
-  end
-  
-  def get_datetime_with_options
-    select_datetime(TEST_TIME, :add_month_numbers => true)
+  # Taken from Rails Edge (2.1)
+  def select_html(type, html_options, options, select_tag_options = {})
+    name_and_id_from_options(options, type)
+    select_options = {:id => options[:id], :name => options[:name]}
+    select_options.merge!(:disabled => 'disabled') if options[:disabled]
+    select_options.merge!(select_tag_options) unless select_tag_options.empty?
+    select_html = "\n"
+    select_html << content_tag(:option, '', :value => '') + "\n" if options[:include_blank]
+    select_html << html_options.to_s
+    content_tag(:select, select_html, select_options) + "\n"
   end
 end
 
@@ -148,55 +140,71 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
   def setup
     raise "You must have Rails to test ActionView integration" and return if $skip_rails
     RuTils::overrides = true
-    
-    HelperTester.class_eval { include ActionView::Helpers::DateHelper }
+
+    HelperTester.send :include, ActionView::Helpers::DateHelper
     @stub = HelperTester.new
   end
   
   def test_distance_of_time_in_words
     assert_equal "20 минут", @stub.distance_of_time_in_words(Time.now - 20.minutes, Time.now)
-    # TODO more tests in t_datetime, just wrapper here
+    # TODO add more tests in t_datetime, just a wrapper here
   end
   
   def test_select_month
-    expected_select_month = "<select id=\"date_month\" name=\"date[month]\">\n<option value=\"1\">январь</option>\n<option value=\"2\">февраль</option>\n<option value=\"3\">март</option>\n<option value=\"4\">апрель</option>\n<option value=\"5\">май</option>\n<option value=\"6\">июнь</option>\n<option value=\"7\">июль</option>\n<option value=\"8\">август</option>\n<option value=\"9\">сентябрь</option>\n<option value=\"10\" selected=\"selected\">октябрь</option>\n<option value=\"11\">ноябрь</option>\n<option value=\"12\">декабрь</option>\n</select>\n"
-    assert_equal expected_select_month, @stub.get_select_month, "Хелпер select_month без опций"
-
-    assert_match /июль/, @stub.get_select_month, "Месяц в выборе месяца должен быть указан в именительном падеже"
-    
-    expected_select_month_umn = "<select id=\"date_month\" name=\"date[month]\">\n<option value=\"1\">1</option>\n<option value=\"2\">2</option>\n<option value=\"3\">3</option>\n<option value=\"4\">4</option>\n<option value=\"5\">5</option>\n<option value=\"6\">6</option>\n<option value=\"7\">7</option>\n<option value=\"8\">8</option>\n<option value=\"9\">9</option>\n<option value=\"10\" selected=\"selected\">10</option>\n<option value=\"11\">11</option>\n<option value=\"12\">12</option>\n</select>\n"
-    assert_equal expected_select_month_umn, @stub.get_select_month_use_month_numbers, "Хелпер select_month с номером месяца вместо названия месяца"
-    
-    expected_select_month_amn = "<select id=\"date_month\" name=\"date[month]\">\n<option value=\"1\">1 - январь</option>\n<option value=\"2\">2 - февраль</option>\n<option value=\"3\">3 - март</option>\n<option value=\"4\">4 - апрель</option>\n<option value=\"5\">5 - май</option>\n<option value=\"6\">6 - июнь</option>\n<option value=\"7\">7 - июль</option>\n<option value=\"8\">8 - август</option>\n<option value=\"9\">9 - сентябрь</option>\n<option value=\"10\" selected=\"selected\">10 - октябрь</option>\n<option value=\"11\">11 - ноябрь</option>\n<option value=\"12\">12 - декабрь</option>\n</select>\n"
-    assert_equal expected_select_month_amn, @stub.get_select_month_add_month_numbers, "Хелпер select_month с номером и названием месяца"
-    
-    expected_select_month_usm = "<select id=\"date_month\" name=\"date[month]\">\n<option value=\"1\">янв</option>\n<option value=\"2\">фев</option>\n<option value=\"3\">мар</option>\n<option value=\"4\">апр</option>\n<option value=\"5\">май</option>\n<option value=\"6\">июн</option>\n<option value=\"7\">июл</option>\n<option value=\"8\">авг</option>\n<option value=\"9\">сен</option>\n<option value=\"10\" selected=\"selected\">окт</option>\n<option value=\"11\">ноя</option>\n<option value=\"12\">дек</option>\n</select>\n"
-    assert_equal expected_select_month_usm, @stub.get_select_month_use_short_month, "Хелпер select_month с использованием короткого имени месяца"
-    
-    # TODO HTML OPTIONS
+    assert_match /июль/, @stub.select_month(TEST_DATE), 
+      "Месяц в выборе месяца должен быть указан в именительном падеже"
+    assert_match />7\<\/option\>/, @stub.select_month(TEST_DATE, :use_month_numbers => true), 
+      "Хелпер select_month с номером месяца вместо названия месяца"
+    assert_match /10\ \-\ октябрь/, @stub.select_month(TEST_DATE, :add_month_numbers => true), 
+      "Хелпер select_month с номером и названием месяца"
+    assert_match /\>июн\<\/option\>/, @stub.select_month(TEST_DATE, :use_short_month => true), 
+      "Короткое имя месяца при использовании опции :use_short_month"
+    assert_match /name\=\"date\[foobar\]\"/, @stub.select_month(TEST_DATE, :field_name => "foobar"), 
+      "Хелпер select_month должен принимать опцию :field_name"
+    assert_match /type\=\"hidden\".+value\=\"10\"/m, @stub.select_month(TEST_DATE, :use_hidden => true),
+      "Хелпер select_month должен принимать опцию :use_hidden"
+    assert_match /type\=\"hidden\".+name=\"date\[foobar\]\"/m, @stub.select_month(TEST_DATE, :use_hidden => true, :field_name => "foobar"),
+      "Хелпер select_month должен принимать опцию :use_hidden одновременно с :field_name"
   end
 
   def test_select_date  
-    expected_date_select = "<select id=\"date_day\" name=\"date[day]\">\n<option value=\"1\">1</option>\n<option value=\"2\">2</option>\n<option value=\"3\">3</option>\n<option value=\"4\">4</option>\n<option value=\"5\">5</option>\n<option value=\"6\">6</option>\n<option value=\"7\">7</option>\n<option value=\"8\">8</option>\n<option value=\"9\">9</option>\n<option value=\"10\">10</option>\n<option value=\"11\">11</option>\n<option value=\"12\">12</option>\n<option value=\"13\">13</option>\n<option value=\"14\">14</option>\n<option value=\"15\" selected=\"selected\">15</option>\n<option value=\"16\">16</option>\n<option value=\"17\">17</option>\n<option value=\"18\">18</option>\n<option value=\"19\">19</option>\n<option value=\"20\">20</option>\n<option value=\"21\">21</option>\n<option value=\"22\">22</option>\n<option value=\"23\">23</option>\n<option value=\"24\">24</option>\n<option value=\"25\">25</option>\n<option value=\"26\">26</option>\n<option value=\"27\">27</option>\n<option value=\"28\">28</option>\n<option value=\"29\">29</option>\n<option value=\"30\">30</option>\n<option value=\"31\">31</option>\n</select>\n<select id=\"date_month\" name=\"date[month]\">\n<option value=\"1\">января</option>\n<option value=\"2\">февраля</option>\n<option value=\"3\">марта</option>\n<option value=\"4\">апреля</option>\n<option value=\"5\">мая</option>\n<option value=\"6\">июня</option>\n<option value=\"7\">июля</option>\n<option value=\"8\">августа</option>\n<option value=\"9\">сентября</option>\n<option value=\"10\" selected=\"selected\">октября</option>\n<option value=\"11\">ноября</option>\n<option value=\"12\">декабря</option>\n</select>\n<select id=\"date_year\" name=\"date[year]\">\n<option value=\"1978\">1978</option>\n<option value=\"1979\">1979</option>\n<option value=\"1980\">1980</option>\n<option value=\"1981\">1981</option>\n<option value=\"1982\">1982</option>\n<option value=\"1983\" selected=\"selected\">1983</option>\n<option value=\"1984\">1984</option>\n<option value=\"1985\">1985</option>\n<option value=\"1986\">1986</option>\n<option value=\"1987\">1987</option>\n<option value=\"1988\">1988</option>\n</select>\n"
-    
-    assert_equal expected_date_select, @stub.get_date_select, "Хелпер date_select без опций"
-    assert_match /декабря/, @stub.get_date_select, "Имя месяца должно быть указано в родительном падеже"
-
-    assert_match /декабря/, @stub.get_date_select_without_day,
+    assert_match /date\_day.+date\_month.+date\_year/m, @stub.select_date(TEST_TIME),
+      "Хелпер select_date должен выводить поля в следующем порядке: день, месяц, год"
+    assert_match /декабря/, @stub.select_date(TEST_DATE), 
+      "Имя месяца должно быть указано в родительном падеже"
+    assert_match /декабря/, @stub.select_date(TEST_DATE, :order => [:month, :year]),
       "Хелпер select_date не позволяет опускать фрагменты, имя месяца должно быть указано в родительном падеже"
-
-    assert_match @stub.get_date_select_no_options, @stub.get_date_select_today, "Хелпер select_date без параметров работает с текущей датой"
-    # TODO HTML options
+    assert_match @stub.select_date, @stub.select_date(Time.now), 
+      "Хелпер select_date без параметров работает с текущей датой"
   end
 
   def test_select_datetime
-    assert_match /date\_day.+date\_month.+date\_year.+date\_hour.+date\_minute/m, @stub.get_datetime, "Хелпер select_datetime должен выводить поля в следующем порядке: день, месяц, год, час, минута"
+    assert_match /date\_day.+date\_month.+date\_year.+date\_hour.+date\_minute/m, @stub.select_datetime(TEST_TIME),
+      "Хелпер select_datetime должен выводить поля в следующем порядке: день, месяц, год, час, минута"
+    assert_match /10\ \-\ октября/, @stub.select_datetime(TEST_TIME, :add_month_numbers => true), 
+      "Хелпер select_datetime должен передавать опции вспомогательным хелперам"
+    assert_match @stub.select_datetime, @stub.select_datetime(Time.now), 
+      "Хелпер select_datetime без параметров работает с текущей датой"
+  end
+  
+  def test_html_options
+    RuTils::overrides = true
+    HelperTesterHtmlOptions.send :include, ActionView::Helpers::DateHelper
+    @stub_h = HelperTesterHtmlOptions.new
+    @mock = flexmock(@stub_h)
     
-    assert_match /10\ \-\ октябрь/, @stub.get_datetime_with_options, "Хелпер select_datetime должен передавать опции вспомогательным хелперам"
+    # неважно что возвращают хелперы select_[day|year|time], нам нужно только проверить
+    # передачу html_options
+    @mock.should_receive(:select_day).and_return("")
+    @mock.should_receive(:select_year).and_return("")
+    @mock.should_receive(:select_time).and_return("")
 
-    assert_match @stub.get_datetime_no_options, @stub.get_datetime_now, "Хелпер select_datetime без параметров работает с текущей датой"
-
-    # TODO HTML options
+    assert_match /id=\"foobar\"/, @stub_h.select_month(TEST_DATE, {}, {:id => "foobar"}),
+      "Хелпер select_month должен поддерживать html опции на Rails Edge (2.1+)"
+    assert_match /id=\"foobar\"/, @stub_h.select_date(TEST_DATE, {}, {:id => "foobar"}), 
+      "Хелпер select_date должен поддерживать html опции на Rails Edge (2.1+)"
+    assert_match /id=\"foobar\"/, @stub_h.select_datetime(TEST_TIME, {}, {:id => "foobar"}), 
+      "Хелпер select_datetime должен поддерживать html опции на Rails Edge (2.1+)"
   end
 end
 

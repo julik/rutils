@@ -1,3 +1,8 @@
+
+* Переписаны Date хелперы для Rails. Теперь поддерживаются все опции Rails 1.2--2.0 и 
+  Rails Edge (2.1+) (Yaroslav Markin)
+* Переписаны и дополнены тесты на перегрузку Date хелперов Rails (Yaroslav Markin)
+* Для тестов на перегрузку хелперов Rails теперь нужен flexmock (gem install flexmock) (Yaroslav Markin)
 * До свидания, <nobr>. Указывайте .nobr { text-wrap: nowrap } в своих стилевых таблицах.
 
 Версия 0.2.3 - 27.09.2007
