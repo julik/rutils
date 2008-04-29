@@ -1,7 +1,6 @@
 $KCODE = 'u'
 require 'rubygems'
 require 'test/unit'
-require 'flexmock/test_unit'
 
 begin
   require 'action_controller' unless defined?(ActionController)
@@ -94,46 +93,6 @@ class HelperTester
   include ActionView::Helpers::TagHelper
 end
 
-# Вспомогательный класс для тестирования перегруженного DateHelper
-#
-# Пытается эмулировать DateHelper из Rails Edge (2.1+) за счет
-# поддержки в хелперах параметра html_options
-class HelperTesterHtmlOptions
-  include ActionView::Helpers::TagHelper
-  
-  # Taken from Rails Edge (2.1)
-  def select_second(datetime, options = {}, html_options = {})
-    val = datetime ? (datetime.kind_of?(Fixnum) ? datetime : datetime.sec) : ''
-    if options[:use_hidden]
-      options[:include_seconds] ? hidden_html(options[:field_name] || 'second', val, options) : ''
-    else
-      second_options = []
-      0.upto(59) do |second|
-        second_options << ((val == second) ?
-          content_tag(:option, leading_zero_on_single_digits(second), :value => leading_zero_on_single_digits(second), :selected => "selected") :
-          content_tag(:option, leading_zero_on_single_digits(second), :value => leading_zero_on_single_digits(second))
-        )
-        second_options << "\n"
-      end
-      select_html(options[:field_name] || 'second', second_options.join, options, html_options)
-    end
-  end
-  
-  private
-  
-  # Taken from Rails Edge (2.1)
-  def select_html(type, html_options, options, select_tag_options = {})
-    name_and_id_from_options(options, type)
-    select_options = {:id => options[:id], :name => options[:name]}
-    select_options.merge!(:disabled => 'disabled') if options[:disabled]
-    select_options.merge!(select_tag_options) unless select_tag_options.empty?
-    select_html = "\n"
-    select_html << content_tag(:option, '', :value => '') + "\n" if options[:include_blank]
-    select_html << html_options.to_s
-    content_tag(:select, select_html, select_options) + "\n"
-  end
-end
-
 # Перегрузка helper'ов Rails
 # TODO добавить и обновить тесты из Rails
 class RailsHelpersOverrideTest < Test::Unit::TestCase
@@ -181,24 +140,12 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
   def test_select_datetime
     assert_match /date\_day.+date\_month.+date\_year.+date\_hour.+date\_minute/m, @stub.select_datetime(TEST_TIME),
       "Хелпер select_datetime должен выводить поля в следующем порядке: день, месяц, год, час, минута"
+    assert_match /10\ \-\ октября/, @stub.select_datetime(TEST_TIME, :add_month_numbers => true), 
+      "Хелпер select_datetime должен передавать опции вспомогательным хелперам"
+    assert_match @stub.select_datetime, @stub.select_datetime(Time.now), 
+      "Хелпер select_datetime без параметров работает с текущей датой"
   end
   
-  def test_html_options
-    RuTils::overrides = true
-    HelperTesterHtmlOptions.send :include, ActionView::Helpers::DateHelper
-    @stub_h = HelperTesterHtmlOptions.new
-    @mock = flexmock(@stub_h)
-    
-    # неважно что возвращают хелперы select_[day|year|time|datetime], нам нужно только проверить
-    # передачу html_options
-    @mock.should_receive(:select_day).and_return("")
-    @mock.should_receive(:select_year).and_return("")
-    @mock.should_receive(:select_time).and_return("")
-
-    assert_match /id=\"foobar\"/, @stub_h.select_month(TEST_DATE, {}, {:id => "foobar"}),
-      "Хелпер select_month должен поддерживать html опции на Rails Edge (2.1+)"
-    assert_match /id=\"foobar\"/, @stub_h.select_date(TEST_DATE, {}, {:id => "foobar"}), 
-      "Хелпер select_date должен поддерживать html опции на Rails Edge (2.1+)"
-  end
+  # TODO тестирование html опций -- как сделать с константами?
 end
 
