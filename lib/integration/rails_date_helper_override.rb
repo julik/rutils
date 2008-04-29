@@ -99,16 +99,5 @@ if defined?(Object::ActionView)
       end
       select_date
     end
-  
-    # Заменяет ActionView::Helpers::DateHelper::select_datetime меню выбора русской даты.
-    def select_datetime(datetime = Time.current, options = {}, html_options = {})
-      separator = options[:datetime_separator] || ''
-      if DATE_HELPER_RECEIVES_HTML_OPTIONS
-        select_date(datetime, options, html_options) + separator + select_time(datetime, options, html_options)
-      else
-        select_date(datetime, options) + separator + select_time(datetime, options)
-      end
-    end
-    
   end
 end #endif
