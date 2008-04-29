@@ -140,10 +140,6 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
   def test_select_datetime
     assert_match /date\_day.+date\_month.+date\_year.+date\_hour.+date\_minute/m, @stub.select_datetime(TEST_TIME),
       "Хелпер select_datetime должен выводить поля в следующем порядке: день, месяц, год, час, минута"
-    assert_match /10\ \-\ октября/, @stub.select_datetime(TEST_TIME, :add_month_numbers => true), 
-      "Хелпер select_datetime должен передавать опции вспомогательным хелперам"
-    assert_match @stub.select_datetime, @stub.select_datetime(Time.now), 
-      "Хелпер select_datetime без параметров работает с текущей датой"
   end
   
   # TODO тестирование html опций -- как сделать с константами?
