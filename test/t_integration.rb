@@ -1,6 +1,7 @@
 $KCODE = 'u'
 require 'rubygems'
 require 'test/unit'
+require 'multi_rails_init'
 
 begin
   require 'action_controller' unless defined?(ActionController)

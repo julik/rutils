@@ -6,6 +6,7 @@ require 'rake/packagetask'
 require 'rake/gempackagetask'
 require 'rake/contrib/rubyforgepublisher'
 require 'fileutils'
+require 'load_multi_rails_rake_tasks'
 require 'lib/rutils'
 
 begin
