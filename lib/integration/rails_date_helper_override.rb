@@ -1,4 +1,3 @@
-# TODO синхронизироваться с AV::Helpers::DateHelper
 # TODO документирование всех перегруженных методов "с нуля"
 if defined?(Object::ActionView)
   module Object::ActionView::Helpers::DateHelper
