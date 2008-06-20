@@ -1,5 +1,5 @@
 
-* добавлены алиасы #rubl и #rublja для Numeric#rublej. Теперь можно писать: 1.rubl, 3.rublja.
+* добавлены алиасы #rubl и #rublja для Numeric#rublej. Теперь можно писать: 1.rubl, 3.rublja. (Yaroslav Markin)
 * Переписаны Date хелперы для Rails. Теперь поддерживаются все опции Rails 1.2--2.0 и 
   Rails 2.1+ (Yaroslav Markin)
 * Переписаны и дополнены тесты на перегрузку Date хелперов Rails (Yaroslav Markin)

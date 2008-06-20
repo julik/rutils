@@ -72,22 +72,6 @@ if defined?(Object::ActionView)
       end
     end
     
-    # Заменяет ActionView::Helpers::DateHelper::select_date меню выбора русской даты.
-    # def select_date(date = Date.today, options = {}, html_options = {})
-    #   options[:order] ||= []
-    #   [:day, :month, :year].each { |o| options[:order].push(o) unless options[:order].include?(o) }
-    #   
-    #   select_date = ''
-    #   options[:order].each do |o|
-    #     if DATE_HELPERS_RECEIVE_HTML_OPTIONS
-    #       select_date << self.send("select_#{o}", date, options, html_options)
-    #     else
-    #       select_date << self.send("select_#{o}", date, options)
-    #     end
-    #   end
-    #   select_date
-    # end
-    
     alias :stock_select_date :select_date
     # Заменяет ActionView::Helpers::DateHelper::select_date меню выбора русской даты.
     def select_date(date = Date.today, options = {}, html_options = {})
