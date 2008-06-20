@@ -74,19 +74,48 @@ if defined?(Object::ActionView)
     end
     
     # Заменяет ActionView::Helpers::DateHelper::select_date меню выбора русской даты.
+    # def select_date(date = Date.today, options = {}, html_options = {})
+    #   options[:order] ||= []
+    #   [:day, :month, :year].each { |o| options[:order].push(o) unless options[:order].include?(o) }
+    #   
+    #   select_date = ''
+    #   options[:order].each do |o|
+    #     if DATE_HELPERS_RECEIVE_HTML_OPTIONS
+    #       select_date << self.send("select_#{o}", date, options, html_options)
+    #     else
+    #       select_date << self.send("select_#{o}", date, options)
+    #     end
+    #   end
+    #   select_date
+    # end
+    
+    alias :stock_select_date :select_date
+    # Заменяет ActionView::Helpers::DateHelper::select_date меню выбора русской даты.
     def select_date(date = Date.today, options = {}, html_options = {})
-      options[:order] ||= []
-      [:day, :month, :year].each { |o| options[:order].push(o) unless options[:order].include?(o) }
-      
-      select_date = ''
-      options[:order].each do |o|
-        if DATE_HELPERS_RECEIVE_HTML_OPTIONS
-          select_date << self.send("select_#{o}", date, options, html_options)
-        else
-          select_date << self.send("select_#{o}", date, options)
-        end
+      options[:order] ||= [:day, :month, :year]
+      if DATE_HELPERS_RECEIVE_HTML_OPTIONS
+        stock_select_date(date, options, html_options)
+      else
+        stock_select_date(date, options)
       end
-      select_date
     end
   end
+  
+  module Object::ActionView::Helpers
+    if defined?(InstanceTag) && InstanceTag.private_method_defined?(:date_or_time_select)
+      class InstanceTag #:nodoc:
+        private
+          alias :stock_date_or_time_select :date_or_time_select
+          def date_or_time_select(options, html_options = {})
+            options[:order] ||= [:day, :month, :year]
+            if DATE_HELPERS_RECEIVE_HTML_OPTIONS
+              stock_date_or_time_select(options, html_options)
+            else
+              stock_date_or_time_select(options)
+            end
+          end
+      end
+    end
+  end
+  
 end #endif

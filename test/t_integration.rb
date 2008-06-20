@@ -92,6 +92,11 @@ TEST_TIME = Time.local(1983, 10, 15, 12, 15) # also coincidentially...
 # Вспомогательный класс для тестирования перегруженного DateHelper
 class HelperTester
   include ActionView::Helpers::TagHelper
+  
+  # для тестирования to_datetime_select_tag
+  def date_field
+    TEST_TIME
+  end
 end
 
 # Перегрузка helper'ов Rails
@@ -137,8 +142,8 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
   end
 
   def test_select_datetime
-    assert_match /date\_day.+date\_month.+date\_year.+date\_hour.+date\_minute/m, @stub.select_datetime(TEST_TIME),
-      "Хелпер select_datetime должен выводить поля в следующем порядке: день, месяц, год, час, минута"
+    assert_match /date\_day.+date\_month.+date\_year/m, @stub.select_datetime(TEST_TIME),
+      "Хелпер select_datetime должен выводить поля в следующем порядке: день, месяц, год"
   end
   
   def test_html_options
@@ -149,6 +154,14 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
       assert_match /id\=\"foobar\"/m,  @stub.select_date(TEST_DATE, {}, :id => "foobar"),
         "Хелпер select_date принимает html_options"
     end
+  end
+  
+  def test_instance_tag
+    @it = ActionView::Helpers::InstanceTag.new(:stub, :date_field, self).to_datetime_select_tag
+    assert_match /\>10\<.+\>октября\<.+\>1983\</m, @it,
+      "to_datetime_select_rag должен выводить поля в следующем порядке: день, месяц, год"
+    assert_match /июля/m, @it,
+     "to_datetime_select_tag выводит месяц в родительном падеже"
   end
 end
 
