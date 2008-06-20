@@ -219,9 +219,13 @@ module RuTils
       
       # Выводит сумму в рублях прописью. Например:
       # * (15.4).rublej => "пятнадцать рублей сорок копеек"
+      # * 1.rubl        => "один рубль"
+      # * (3.14).rublja => "три рубля четырнадцать копеек"
       def rublej
         RuTils::Pluralization::rublej(self)
       end
+      alias :rubl   :rublej
+      alias :rublja :rublej
     end
   end
 end

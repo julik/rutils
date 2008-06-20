@@ -39,6 +39,8 @@ class PropisjuTestCase < Test::Unit::TestCase
     assert_equal "триста сорок три рубля двадцать копеек", (343.20).rublej
     assert_equal "сорок две копейки", (0.4187).rublej
     assert_equal "триста тридцать два рубля", (331.995).rublej
+    assert_equal "один рубль", 1.rubl
+    assert_equal "три рубля четырнадцать копеек", (3.14).rublja
   end  
 end
 
