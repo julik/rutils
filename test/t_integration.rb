@@ -126,7 +126,7 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
   end
 
   def test_select_date  
-    assert_match /date\_day.+date\_month.+date\_year/m, @stub.select_date(TEST_TIME),
+    assert_match /date\_day.+date\_month.+date\_year/m, @stub.select_date(TEST_DATE),
       "Хелпер select_date должен выводить поля в следующем порядке: день, месяц, год"
     assert_match /декабря/, @stub.select_date(TEST_DATE), 
       "Имя месяца должно быть указано в родительном падеже"
@@ -141,6 +141,14 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
       "Хелпер select_datetime должен выводить поля в следующем порядке: день, месяц, год, час, минута"
   end
   
-  # TODO тестирование html опций -- как сделать с константами?
+  def test_html_options
+    if ActionView::Helpers::DateHelper::DATE_HELPERS_RECEIVE_HTML_OPTIONS
+      assert_match /id\=\"foobar\"/m,  @stub.select_month(TEST_DATE, {}, :id => "foobar"),
+        "Хелпер select_month принимает html_options"
+
+      assert_match /id\=\"foobar\"/m,  @stub.select_date(TEST_DATE, {}, :id => "foobar"),
+        "Хелпер select_date принимает html_options"
+    end
+  end
 end
 

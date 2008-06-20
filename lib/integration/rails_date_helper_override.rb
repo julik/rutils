@@ -2,23 +2,12 @@
 # TODO документирование всех перегруженных методов "с нуля"
 if defined?(Object::ActionView)
   module Object::ActionView::Helpers::DateHelper
+    # Несколько хаков для корректной работы модуля с Rails 1.2--2.0 одновременно с Rails 2.1 и выше.
 
-    # Несколько хаков для корректной работы модуля с Rails 1.2--2.0 одновременно с Rails Edge (2.1+)
-
-    # Нужно определить, понимают ли хелперы DateHelper параметр <tt>html_options</tt> (идет последним).
-    # В данном случае проверяем, принимает ли метод <tt>select_second</tt> три параметра 
-    # (третий как раз и есть <tt>html_options</tt>)
-    #
-    # Если отвечает (Rails Edge, Rails 2.1+), то во всех методах, которые 
-    # мы переопределяем, будем передавать <tt>html_options</tt> другим хелперам.
-    begin
-      class DateHelperHtmlOptionsTest; end;
-      DateHelperHtmlOptionsTest.send :include, self
-      DateHelperHtmlOptionsTest.new.select_second(Time.now, {}, {})
-      DATE_HELPER_RECEIVES_HTML_OPTIONS = true
-    rescue ArgumentError
-      DATE_HELPER_RECEIVES_HTML_OPTIONS = false
-    end
+    # Хелперы DateHelper принимают параметр <tt>html_options</tt> (идет последним) начиная с Rails 2.1.
+    # Нужно понять, имеем ли мы дело с Rails 2.1+, для этого проверяем наличие классметода helper_modules у
+    # ActionView::Base, который появился как раз в версии 2.1.
+    DATE_HELPERS_RECEIVE_HTML_OPTIONS = ActionView::Base.respond_to?(:helper_modules)
 
     # В Rails Edge (2.1+) определяется <tt>Time.current</tt> для работы с временными зонами.
     unless Time.respond_to? :current
@@ -76,7 +65,7 @@ if defined?(Object::ActionView)
           )
           month_options << "\n"
         end
-        if DATE_HELPER_RECEIVES_HTML_OPTIONS
+        if DATE_HELPERS_RECEIVE_HTML_OPTIONS
           select_html(options[:field_name] || 'month', month_options.join, options, html_options)
         else
           select_html(options[:field_name] || 'month', month_options.join, options)
@@ -91,7 +80,7 @@ if defined?(Object::ActionView)
       
       select_date = ''
       options[:order].each do |o|
-        if DATE_HELPER_RECEIVES_HTML_OPTIONS
+        if DATE_HELPERS_RECEIVE_HTML_OPTIONS
           select_date << self.send("select_#{o}", date, options, html_options)
         else
           select_date << self.send("select_#{o}", date, options)
