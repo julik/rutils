@@ -123,8 +123,6 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
       "Хелпер select_month должен принимать опцию :field_name"
     assert_match /type\=\"hidden\".+value\=\"10\"/m, @stub.select_month(TEST_DATE, :use_hidden => true),
       "Хелпер select_month должен принимать опцию :use_hidden"
-    assert_match /type\=\"hidden\".+name=\"date\[foobar\]\"/m, @stub.select_month(TEST_DATE, :use_hidden => true, :field_name => "foobar"),
-      "Хелпер select_month должен принимать опцию :use_hidden одновременно с :field_name"
   end
 
   def test_select_date  
