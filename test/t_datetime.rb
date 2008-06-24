@@ -22,6 +22,8 @@ class StrftimeRuTest < Test::Unit::TestCase
       assert_equal "%сб, %суббота, %дек, %декабрь", Time.local(2005,"dec",31).strftime("%%%a, %%%A, %%%b, %%%B")
       assert_equal "Сегодня: 31 декабря, суббота, 2005 года", Time.local(2005,"dec",31).strftime("Сегодня: %d %B, %A, %Y года")
       assert_equal "Сегодня: ноябрь, 30 число, дождик в четверг, а год у нас - 2006", Time.local(2006,11,30).strftime("Сегодня: %B, %d число, дождик в %A, а год у нас - %Y")
+      assert_equal "01 декабря", Time.local(1985, "dec", 01).strftime("%d %B")
+      assert_equal "11 декабря", Time.local(1985, "dec", 11).strftime("%d %B")
       
       date = Date.new(2005, 12, 31)
       assert_equal "дек декабрь сб суббота", "#{Date::RU_ABBR_MONTHNAMES[date.mon]} #{Date::RU_MONTHNAMES[date.mon]} #{Date::RU_ABBR_DAYNAMES[date.wday]} #{Date::RU_DAYNAMES[date.wday]}"
@@ -33,6 +35,8 @@ class StrftimeRuTest < Test::Unit::TestCase
       assert_equal "%a, %A, %b, %B", Time.local(2005,"dec",31).strftime("%%a, %%A, %%b, %%B")
       assert_equal "%Sat, %Saturday, %Dec, %December", Time.local(2005,"dec",31).strftime("%%%a, %%%A, %%%b, %%%B")
       assert_equal "Сегодня: 31 December, Saturday, 2005 год", Time.local(2005,"dec",31).strftime("Сегодня: %d %B, %A, %Y год")
+      assert_equal "01 December", Time.local(1985, "dec", 01).strftime("%d %B")
+      assert_equal "11 December", Time.local(1985, "dec", 11).strftime("%d %B")
       
       date = Date.new(2005, 11, 9)
       assert_equal "Nov November Wed Wednesday", "#{Date::ABBR_MONTHNAMES[date.mon]} #{Date::MONTHNAMES[date.mon]} #{Date::ABBR_DAYNAMES[date.wday]} #{Date::DAYNAMES[date.wday]}"
