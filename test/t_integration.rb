@@ -1,7 +1,12 @@
 $KCODE = 'u'
 require 'rubygems'
 require 'test/unit'
-require 'multi_rails_init'
+
+begin
+  require 'multi_rails_init'
+rescue LoadError
+  $stderr.puts "Please install multi_rails for regression testing testing"
+end
 
 begin
   require 'action_controller' unless defined?(ActionController)
@@ -89,25 +94,23 @@ end
 TEST_DATE = Date.parse("1983-10-15") # coincidentially...
 TEST_TIME = Time.local(1983, 10, 15, 12, 15) # also coincidentially...
 
-# Вспомогательный класс для тестирования перегруженного DateHelper
-class HelperTester
-  include ActionView::Helpers::TagHelper
-  
-  # для тестирования to_datetime_select_tag
-  def date_field
-    TEST_TIME
-  end
-end
-
 # Перегрузка helper'ов Rails
 # TODO добавить и обновить тесты из Rails
 class RailsHelpersOverrideTest < Test::Unit::TestCase
+  # Вспомогательный класс для тестирования перегруженного DateHelper
+  class HelperStub
+    # для тестирования to_datetime_select_tag
+    def date_field; TEST_TIME; end
+  end
+
   def setup
     raise "You must have Rails to test ActionView integration" and return if $skip_rails
+    
     RuTils::overrides = true
-
-    HelperTester.send :include, ActionView::Helpers::DateHelper
-    @stub = HelperTester.new
+    # А никто и не говорил что класс должен быть один :-)
+    k = Class.new(HelperStub)
+    [ActionView::Helpers::TagHelper, ActionView::Helpers::DateHelper].each{|m| k.send(:include, m)}
+    @stub = k.new
   end
   
   def test_distance_of_time_in_words
@@ -115,6 +118,7 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
     # TODO add more tests in t_datetime, just a wrapper here
   end
   
+  # TODO - TextMate это не хайлайтит, и это _крайне_ достает
   def test_select_month
     assert_match /июль/, @stub.select_month(TEST_DATE), 
       "Месяц в выборе месяца должен быть указан в именительном падеже"

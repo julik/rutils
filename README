@@ -23,7 +23,7 @@ RubyKanjiCode в своем httpd.conf.
 Большое спасибо Роману Иванову aka Kukutz и Николаю Яремко aka Kuso Mendokuzee за
 реализацию большинства алгоритмов на PHP.
 
-Разработку RuTils ведут Julik[http://julik.nl] и Mash[http://imfo.ru]
+Разработчики RuTils - Julik[http://julik.nl], Mash[http://imfo.ru], Yum[http://evilmartians.com/]
 
 == Cумма прописью и выбор числительного
 

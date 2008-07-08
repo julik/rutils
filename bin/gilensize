@@ -1,10 +1,7 @@
 #!/usr/bin/env ruby
-$KCODE = 'u'
-require File.dirname(__FILE__) + '/../lib/rutils'
-
 # == Synopsis
 # 
-# Processes text on standard input with Typografica
+# Processes text on standard input with Gilenson. Please feed it UTF-8!
 # 
 # == Usage
 # 
@@ -12,6 +9,13 @@ require File.dirname(__FILE__) + '/../lib/rutils'
 #   
 # == Author
 #   Julik <me@julik.nl>
+
+$KCODE = 'u'
+require File.dirname(__FILE__) + '/../lib/rutils'
+require 'optparse'
+OptionParser.new do | p |
+ p.on(" -h", "--help") { require 'rdoc/usage'; RDoc::usage }
+end.parse!
 
 while st = gets do
   puts RuTils::Gilenson.new(st).to_html
