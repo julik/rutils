@@ -1,8 +1,8 @@
-CHANGELOG
+History.txt
 Manifest.txt
-README
+README.txt
 Rakefile.rb
-TODO
+TODO.txt
 bin/gilensize
 bin/rutilize
 init.rb

@@ -14,15 +14,12 @@ begin
     DOCOPTS = %w(--webcvs=http://rutils.rubyforge.org/svn/trunk/%s --charset=utf-8 --promiscuous)
     Rake::RDocTask.class_eval do
       alias_method :_odefine, :define
-      def define; @main = 'README'; @options.unshift(*DOCOPTS); _odefine; end
+      def define; @options.unshift(*DOCOPTS); _odefine; end
     end
     
     def define_tasks
       extra_deps.reject! {|e| e[0] == 'hoe' }
-      self.spec_extras.merge! :rdoc_options => (DOCOPTS.unshift "--main=README"), 
-        # A bug in rubygems+rdoc, we have to point it to capitalized file names by hand 
-        # see http://groups.google.com/group/ruby-core-google/browse_thread/thread/b022259469ebf3d1
-        :extra_rdoc_files => ["README", "TODO", "CHANGELOG"]
+      self.spec_extras.merge! :rdoc_options => (DOCOPTS.unshift "--main=README.txt") 
       super
     end
   end
@@ -32,16 +29,9 @@ begin
     p.author = ["Julian 'Julik' Tarkhanov", "Danil Ivanov", "Yaroslav Markin"]
     p.summary = %q{ Simple processing of russian strings }
     p.description = %q{ Allows simple processing of russian strings - transliteration, numerals as text and HTML beautification }
-    
     p.email = 'me@julik.nl'
-    
-    changelog_pieces = File.read('CHANGELOG').split(/^Версия /)[0..1]
-    # Если версия не указана берем кусок про trunk
-    changelog_pieces.shift if changelog_pieces[0].strip.empty?
-    
-    p.changes = changelog_pieces[0].strip
+    p.changes = p.paragraphs_of('History.txt', 0..1).join("\n\n")
     p.url = "http://rutils.rubyforge.org"
-    p.rdoc_pattern = /#{p.rdoc_pattern}|README|CHANGELOG|TODO/
     p.test_globs = 'test/t_*.rb'
     p.extra_deps = ['actionpack', 'activesupport']
   end
