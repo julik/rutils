@@ -30,9 +30,10 @@ begin
   KolkHoe.new('rutils', RuTils::VERSION) do |p|
     p.name = "rutils"
     p.author = ["Julian 'Julik' Tarkhanov", "Danil Ivanov", "Yaroslav Markin"]
-    p.description = "A library for writing tests for your Camping app."
-    p.email = 'me@julik.nl'
     p.summary = %q{ Simple processing of russian strings }
+    p.description = %q{ Allows simple processing of russian strings - transliteration, numerals as text and HTML beautification }
+    
+    p.email = 'me@julik.nl'
     
     changelog_pieces = File.read('CHANGELOG').split(/^Версия /)[0..1]
     # Если версия не указана берем кусок про trunk
