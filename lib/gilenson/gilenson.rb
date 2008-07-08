@@ -5,13 +5,6 @@ module RuTils
     def self.new(*args) #:nodoc:
       RuTils::Gilenson::Formatter.new(*args)
     end
-    
-    # Загружаем "старый" Гиленсон если он будет нужен
-    def self.const_missing(const) #:nodoc:
-      super(const) unless const == :Obsolete
-      require File.dirname(__FILE__) + '/gilenson_port'
-      return RuTils::Gilenson::Obsolete
-    end
   end
 end
 

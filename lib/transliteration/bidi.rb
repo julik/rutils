@@ -29,6 +29,8 @@ module RuTils::Transliteration::BiDi
   TABLE_FROM = TABLE_TO.unshift([" ","__"]).clone
   TABLE_TO.unshift(["_","__"])
 
+  #:startdoc:
+  
   def self.translify(str, allow_slashes = true)
     slash = allow_slashes ? '/' : '';
 

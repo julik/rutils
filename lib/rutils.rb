@@ -2,17 +2,22 @@ $KCODE = 'u'
 
 # Главный контейнер модуля
 module RuTils
+  #:stopdoc:
+  
   # Папка, куда установлен модуль RuTils. Нужно чтобы автоматически копировать RuTils в другие приложения.
   INSTALLATION_DIRECTORY = File.expand_path(File.dirname(__FILE__) + '/../') #:nodoc:
-  MAJOR = 0
-  MINOR = 2
-  TINY = 3
+  MAJOR = 0  #:nodoc:
+  MINOR = 2  #:nodoc:
+  TINY = 3  #:nodoc:
 
-  # Версия RuTils
-  VERSION = [MAJOR, MINOR ,TINY].join('.') #:nodoc:
-  
   # Стандартный маркер для подстановок - invalid UTF sequence
   SUBSTITUTION_MARKER = "\xF0\xF0\xF0\xF0" #:nodoc:
+  
+  # :startdoc:
+  
+  # Версия RuTils
+  VERSION = [MAJOR, MINOR ,TINY].join('.')
+  
   
   def self.load_component(name) #:nodoc:
     require File.join(RuTils::INSTALLATION_DIRECTORY, "lib", name.to_s, name.to_s)
