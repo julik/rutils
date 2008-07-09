@@ -1,10 +1,13 @@
+#$:.reject! { |e| e.include? 'TextMate' }
+
 $KCODE = 'u'
+
 require 'lib/rutils'
+require 'rubygems'
 
 begin
-  require 'rubygems'
   require 'hoe'
-
+  
   # Disable spurious warnings when running tests, ActiveMagic cannot stand -w
   Hoe::RUBY_FLAGS.replace ENV['RUBY_FLAGS'] || "-I#{%w(lib test).join(File::PATH_SEPARATOR)}" + 
     (Hoe::RUBY_DEBUG ? " #{RUBY_DEBUG}" : '')
@@ -32,8 +35,6 @@ begin
     p.test_globs = 'test/t_*.rb'
   end
   
-  require 'load_multi_rails_rake_tasks'
-  
 rescue LoadError
   $stderr.puts "Meta-operations on this package require Hoe and multi_rails"
   task :default => [ :test ]
@@ -45,4 +46,10 @@ rescue LoadError
     t.pattern = 'test/t_*.rb'
     t.verbose = true
   end
+end
+
+begin
+  require 'load_multi_rails_rake_tasks'
+rescue LoadError
+  $stderr.puts "Proper testing of this package with Rails requires multi_rails"
 end

@@ -5,7 +5,7 @@ require 'test/unit'
 begin
   require 'multi_rails_init'
 rescue LoadError
-  $stderr.puts "Please install multi_rails for regression testing testing"
+  $stderr.puts "Please install multi_rails for regression testing!"
 end
 
 begin
