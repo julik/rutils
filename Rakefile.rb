@@ -27,12 +27,13 @@ begin
   KolkHoe.new('rutils', RuTils::VERSION) do |p|
     p.name = "rutils"
     p.author = ["Julian 'Julik' Tarkhanov", "Danil Ivanov", "Yaroslav Markin"]
-    p.email = 'me@julik.nl'
+    p.email = ['me@julik.nl', 'yaroslav@markin.net']
     p.description = 'Simple processing of russian strings'
     p.summary     = 'Simple processing of russian strings'
     p.url = "http://rutils.rubyforge.org"
     p.test_globs = 'test/t_*.rb'
     p.need_zip = true
+    p.remote_rdoc_dir = ''
   end
   
 rescue LoadError

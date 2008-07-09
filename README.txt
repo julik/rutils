@@ -108,7 +108,7 @@ Unicode-тексты в среде UNIX пользуясь стандартны�
 Пример использования:
 
   require 'date' date = Date.new(2005, 11, 9)
-  puts "#{Date::RU_ABBR_MONTHNAMES[date.mon]}" => Ноя puts
+  puts "#{Date::RU_ABBR_MONTHNAMES[date.mon]}" => Ноя
   puts "#{Date::RU_MONTHNAMES[date.mon]}" => Ноябрь
   puts "#{Date::RU_ABBR_DAYNAMES[date.wday]}" => Ср
   puts "#{Date::RU_DAYNAMES[date.wday]}" => Среда
