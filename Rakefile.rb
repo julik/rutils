@@ -1,5 +1,3 @@
-#$:.reject! { |e| e.include? 'TextMate' }
-
 $KCODE = 'u'
 
 require 'lib/rutils'
