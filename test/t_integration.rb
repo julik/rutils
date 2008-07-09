@@ -95,7 +95,6 @@ TEST_DATE = Date.parse("1983-10-15") # coincidentially...
 TEST_TIME = Time.local(1983, 10, 15, 12, 15) # also coincidentially...
 
 # Перегрузка helper'ов Rails
-# TODO добавить и обновить тесты из Rails
 class RailsHelpersOverrideTest < Test::Unit::TestCase
   # Вспомогательный класс для тестирования перегруженного DateHelper
   class HelperStub
@@ -115,7 +114,6 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
   
   def test_distance_of_time_in_words
     assert_equal "20 минут", @stub.distance_of_time_in_words(Time.now - 20.minutes, Time.now)
-    # TODO add more tests in t_datetime, just a wrapper here
   end
   
   # TODO - TextMate это не хайлайтит, и это _крайне_ достает

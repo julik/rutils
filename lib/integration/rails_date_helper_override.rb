@@ -1,4 +1,3 @@
-# TODO документирование всех перегруженных методов "с нуля"
 if defined?(Object::ActionView)
   module Object::ActionView::Helpers::DateHelper
     # Несколько хаков для корректной работы модуля с Rails 1.2--2.0 одновременно с Rails 2.1 и выше.
@@ -6,18 +5,18 @@ if defined?(Object::ActionView)
     # Хелперы DateHelper принимают параметр <tt>html_options</tt> (идет последним) начиная с Rails 2.1.
     # Нужно понять, имеем ли мы дело с Rails 2.1+, для этого проверяем наличие классметода helper_modules у
     # ActionView::Base, который появился как раз в версии 2.1.
-    DATE_HELPERS_RECEIVE_HTML_OPTIONS = ActionView::Base.respond_to?(:helper_modules)
+    DATE_HELPERS_RECEIVE_HTML_OPTIONS = ActionView::Base.respond_to?(:helper_modules) #:nodoc:
 
     # В Rails Edge (2.1+) определяется <tt>Time.current</tt> для работы с временными зонами.
     unless Time.respond_to? :current
-      class << ::Time
+      class << ::Time # :nodoc:
         def current; now; end
       end
     end
     
     # Заменяет <tt>ActionView::Helpers::DateHelper::distance_of_time_in_words</tt> на русское сообщение.
     #
-    # Целые числа интерпретируются как секунды
+    # Целые числа интерпретируются как секунды.
     # <tt>distance_of_time_in_words(50)</tt> возвращает "меньше минуты".
     alias :stock_distance_of_time_in_words :distance_of_time_in_words
     def distance_of_time_in_words(*args)

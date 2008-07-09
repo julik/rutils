@@ -2,14 +2,14 @@
 
 RuTils - простой обработчик русского текста на Ruby. Основная цель RuTils -
 сделать разработку русскоязычных приложений на Ruby (и Rails) максимально простой
-и приятной (в идеале - столь же простой как и разработку оных на английском)
+и приятной (в идеале - столь же простой как и разработку оных на английском).
 
 == Чье это
 
 Большое спасибо Роману Иванову aka Kukutz и Николаю Яремко aka Kuso Mendokuzee за
 реализацию большинства алгоритмов на PHP.
 
-Разработчики RuTils - Julik[http://julik.nl], Mash[http://imfo.ru], Yaroslav Markin[http://markin.net/]
+Разработчики RuTils - Julik[http://julik.nl], Mash[http://imfo.ru], {Yaroslav Markin}[http://markin.net/]
 
 = Как воспользоваться
 
@@ -64,15 +64,13 @@ RuTils на данный момент реализует простейший т
 
 Два режима работы:
 
-* Уничтожение всех слешей, которые встретятся во входной строке. В этом случае
-методы вызываются с передачей в них false. Например,
-"Web/Скрипты".bidi_translify(false) * Пропуск слэшей (используется по умолчанию).
-Например, "Web/+Skripty".bidi_detranslify
+1. Уничтожение всех слешей, которые встретятся во входной строке. В этом случае методы вызываются с передачей в них false. Например, <tt>"Web/Скрипты".bidi_translify(false)</tt>
+2. Пропуск слэшей (используется по умолчанию). Например,
 
- "WebРазработка/Скрипты".bidi_translify => "Web+Razrabotka+/+Skripty"
-"+Ustanovka__+mod_perl".bidi_detranslify => "Установка mod_perl"
-"WebРазработка/Мимо".bidi_translify(false) => "Web+RazrabotkaMimo"
-"+PKHP+/Scripts".bidi_detranslify(false) => "ПХПScripts"
+  "WebРазработка/Скрипты".bidi_translify     => "Web+Razrabotka+/+Skripty"
+  "+Ustanovka__+mod_perl".bidi_detranslify   => "Установка mod_perl"
+  "WebРазработка/Мимо".bidi_translify(false) => "Web+RazrabotkaMimo"
+  "+PKHP+/Scripts".bidi_detranslify(false)   => "ПХПScripts"
 
 == Обработка русской типографики в HTML
 
@@ -148,7 +146,7 @@ RuTils в первую очередь задумывался как максим
 переключиться на английский (или любой другой язык) без перезапуска приложения.
 
 Рекомендуемый способ использования RuTils с Ruby on Rails приложением -- установка RuTils 
-как плагин. Для этого скопируйте директорию rutils в папку vendor/plugins вашего
+плагином. Для этого скопируйте директорию rutils в папку vendor/plugins вашего
 приложения или воспользуйтесь командой rutilize путь_к_rails_приложению чтобы сделать это
 автоматически. После этого вы сможете использовать RuTils без необходимости
 установки gem  на вашем сервере (не забудьте перезапустить приложение чтобы
@@ -166,7 +164,7 @@ RuTils в первую очередь задумывался как максим
 
 Rails[http://rubyonrails.org],
 RedCloth[http://www.whytheluckystiff.net/ruby/redcloth/] и
-BlueCloth[http://www.deveiate.org/projects/BlueCloth] для выполнения тестов
+BlueCloth[http://www.deveiate.org/projects/BlueCloth] для выполнения тестов.
 
 == Работает ли это с текстом в кодировке отличной от UTF-8 (Windows-1251, KOI-8)
 
