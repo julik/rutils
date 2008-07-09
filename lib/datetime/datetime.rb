@@ -32,16 +32,19 @@ module RuTils
        end
     end
     
-    @@ignored = "\xFF\xFF\xFF\xFF" # %% == Literal "%" character 
-    
-    def self.ru_strftime(date='%d.%m.%Y', time='')
-      date.gsub!(/%%/, @@ignored)
-      date.gsub!(/%a/, Date::RU_ABBR_DAYNAMES[time.wday])
-      date.gsub!(/%A/, Date::RU_DAYNAMES[time.wday])
-      date.gsub!(/%b/, Date::RU_ABBR_MONTHNAMES[time.mon])
-      date.gsub!(/%d(\s)*%B/, '%02d' % time.day + '\1' + Date::RU_INFLECTED_MONTHNAMES[time.mon])
-      date.gsub!(/%B/, Date::RU_MONTHNAMES[time.mon])
-      date.gsub!(@@ignored, '%%')
+    def self.ru_strftime(time, format_str='%d.%m.%Y')
+      fm = format_str.dup
+      fm.gsub!(/%{2}/, RuTils::SUBSTITUTION_MARKER)
+      fm.gsub!(/%a/, Date::RU_ABBR_DAYNAMES[time.wday])
+      fm.gsub!(/%A/, Date::RU_DAYNAMES[time.wday])
+      fm.gsub!(/%b/, Date::RU_ABBR_MONTHNAMES[time.mon])
+      
+      fm.gsub!(/%d(\s)*%B/, '%02d' % time.day + '\1' + Date::RU_INFLECTED_MONTHNAMES[time.mon])
+      fm.gsub!(/%B/, Date::RU_MONTHNAMES[time.mon])
+      fm.gsub!(/#{RuTils::SUBSTITUTION_MARKER}/, '%%')
+      
+      # Теперь когда все нужные нам маркеры заменены можно отдать это стандартному strftime
+      time.respond_to?(:strftime_norutils) ? time.strftime_norutils(fm) : time.to_time.strftime_norutils(fm)
     end
   end
 end
@@ -60,8 +63,7 @@ class Time
   alias_method :strftime_norutils, :strftime
   
   def strftime(fmt)
-    RuTils::DateTime::ru_strftime(fmt, self) if RuTils::overrides_enabled?
-    strftime_norutils(fmt)
+    RuTils::overrides_enabled? ? RuTils::DateTime::ru_strftime(self, fmt) : strftime_norutils(fmt)
   end
 end
 
@@ -71,14 +73,12 @@ class Date
   if self.instance_methods.include?('strftime')
     alias_method :strftime_norutils, :strftime
     def strftime(fmt='%F')
-      RuTils::DateTime::ru_strftime(fmt, self) if RuTils::overrides_enabled?
-      strftime_norutils(fmt)
+      RuTils::overrides_enabled? ? RuTils::DateTime::ru_strftime(self, fmt) : strftime_norutils(fmt)
     end
-
+  
   else
     def strftime(fmt='%F')
-      RuTils::DateTime::ru_strftime(fmt, self) if RuTils::overrides_enabled?
-      self.to_time.strftime(fmt)
+      RuTils::overrides_enabled? ? RuTils::DateTime::ru_strftime(self, fmt) : to_time.strftime(fmt)
     end
   end
   

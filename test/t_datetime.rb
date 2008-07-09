@@ -13,7 +13,7 @@ class DistanceOfTimeTest < Test::Unit::TestCase
 end
 
 class StrftimeRuTest < Test::Unit::TestCase
-  def test_strftime_ru
+  def test_should_format_in_russian
     @@old_overrides = RuTils::overrides_enabled?
     
     RuTils::overrides = true
@@ -42,5 +42,16 @@ class StrftimeRuTest < Test::Unit::TestCase
       assert_equal "Nov November Wed Wednesday", "#{Date::ABBR_MONTHNAMES[date.mon]} #{Date::MONTHNAMES[date.mon]} #{Date::ABBR_DAYNAMES[date.wday]} #{Date::DAYNAMES[date.wday]}"
     
     RuTils::overrides = @@old_overrides
+  end
+  
+  def test_formatter_should_actually_return
+    the_fmt = "Это случилось %d %B"
+    assert_equal "Это случилось 01 декабря", RuTils::DateTime::ru_strftime(Time.local(1985, "dec", 01), the_fmt)
+  end
+  
+  def test_formatter_should_not_mutate_passed_format_strings
+    the_fmt, backup = "Это случилось %d %B", "Это случилось %d %B"
+    assert_equal "Это случилось 01 декабря", RuTils::DateTime::ru_strftime(Time.local(1985, "dec", 01), the_fmt)
+    assert_equal the_fmt, backup
   end
 end
