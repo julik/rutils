@@ -28,7 +28,8 @@ begin
     p.name = "rutils"
     p.author = ["Julian 'Julik' Tarkhanov", "Danil Ivanov", "Yaroslav Markin"]
     p.email = 'me@julik.nl'
-    p.summary = 'Simple processing of russian strings'
+    p.description = 'Simple processing of russian strings'
+    p.summary     = 'Simple processing of russian strings'
     p.url = "http://rutils.rubyforge.org"
     p.test_globs = 'test/t_*.rb'
     p.need_zip = true
