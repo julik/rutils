@@ -9,7 +9,7 @@ RuTils - простой обработчик русского текста на 
 Большое спасибо Роману Иванову aka Kukutz и Николаю Яремко aka Kuso Mendokuzee за
 реализацию большинства алгоритмов на PHP.
 
-Разработчики RuTils - Julik[http://julik.nl], Mash[http://imfo.ru], Yum[http://evilmartians.com/]
+Разработчики RuTils - Julik[http://julik.nl], Mash[http://imfo.ru], Yaroslav Markin[http://markin.net/]
 
 = Как воспользоваться
 
