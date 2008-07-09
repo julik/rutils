@@ -161,7 +161,7 @@ RuTils в первую очередь задумывался как максим
 
 == Требования
 
-* Ruby 1.8.2, немного прямых рук. 
+* Ruby 1.8.2 или выше, немного прямых рук. 
 * Rake[http://rake.rubyforge.org],
 
 Rails[http://rubyonrails.org],
