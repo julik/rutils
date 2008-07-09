@@ -31,6 +31,7 @@ begin
     p.summary = 'Simple processing of russian strings'
     p.url = "http://rutils.rubyforge.org"
     p.test_globs = 'test/t_*.rb'
+    p.need_zip = true
   end
   
 rescue LoadError
