@@ -82,6 +82,19 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal 'как&#160;интересно будет переноситься со&#160;строки на&#160;строку <span class="nobr">что-то</span> разделённое дефисом, ведь дефис тот&#160;тоже ведь из&#160;наших. <span class="nobr">Какие-то</span> браузеры думают, что&#160;следует переносить и&#160;его&#8230;', 'как интересно будет переноситься со строки на строку что-то разделённое дефисом, ведь дефис тот тоже ведь из наших. Какие-то браузеры думают, что следует переносить и его...'.gilensize
   end
   
+  def test_forced_quotes
+    assert_equal 'кавычки &#171;расставлены&#187; &#8220;in a&#160;chaotic order&#8221;',
+      'кавычки "расставлены" "in a chaotic order"'.gilensize
+    assert_equal 'кавычки &#8220;расставлены&#8221; &#8220;in a&#160;chaotic order&#8221;', 
+      'кавычки "расставлены" "in a chaotic order"'.gilensize(:enforce_en_quotes => true)
+    assert_equal 'кавычки &#171;расставлены&#187; &#171;in a&#160;chaotic order&#187;', 
+      'кавычки "расставлены" "in a chaotic order"'.gilensize(:enforce_ru_quotes => true)
+  end
+  
+#def test_quotes_and_inch
+#  assert_equal "&#171;This one&#160;is&#160;12&#8342;&#187;", '"This one is 12""'.gilensize
+#end
+  
   def test_quotes  
     assert_equal 'english &#8220;quotes&#8221; should be&#160;quite like this', 'english "quotes" should be quite like this'.gilensize
     assert_equal 'русские же&#160;&#171;оформляются&#187; подобным образом', 'русские же "оформляются" подобным образом'.gilensize
@@ -146,6 +159,11 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal  "сказали мы?!!!", "сказали мы?!!!".gilensize
     assert_equal  "сказали нам", "сказали нам".gilensize
     assert_equal  "(сказали&#160;им)", "(сказали им)".gilensize
+    assert_equal  "Справка&#160;09", 'Справка 09'.gilensize
+  end
+  
+  def test_wordglue_combined_with_glyphs # http://pixel-apes.com/typografica/trako/12
+    assert_equal "&#171;Справка&#160;09&#187;", '"Справка 09"'.gilensize(:wordglue => true)
   end
   
   def test_marker_bypass
@@ -338,6 +356,18 @@ class GilensonConfigurationTest < Test::Unit::TestCase
     assert_raise(RuTils::Gilenson::UnknownSetting) { @gilenson.configure!(:bararara => true) }
   end
   
+  def test_raise_on_unknown_setting_via_gilensize
+    assert_raise(RuTils::Gilenson::UnknownSetting) { "s".gilensize(:bararara => true) }
+  end
+  
+  def test_backslash_does_not_suppress_quote # http://pixel-apes.com/typografica/trako/13, но с латинскими кавычками
+    assert_equal "&#8220;c:\\www\\sites\\&#8221;", '"c:\www\sites\"'.gilensize
+  end
+  
+  def test_cpp
+    assert_equal "C++-API", "C++-API".gilensize
+  end
+  
   def test_raw_utf8_output
     @gilenson.configure!(:raw_output=>true)
     assert_equal '&#38442; Это просто «кавычки»',
@@ -355,17 +385,3 @@ class GilensonConfigurationTest < Test::Unit::TestCase
     assert_equal '[NOB]3&#8211;12&#8211;30[NOBC]', @gilenson.process('3-12-30')
   end
 end
-
-# class TypograficaTrakoEntries < Test::Unit::TestCase
-#     def test_cpp
-#       assert_equal "C++-API", "C++-API".gilensize
-#     end
-#     
-#     def test_symmetricity # http://pixel-apes.com/typografica/trako/12
-#       assert_equal "&#171;Справка&#160;09&#187;", '"Справка 09"'.gilensize
-#     end
-#     
-#     def test_paths # http://pixel-apes.com/typografica/trako/13
-#       assert_equal '&#171;c:\www\sites\&#187;', '"c:\www\sites\"'.gilensize
-#     end
-# end

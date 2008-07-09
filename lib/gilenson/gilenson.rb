@@ -112,6 +112,8 @@ class RuTils::Gilenson::Formatter
      "raw_output" => false,  # выводить UTF-8 вместо entities
      "skip_attr" => false,   # при true не отрабатывать типографику в атрибутах тегов
      "skip_code" => true,    # при true не отрабатывать типографику внутри <code/>, <tt/>, CDATA
+     "enforce_en_quotes" => false, # только латинские кавычки
+     "enforce_ru_quotes" => false, # только русские кавычки (enforce_en_quotes при этом игнорируется)
   } #:nodoc:
   
   SETTINGS.freeze
@@ -149,7 +151,7 @@ class RuTils::Gilenson::Formatter
     :thinsp     => "&#8201;",   # полукруглая шпация (тонкий пробел)
     :nob_open   => '<span class="nobr">',    # открывающий блок без переноса слов
     :nob_close  => '</span>',    # закрывающий блок без переноса слов
-  } #:nodoc:
+  }
   
   GLYPHS.freeze
   # Нормальные "типографские" символы в UTF-виде. Браузерами обрабатываются плохонько, поэтому
@@ -204,7 +206,7 @@ class RuTils::Gilenson::Formatter
    FORBIDDEN_NUMERIC_ENTITIES.freeze #:nodoc:
    
    PROTECTED_SETTINGS = [ :raw_output ] #:nodoc:
-         
+   
    def initialize(*args)
      @_text = args[0].is_a?(String) ? args[0] : ''
      setup_default_settings!
@@ -231,6 +233,7 @@ class RuTils::Gilenson::Formatter
    # Дополнительные аргументы передаются как параметры форматтера и не сохраняются после прогона.
    def process(text_to_process, *args)
      @_text = text_to_process
+     
      if args.last.is_a?(Hash)
        with_configuration(args.last) { self.to_html }
      else
@@ -243,13 +246,27 @@ class RuTils::Gilenson::Formatter
      return '' unless @_text
      
      text = @_text.strip
+     
+     # -6. Подмухляем таблицу глифов, если нам ее передали
+     glyph_table = glyph.dup
+     
+     if @settings["enforce_ru_quotes"]
+       glyph_table[:ldquo], glyph_table[:rdquo] = glyph_table[:laquo], glyph_table[:raquo]
+     elsif @settings["enforce_en_quotes"]
+       glyph_table[:laquo], glyph_table[:raquo] = glyph_table[:ldquo], glyph_table[:rdquo]
+     end
+     
+     # -5. Копируем глифы в ивары, к ним доступ быстр и в коде они глаза тоже не мозолят
+     glyph_table.each_pair do | ki, wi |
+       instance_variable_set("@#{ki}", wi)
+     end
    
      # -4. запрет тагов html
      process_escape_html(text) unless @settings["html"]
    
      # -3. Никогда (вы слышите?!) не пущать лабуду &#not_correct_number;
      FORBIDDEN_NUMERIC_ENTITIES.dup.each_pair do | key, rep |
-       text.gsub!(/&##{key};/, glyph[rep])
+       text.gsub!(/&##{key};/, self.glyph[rep])
      end
    
      # -2. Чистим copy&paste
@@ -264,16 +281,14 @@ class RuTils::Gilenson::Formatter
      # 1. Запятые и пробелы
      process_spacing(text) if @settings["spacing"]
    
-     # 3. Спецсимволы
-     # 0. дюймы с цифрами
-     # заменено на инчи
-     process_inches(text) if @settings["inches"]
-   
      # 1. лапки
      process_quotes(text) if @settings["quotes"]
      
      # 2. ёлочки
      process_laquo(text) if @settings["laquo"]
+
+     # 3. Инчи
+     process_inches(text) if @settings["inches"]
    
      # 2b. одновременно ёлочки и лапки
      process_compound_quotes(text) if (@settings["quotes"] && @settings["laquo"])
@@ -379,9 +394,9 @@ class RuTils::Gilenson::Formatter
    end
    
    # Позволяет получить процедуру, при вызове возвращающую значение глифа
-   def lookup(glyph_to_lookup)
-     return Proc.new { self.glyph[glyph_to_lookup] }
-   end
+#   def lookup(glyph_to_lookup)
+#     return Proc.new { g[glyph_to_lookup] }
+#   end
    
    # Подставляет "символы" (двоеточие + имя глифа) на нужное значение глифа заданное в данном форматтере
    def substitute_glyphs_in_string(str)
@@ -450,7 +465,7 @@ class RuTils::Gilenson::Formatter
    def reinsert_fragments(text, fragments)
      fragments.each do |fragment|
        fragment.gsub!(/ (href|src|data)=((?:(\')([^\']*)(\'))|(?:(\")([^\"]*)(\")))/uim) do
-         " #{$1}=" + $2.gsub(/&(?!(#0*38)|(amp);)/, self.glyph[:amp])
+         " #{$1}=" + $2.gsub(/&(?!(#0*38)|(amp);)/, @amp)
        end # unless @settings['raw_output'] -- делать это надо всегда (mash)
        
        unless @settings['skip_attr']
@@ -483,13 +498,13 @@ class RuTils::Gilenson::Formatter
    end
    
    def process_dashglue(text)
-     text.gsub!( /([a-zа-яА-Я0-9]+(\-[a-zа-яА-Я0-9]+)+)/ui, glyph[:nob_open]+'\1'+glyph[:nob_close])
+     text.gsub!( /([a-zа-яА-Я0-9]+(\-[a-zа-яА-Я0-9]+)+)/ui, @nob_open+'\1'+ @nob_close)
    end
     
    def process_escape_html(text)
-     text.gsub!(/&/, glyph[:amp])
-     text.gsub!(/</, glyph[:lt])
-     text.gsub!(/>/, glyph[:gt])
+     text.gsub!(/&/, @amp)
+     text.gsub!(/</, @lt)
+     text.gsub!(/>/, @gt)
    end
     
    def process_span_instead_of_nobr(text)
@@ -498,76 +513,82 @@ class RuTils::Gilenson::Formatter
    end
     
    def process_dash(text)
-     text.gsub!( /(\s|;)\-(\s)/ui, '\1'+self.glyph[:ndash]+'\2')
+     text.gsub!( /(\s|;)\-(\s)/ui, '\1'+@ndash+'\2')
    end
     
    def process_emdash(text)
-     text.gsub!( /(\s|;)\-\-(\s)/ui, '\1'+self.glyph[:mdash]+'\2')
+     text.gsub!( /(\s|;)\-\-(\s)/ui, '\1'+@mdash+'\2')
      # 4. (с)
-     text.gsub!(/\([сСcC]\)((?=\w)|(?=\s[0-9]+))/u, self.glyph[:copy]) if @settings["(c)"]
+     text.gsub!(/\([сСcC]\)((?=\w)|(?=\s[0-9]+))/u, @copy) if @settings["(c)"]
      # 4a. (r)
-     text.gsub!( /\(r\)/ui, '<sup>'+self.glyph[:reg]+'</sup>') if @settings["(r)"]
+     text.gsub!( /\(r\)/ui, '<sup>'+@reg+'</sup>') if @settings["(r)"]
    
      # 4b. (tm)
-     text.gsub!( /\(tm\)|\(тм\)/ui, self.glyph[:trade]) if @settings["(tm)"]
+     text.gsub!( /\(tm\)|\(тм\)/ui, @trade) if @settings["(tm)"]
      # 4c. (p)   
-     text.gsub!( /\(p\)/ui, self.glyph[:sect]) if @settings["(p)"]
+     text.gsub!( /\(p\)/ui, @sect) if @settings["(p)"]
    end
    
    def process_ellipsises(text)
-     text.gsub!( '...', self.glyph[:hellip])
+     text.gsub!( '...', @hellip)
    end
     
    def process_laquo(text)
-     text.gsub!( /\"\"/ui, self.glyph[:quot]*2);
-     text.gsub!( /(^|\s|#{@mark_tag}|>|\()\"((#{@mark_tag})*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, '\1'+self.glyph[:laquo]+'\2');
+     text.gsub!( /\"\"/ui, @quot * 2);
+     text.gsub!( /(^|\s|#{@mark_tag}|>|\()\"((#{@mark_tag})*[~0-9ёЁA-Za-zА-Яа-я\-:\/\.])/ui, '\1' + @laquo + '\2');
      _text = '""';
      until _text == text do
        _text = text;
-       text.gsub!( /(#{self.glyph[:laquo]}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/\?\!](#{@mark_tag})*)\"/sui, 
-         '\1'+self.glyph[:raquo])
+       text.gsub!( /(#{@laquo}([^\"]*)[ёЁA-Za-zА-Яа-я0-9\.\-:\/\?\!](#{@mark_tag})*)\"/sui, '\1' + @raquo)
      end
    end
-           
+   
    def process_quotes(text)
-     text.gsub!( /\"\"/ui, self.glyph[:quot]*2)
-     text.gsub!( /\"\.\"/ui, self.glyph[:quot]+"."+self.glyph[:quot])
+     text.gsub!( /\"\"/ui, @quot*2)
+     text.gsub!( /\"\.\"/ui, @quot+"."+@quot)
      _text = '""';
+     lat_c = '0-9A-Za-z'
+     punct = /\'\!\s\.\?\,\-\&\;\:\\/
+     
      until _text == text do  
        _text = text.dup
-       text.gsub!( /(^|\s|#{@mark_tag}|>)\"([0-9A-Za-z\'\!\s\.\?\,\-\&\;\:\_\#{@mark_tag}]+(\"|#{self.glyph[:rdquo]}))/ui, '\1'+self.glyph[:ldquo]+'\2')
-       #this doesnt work in-place. somehow.
-       text.gsub!( /(#{self.glyph[:ldquo]}([A-Za-z0-9\'\!\s\.\?\,\-\&\;\:\#{@mark_tag}\_]*).*[A-Za-z0-9][\#{@mark_tag}\?\.\!\,]*)\"/ui, '\1'+self.glyph[:rdquo])
+       text.gsub!( /(^|\s|#{@mark_tag}|>)\"([#{lat_c}#{punct}\_\#{@mark_tag}]+(\"|#{@rdquo}))/ui, '\1'+ @ldquo +'\2')
+       text.gsub!( /(#{@ldquo}([#{lat_c}#{punct}#{@mark_tag}\_]*).*[#{lat_c}][\#{@mark_tag}\?\.\!\,\\]*)\"/ui, '\1'+ @rdquo)
      end
    end
     
    def process_compound_quotes(text)
-     text.gsub!(/(#{self.glyph[:ldquo]}(([A-Za-z0-9'!\.?,\-&;:]|\s|#{@mark_tag})*)#{self.glyph[:laquo]}(.*)#{self.glyph[:raquo]})#{self.glyph[:raquo]}/ui,'\1'+self.glyph[:rdquo]);
+     text.gsub!(/(#{@ldquo}(([A-Za-z0-9'!\.?,\-&;:]|\s|#{@mark_tag})*)#{@laquo}(.*)#{@raquo})#{@raquo}/ui, '\1' + @rdquo);
    end
    
    def process_degrees(text)
-     text.gsub!( /-([0-9])+\^([FCС])/, self.glyph[:ndash]+'\1'+self.glyph[:deg]+'\2') #deg
-     text.gsub!( /\+([0-9])+\^([FCС])/, '+\1'+self.glyph[:deg]+'\2')
-     text.gsub!( /\^([FCС])/, self.glyph[:deg]+'\1')
+     text.gsub!( /-([0-9])+\^([FCС])/, @ndash+'\1'+ @deg +'\2') #deg
+     text.gsub!( /\+([0-9])+\^([FCС])/, '+\1'+ @deg +'\2')
+     text.gsub!( /\^([FCС])/, @deg+'\1')
    end
    
    def process_wordglue(text)
      text.replace(" " + text + " ")
      _text = " " + text + " "
-     
+
      until _text == text
         _text = text
-        text.gsub!( /(\s+)([a-zа-яА-Я]{1,2})(\s+)([^\\s$])/ui, '\1\2' + glyph[:nbsp]+'\4')
-        text.gsub!( /(\s+)([a-zа-яА-Я]{3})(\s+)([^\\s$])/ui,   '\1\2' + glyph[:nbsp]+'\4')
+        text.gsub!( /(\s+)([a-zа-яА-Я0-9]{1,2})(\s+)([^\\s$])/ui, '\1\2' + @nbsp +'\4')
+        text.gsub!( /(\s+)([a-zа-яА-Я0-9]{3})(\s+)([^\\s$])/ui,   '\1\2' + @nbsp+'\4')
      end
      
-     text.gsub!(/(\s+)([a-zа-яА-Я]{1,2}[\)\]\!\?,\.;]{0,3}\s$)/ui, glyph[:nbsp]+'\2')
+     # Пунктуация это либо один из наших глифов, либо мемберы класса. В данном случае 
+     # мы цепляемся за кончик строки поэтому можум прихватить и глиф тоже
+     # Пунктуация включает наши собственные глифы!
+     punct = glyph.values.map{|v| Regexp.escape(v)}.join('|')
+     vpunct = /(#{punct}|[\)\]\!\?,\.;])/
      
-     @glueleft.each { | i |  text.gsub!( /(\s)(#{i})(\s+)/sui, '\1\2' + glyph[:nbsp]) }
+     text.gsub!(/(\s+)([a-zа-яА-Я0-9]{1,2}#{vpunct}{0,3}\s$)/ui, @nbsp+'\2')
      
-     @glueright.each { | i | text.gsub!( /(\s)(#{i})(\s+)/sui, glyph[:nbsp]+'\2\3') }
+     @glueleft.each { | i |  text.gsub!( /(\s)(#{i})(\s+)/sui, '\1\2' + @nbsp) }
      
-     text.strip!
+     @glueright.each { | i | text.gsub!( /(\s)(#{i})(\s+)/sui, @nbsp+'\2\3') }
+     
    end
     
    def process_phones(text)
@@ -580,7 +601,7 @@ class RuTils::Gilenson::Formatter
    def process_acronyms(text)
      acronym = /\b([A-ZА-Я][A-ZА-Я0-9]{2,})\b(?:[(]([^)]*)[)])/u
      if @settings["raw_output"]
-       text.gsub!(acronym, '\1%s(\2)' % glyph[:thinsp])
+       text.gsub!(acronym, '\1%s(\2)' % @thinsp)
      else
        text.gsub!(acronym) do
          expl = $2.to_s; process_escape_html(expl)
@@ -589,12 +610,13 @@ class RuTils::Gilenson::Formatter
      end
    end
    
+   # Обработка знака дюйма, кроме случаев когда он внутри кавычек
    def process_inches(text)
-     text.gsub!(/\s([0-9]{1,2}([\.,][0-9]{1,2})?)\"/ui, ' \1'+self.glyph[:inch])
+     text.gsub!(/\s([0-9]{1,2}([\.,][0-9]{1,2})?)(\"){1,1}/ui, ' \1' + @inch)
    end
    
    def process_plusmin(text)
-     text.gsub!(/[^+]\+\-/ui, self.glyph[:plusmn]) 
+     text.gsub!(/[^+]\+\-/ui, @plusmn) 
    end
    
    # Подменяет все юникодные entities в тексте на истинные UTF-8-символы
@@ -621,8 +643,7 @@ end
 module RuTils::Gilenson::StringFormatting
   # Форматирует строку с помощью Gilenson::Formatter. Все дополнительные опции передаются форматтеру.
   def gilensize(*args)
-    opts = args.last.is_a?(Hash) ? args.last : {}
-    RuTils::Gilenson::Formatter.new(self, *opts).to_html
+    RuTils::Gilenson::Formatter.new(self, args.shift || {}).to_html
   end
   
   # Форматирует строку с помощью Gilenson::Obsolete. Всe дополнительные опции передаются форматтеру.
