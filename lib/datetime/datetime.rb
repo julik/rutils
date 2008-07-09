@@ -33,18 +33,16 @@ module RuTils
     end
     
     def self.ru_strftime(time, format_str='%d.%m.%Y')
-      fm = format_str.dup
-      fm.gsub!(/%{2}/, RuTils::SUBSTITUTION_MARKER)
-      fm.gsub!(/%a/, Date::RU_ABBR_DAYNAMES[time.wday])
-      fm.gsub!(/%A/, Date::RU_DAYNAMES[time.wday])
-      fm.gsub!(/%b/, Date::RU_ABBR_MONTHNAMES[time.mon])
-      
-      fm.gsub!(/%d(\s)*%B/, '%02d' % time.day + '\1' + Date::RU_INFLECTED_MONTHNAMES[time.mon])
-      fm.gsub!(/%B/, Date::RU_MONTHNAMES[time.mon])
-      fm.gsub!(/#{RuTils::SUBSTITUTION_MARKER}/, '%%')
+      clean_fmt = format_str.gsub(/%{2}/, RuTils::SUBSTITUTION_MARKER).
+        gsub(/%a/, Date::RU_ABBR_DAYNAMES[time.wday]).
+        gsub(/%A/, Date::RU_DAYNAMES[time.wday]).
+        gsub(/%b/, Date::RU_ABBR_MONTHNAMES[time.mon]).
+        gsub(/%d(\s)*%B/, '%02d' % time.day + '\1' + Date::RU_INFLECTED_MONTHNAMES[time.mon]).
+        gsub(/%B/, Date::RU_MONTHNAMES[time.mon]).
+        gsub(/#{RuTils::SUBSTITUTION_MARKER}/, '%%')
       
       # Теперь когда все нужные нам маркеры заменены можно отдать это стандартному strftime
-      time.respond_to?(:strftime_norutils) ? time.strftime_norutils(fm) : time.to_time.strftime_norutils(fm)
+      time.respond_to?(:strftime_norutils) ? time.strftime_norutils(clean_fmt) : time.to_time.strftime_norutils(clean_fmt)
     end
   end
 end
