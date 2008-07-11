@@ -105,19 +105,21 @@ class StrftimeTest < Test::Unit::TestCase
   
   def test_overrides_should_be_thread_local
     a = Thread.new do
-      sleep(0.2)
-      RuTils::overrides = true
-      2.times { assert_equal "11 декабря", Time.local(1985, "dec", 11).strftime("%d %B") }
-      RuTils::overrides = false
-      2.times { assert_equal "11 December", Time.local(1985, "dec", 11).strftime("%d %B") }
+      sleep(0.3)
+      120.times do
+        RuTils::overrides = true
+        assert_equal "11 декабря", Time.local(1985, "dec", 11).strftime("%d %B")
+        RuTils::overrides = false
+      end
     end
     
     b = Thread.new do
       sleep(0.2)
-      RuTils::overrides = false
-      2.times { assert_equal "11 December", Time.local(1985, "dec", 11).strftime("%d %B") }
-      RuTils::overrides = true
-      2.times { assert_equal "11 декабря", Time.local(1985, "dec", 11).strftime("%d %B") }
+      120.times do
+        RuTils::overrides = false
+        assert_equal "11 December", Time.local(1985, "dec", 11).strftime("%d %B")
+        RuTils::overrides = true
+      end
     end
     
     ensure
