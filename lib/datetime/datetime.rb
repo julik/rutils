@@ -33,7 +33,7 @@ module RuTils
     end
     
     def self.ru_strftime(time, format_str='%d.%m.%Y')
-      clean_fmt = format_str.gsub(/%{2}/, RuTils::SUBSTITUTION_MARKER).
+      clean_fmt = format_str.to_s.gsub(/%{2}/, RuTils::SUBSTITUTION_MARKER).
         gsub(/%a/, Date::RU_ABBR_DAYNAMES[time.wday]).
         gsub(/%A/, Date::RU_DAYNAMES[time.wday]).
         gsub(/%b/, Date::RU_ABBR_MONTHNAMES[time.mon]).
