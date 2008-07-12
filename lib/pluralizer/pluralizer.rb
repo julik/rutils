@@ -5,7 +5,8 @@ module RuTils
       variant = (amount%10==1 && amount%100!=11 ? 1 : amount%10>=2 && amount%10<=4 && (amount%100<10 || amount%100>=20) ? 2 : 3)
       variants[variant-1]
     end
-
+    
+    # Выводит целое или дробное число как сумму в рублях прописью
     def self.rublej(amount)
       pts = []
       
@@ -19,6 +20,14 @@ module RuTils
         end
       end
       
+      pts.join(' ')
+    end
+    
+    def self.kopeek(amount)
+      pts = []
+      r, k = (amount/100.0).floor, (amount - ((amount/100.0).floor * 100)).to_i
+      pts << RuTils::Pluralization::sum_string(r, 1, "рубль", "рубля", "рублей") unless r.zero?
+      pts << RuTils::Pluralization::sum_string(k, 2, 'копейка', 'копейки', 'копеек') unless k.zero?
       pts.join(' ')
     end
     
@@ -227,6 +236,14 @@ module RuTils
       alias :rubl   :rublej
       alias :rublja :rublej
     end
+    
+    module FixnumFormatting
+      def kopeek
+        RuTils::Pluralization.kopeek(self)
+      end
+      alias :kopeika   :kopeek
+      alias :kopeiki :kopeek
+    end
   end
 end
 
@@ -234,6 +251,9 @@ class Object::Numeric
   include RuTils::Pluralization::NumericFormatting
 end
 
+class Object::Fixnum
+  include RuTils::Pluralization::FixnumFormatting
+end
 
 class Object::Float
   include RuTils::Pluralization::FloatFormatting
