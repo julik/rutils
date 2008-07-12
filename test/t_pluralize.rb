@@ -47,6 +47,8 @@ class PropisjuTestCase < Test::Unit::TestCase
     assert_equal "сто двадцать три рубля", 12300.kopeek
     assert_equal "три рубля четырнадцать копеек", 314.kopeek
     assert_equal "тридцать две копейки", 32.kopeek
+    assert_equal "двадцать одна копейка", 21.kopeika
+    assert_equal "три копейки", 3.kopeiki
   end
   
   def test_kopeek_should_not_be_available_on_floats
