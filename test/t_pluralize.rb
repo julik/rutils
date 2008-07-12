@@ -48,6 +48,10 @@ class PropisjuTestCase < Test::Unit::TestCase
     assert_equal "три рубля четырнадцать копеек", 314.kopeek
     assert_equal "тридцать две копейки", 32.kopeek
   end
+  
+  def test_kopeek_should_not_be_available_on_floats
+    assert_raise(NoMethodError) { (3.3).kopeek }
+  end
 end
 
 #class PluralizeTestCase < Test::Unit::TestCase
