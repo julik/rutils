@@ -103,20 +103,20 @@ class StrftimeTest < Test::Unit::TestCase
     end
   end
   
-  def test_overrides_should_be_thread_local
+  def test_overrides_should_be_thread_safe
     a = Thread.new do
-      sleep(0.3)
       120.times do
         RuTils::overrides = true
+        sleep(rand(10)/100.0)
         assert_equal "11 декабря", Time.local(1985, "dec", 11).strftime("%d %B")
         RuTils::overrides = false
       end
     end
     
     b = Thread.new do
-      sleep(0.2)
       120.times do
         RuTils::overrides = false
+        sleep(rand(10)/100.0)
         assert_equal "11 December", Time.local(1985, "dec", 11).strftime("%d %B")
         RuTils::overrides = true
       end
