@@ -107,7 +107,7 @@ class StrftimeTest < Test::Unit::TestCase
     a = Thread.new do
       120.times do
         RuTils::overrides = true
-        sleep(rand(10)/100.0)
+        sleep(rand(10)/200.0)
         assert_equal "11 декабря", Time.local(1985, "dec", 11).strftime("%d %B")
         RuTils::overrides = false
       end
@@ -116,14 +116,14 @@ class StrftimeTest < Test::Unit::TestCase
     b = Thread.new do
       120.times do
         RuTils::overrides = false
-        sleep(rand(10)/100.0)
+        sleep(rand(10)/200.0)
         assert_equal "11 December", Time.local(1985, "dec", 11).strftime("%d %B")
         RuTils::overrides = true
       end
     end
     
     ensure
-      a.join; b.join 
+     a.join; b.join 
   end
   
   def with_overrides_set_to(value, &blk)
