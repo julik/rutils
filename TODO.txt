@@ -6,3 +6,6 @@
 
 ==Rails
 
+i18n was merged into Rails trunk (http://github.com/svenfuchs/i18n/tree/master), (http://github.com/svenfuchs/rails/tree/i18n-merge), нужно 
+написать i18n файлы для common stuff (datetime) и Rails.
+
