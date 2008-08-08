@@ -13,6 +13,13 @@ if defined?(Object::ActionView)
         def current; now; end
       end
     end
+
+    # В Rails Edge (2.1+) определяется <tt>Date.current</tt> для работы с временными зонами.
+    unless Date.respond_to? :current
+      class << ::Date # :nodoc:
+        def current; now; end
+      end
+    end
     
     # Заменяет <tt>ActionView::Helpers::DateHelper::distance_of_time_in_words</tt> на русское сообщение.
     #
@@ -73,7 +80,7 @@ if defined?(Object::ActionView)
     
     alias :stock_select_date :select_date
     # Заменяет ActionView::Helpers::DateHelper::select_date меню выбора русской даты.
-    def select_date(date = Date.today, options = {}, html_options = {})
+    def select_date(date = Date.current, options = {}, html_options = {})
       options[:order] ||= [:day, :month, :year]
       if DATE_HELPERS_RECEIVE_HTML_OPTIONS
         stock_select_date(date, options, html_options)
