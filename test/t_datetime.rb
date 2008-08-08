@@ -45,6 +45,13 @@ class StrftimeRuTest < Test::Unit::TestCase
       "Should format 11 with leading zero and replace month"
   end
   
+  def test_percent_e
+    assert_format_eq "1 декабря", Time.local(1985, "dec", 01), "%e %B",
+      "Should format %e w/o leading zero and replace month"
+    assert_format_eq "11 декабря", Time.local(1985, "dec", 11), "%e %B",
+      "Should format 11 w/o leading zero and replace month"
+  end
+  
   def test_all_shorthands
     assert_format_eq "Сегодня: 31 декабря, суббота, 2005 года", Time.local(2005,"dec",31),
       "Сегодня: %d %B, %A, %Y года", "Should format with short format string"

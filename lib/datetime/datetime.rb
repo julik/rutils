@@ -38,6 +38,7 @@ module RuTils
         gsub(/%A/, Date::RU_DAYNAMES[time.wday]).
         gsub(/%b/, Date::RU_ABBR_MONTHNAMES[time.mon]).
         gsub(/%d(\s)*%B/, '%02d' % time.day + '\1' + Date::RU_INFLECTED_MONTHNAMES[time.mon]).
+        gsub(/%e(\s)*%B/, '%d' % time.day + '\1' + Date::RU_INFLECTED_MONTHNAMES[time.mon]).
         gsub(/%B/, Date::RU_MONTHNAMES[time.mon]).
         gsub(/#{RuTils::SUBSTITUTION_MARKER}/, '%%')
       
