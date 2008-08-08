@@ -5,4 +5,4 @@
 =end
 require File.join(File.dirname(__FILE__), 'lib', 'rutils')
 RuTils::overrides = true
-require File.dirname(__FILE__), + '/lib/rutils/rails_pre_filter' 
+require File.dirname(__FILE__) + '/lib/rutils/rails_pre_filter' 

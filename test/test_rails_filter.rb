@@ -1,5 +1,6 @@
 require 'action_controller/test_process'
-load File.dirname(__FILE__) +  '/../lib/integration/init.rb'
+require File.dirname(__FILE__) +  '/../init.rb'
+
 ActionController::Routing::Routes.draw {  |map| map.connect ':controller/:action/:id' }
 
 class RutiledController < ActionController::Base #:nodoc:
