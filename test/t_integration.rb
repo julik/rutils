@@ -2,24 +2,25 @@ $KCODE = 'u'
 require 'rubygems'
 require 'test/unit'
 
-def requiring_with_report(test = nil)
+def requiring_with_dependencies(*tests)
   begin
     yield
-    require File.join(File.dirname(__FILE__), test) if test
+    tests.map {|t|  require File.join(File.dirname(__FILE__), t) }
   rescue LoadError => e
     $stderr.puts "Skipping integration test - #{e}"
   end
 end
 
-requiring_with_report { require 'multi_rails_init' }
+requiring_with_dependencies { require 'multi_rails_init' }
 
-requiring_with_report('test_rails_helpers') do
+requiring_with_dependencies('test_rails_helpers', 'test_rails_filter') do
   require 'action_controller' unless defined?(ActionController)
   require 'action_view' unless defined?(ActionView)
 end
 
-requiring_with_report('test_integration_bluecloth') { require 'bluecloth' }
-requiring_with_report do
+
+requiring_with_dependencies('test_integration_bluecloth') { require 'bluecloth' }
+requiring_with_dependencies do
   require 'RedCloth'
   if RedCloth::VERSION =~ /^3/
     require File.dirname(__FILE__) + '/test_integration_redcloth3'
