@@ -21,8 +21,6 @@ end
 #   * работа только и полностью в UTF-8 (включая entities, применимые в XML)
 #   * поддержка "raw"-вывода (символов вместо entities) - текст выводимый Gilenson можно верстать на бумаге
 #
-# Если вам нужно получать идентичный Typografica вывод, пользуйтесь RuTils::Gilenson::Obsolete
-# вместо RuTils::Gilenson::Formatter.
 #
 # ==Использование
 # Быстрее всего - через метод ++gilensize++ для любой строковой переменной
@@ -646,11 +644,6 @@ module RuTils::Gilenson::StringFormatting
     RuTils::Gilenson::Formatter.new(self, args.shift || {}).to_html
   end
   
-  # Форматирует строку с помощью Gilenson::Obsolete. Всe дополнительные опции передаются форматтеру.
-  def o_gilensize(*args)
-    opts = args.last.is_a?(Hash) ? args.last : {}
-    RuTils::Gilenson::Obsolete.new(self, *opts).to_html
-  end
 end
 
 Object::String.send(:include, RuTils::Gilenson::StringFormatting)
