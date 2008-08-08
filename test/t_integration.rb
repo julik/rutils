@@ -21,7 +21,7 @@ end
 
 requiring_with_dependencies('test_integration_bluecloth') { require 'bluecloth' }
 requiring_with_dependencies do
-  require 'RedCloth'
+  require 'RedCloth' unless defined? RedCloth
   if RedCloth::VERSION =~ /^3/
     require File.dirname(__FILE__) + '/test_integration_redcloth3'
   else
