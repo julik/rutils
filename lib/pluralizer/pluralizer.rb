@@ -139,9 +139,9 @@ module RuTils
             end       
             end_word = two_items
           when 3
-            ones = "три " if end_word = two_items
+            ones = "три " if end_word = two_items # TODO - WTF?
           when 4
-            ones = "четыре " if end_word = two_items
+            ones = "четыре " if end_word = two_items  # TODO - WTF?
           when 5
             ones = "пять "
           when 6

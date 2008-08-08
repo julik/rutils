@@ -2,29 +2,30 @@ $KCODE = 'u'
 require 'rubygems'
 require 'test/unit'
 
-begin
-  require 'multi_rails_init'
-rescue LoadError
-  $stderr.puts "Please install multi_rails for regression testing!"
+def requiring_with_report(test = nil)
+  begin
+    yield
+    require File.join(File.dirname(__FILE__), test) if test
+  rescue LoadError => e
+    $stderr.puts "Skipping integration test - #{e}"
+  end
 end
 
-begin
+requiring_with_report { require 'multi_rails_init' }
+
+requiring_with_report('test_rails_helpers') do
   require 'action_controller' unless defined?(ActionController)
   require 'action_view' unless defined?(ActionView)
-rescue LoadError
-  $skip_rails = true
 end
 
-begin
-  require 'RedCloth' unless defined?(RedCloth)
-rescue LoadError
-  $skip_redcloth = true
-end
-
-begin
-  require 'BlueCloth' unless defined?(BlueCloth)
-rescue LoadError
-  $skip_bluecloth = true
+requiring_with_report('test_integration_bluecloth') { require 'bluecloth' }
+requiring_with_report do
+  require 'RedCloth'
+  if RedCloth::VERSION =~ /^3/
+    require File.dirname(__FILE__) + '/test_integration_redcloth3'
+  else
+    require File.dirname(__FILE__) + '/test_integration_redcloth4'
+  end
 end
 
 require File.dirname(__FILE__) + '/../lib/rutils'
@@ -42,128 +43,3 @@ class IntegrationFlagTest < Test::Unit::TestCase
     assert RuTils::overrides_enabled?
   end  
 end
-
-# Интеграция с RedCloth - Textile.
-# Нужно иметь в виду что Textile осуществляет свою обработку типографики, которую мы подменяем!
-class TextileIntegrationTest < Test::Unit::TestCase
-  def test_integration_textile
-    raise "You must have RedCloth to test Textile integration" and return if $skip_redcloth
-
-    RuTils::overrides = true
-    assert RuTils.overrides_enabled?
-    assert_equal "<p>И&#160;вот &#171;они пошли туда&#187;, и&#160;шли шли&#160;шли</p>", 
-      RedCloth.new('И вот "они пошли туда", и шли шли шли').to_html
-
-    RuTils::overrides = false      
-    assert !RuTils::overrides_enabled?
-    assert_equal '<p><strong>strong text</strong> and <em>emphasized text</em></p>',
-      RedCloth.new("*strong text* and _emphasized text_").to_html, "Spaces should be preserved \
-without RuTils"
-    
-    RuTils::overrides = true      
-    assert RuTils.overrides_enabled?
-    assert_equal '<p><strong>strong text</strong> and <em>emphasized text</em></p>',
-      RedCloth.new("*strong text* and _emphasized text_").to_html, "Spaces should be preserved"
-    
-    RuTils::overrides = false
-    assert !RuTils.overrides_enabled?
-    assert_equal "<p>И вот &#8220;они пошли туда&#8221;, и шли шли шли</p>", 
-      RedCloth.new('И вот "они пошли туда", и шли шли шли').to_html
-  
-  end
-end
-
-# Интеграция с BlueCloth - Markdown
-# Сам Markdown никакой обработки типографики не производит (это делает RubyPants, но вряд ли его кто-то юзает на практике)
-class MarkdownIntegrationTest < Test::Unit::TestCase
-  def test_integration_markdown
-    raise "You must have BlueCloth to test Markdown integration" and return if $skip_bluecloth
-
-    RuTils::overrides = true
-    assert RuTils.overrides_enabled?
-    assert_equal "<p>И вот&#160;&#171;они пошли туда&#187;, и&#160;шли шли&#160;шли</p>", 
-      BlueCloth.new('И вот "они пошли туда", и шли шли шли').to_html
-
-    RuTils::overrides = false
-    assert !RuTils.overrides_enabled?
-    assert_equal "<p>И вот \"они пошли туда\", и шли шли шли</p>", 
-      BlueCloth.new('И вот "они пошли туда", и шли шли шли').to_html
-  end
-end
-
-TEST_DATE = Date.parse("1983-10-15") # coincidentially...
-TEST_TIME = Time.local(1983, 10, 15, 12, 15) # also coincidentially...
-
-# Перегрузка helper'ов Rails
-class RailsHelpersOverrideTest < Test::Unit::TestCase
-  # Вспомогательный класс для тестирования перегруженного DateHelper
-  class HelperStub
-    # для тестирования to_datetime_select_tag
-    def date_field; TEST_TIME; end
-  end
-
-  def setup
-    raise "You must have Rails to test ActionView integration" and return if $skip_rails
-    
-    RuTils::overrides = true
-    # А никто и не говорил что класс должен быть один :-)
-    k = Class.new(HelperStub)
-    [ActionView::Helpers::TagHelper, ActionView::Helpers::DateHelper].each{|m| k.send(:include, m)}
-    @stub = k.new
-  end
-  
-  def test_distance_of_time_in_words
-    assert_equal "20 минут", @stub.distance_of_time_in_words(Time.now - 20.minutes, Time.now)
-  end
-  
-  # TODO - TextMate это не хайлайтит, и это _крайне_ достает
-  def test_select_month
-    assert_match /июль/, @stub.select_month(TEST_DATE), 
-      "Месяц в выборе месяца должен быть указан в именительном падеже"
-    assert_match />7\<\/option\>/, @stub.select_month(TEST_DATE, :use_month_numbers => true), 
-      "Хелпер select_month с номером месяца вместо названия месяца"
-    assert_match /10\ \-\ октябрь/, @stub.select_month(TEST_DATE, :add_month_numbers => true), 
-      "Хелпер select_month с номером и названием месяца"
-    assert_match /\>июн\<\/option\>/, @stub.select_month(TEST_DATE, :use_short_month => true), 
-      "Короткое имя месяца при использовании опции :use_short_month"
-    assert_match /name\=\"date\[foobar\]\"/, @stub.select_month(TEST_DATE, :field_name => "foobar"), 
-      "Хелпер select_month должен принимать опцию :field_name"
-    assert_match /type\=\"hidden\".+value\=\"10\"/m, @stub.select_month(TEST_DATE, :use_hidden => true),
-      "Хелпер select_month должен принимать опцию :use_hidden"
-  end
-
-  def test_select_date  
-    assert_match /date\_day.+date\_month.+date\_year/m, @stub.select_date(TEST_DATE),
-      "Хелпер select_date должен выводить поля в следующем порядке: день, месяц, год"
-    assert_match /декабря/, @stub.select_date(TEST_DATE), 
-      "Имя месяца должно быть указано в родительном падеже"
-    assert_match /декабря/, @stub.select_date(TEST_DATE, :order => [:month, :year]),
-      "Хелпер select_date не позволяет опускать фрагменты, имя месяца должно быть указано в родительном падеже"
-    assert_match @stub.select_date, @stub.select_date(Time.now), 
-      "Хелпер select_date без параметров работает с текущей датой"
-  end
-
-  def test_select_datetime
-    assert_match /date\_day.+date\_month.+date\_year/m, @stub.select_datetime(TEST_TIME),
-      "Хелпер select_datetime должен выводить поля в следующем порядке: день, месяц, год"
-  end
-  
-  def test_html_options
-    if ActionView::Helpers::DateHelper::DATE_HELPERS_RECEIVE_HTML_OPTIONS
-      assert_match /id\=\"foobar\"/m,  @stub.select_month(TEST_DATE, {}, :id => "foobar"),
-        "Хелпер select_month принимает html_options"
-
-      assert_match /id\=\"foobar\"/m,  @stub.select_date(TEST_DATE, {}, :id => "foobar"),
-        "Хелпер select_date принимает html_options"
-    end
-  end
-  
-  def test_instance_tag
-    @it = ActionView::Helpers::InstanceTag.new(:stub, :date_field, self).to_datetime_select_tag
-    assert_match /\>10\<.+\>октября\<.+\>1983\</m, @it,
-      "to_datetime_select_rag должен выводить поля в следующем порядке: день, месяц, год"
-    assert_match /июля/m, @it,
-     "to_datetime_select_tag выводит месяц в родительном падеже"
-  end
-end
-

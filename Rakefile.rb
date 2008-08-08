@@ -1,7 +1,10 @@
 $KCODE = 'u'
+$:.reject! { |e| e.include? 'TextMate' }
 
 require 'lib/rutils'
 require 'rubygems'
+
+
 
 begin
   require 'hoe'
@@ -10,12 +13,13 @@ begin
   Hoe::RUBY_FLAGS.replace ENV['RUBY_FLAGS'] || "-I#{%w(lib test).join(File::PATH_SEPARATOR)}" + 
     (Hoe::RUBY_DEBUG ? " #{RUBY_DEBUG}" : '')
   
-  # The generic URI syntax mandates that new URI schemes that provide for the representation of character data in a URI must, in effect,
-  # represent characters from the unreserved set without translation, and should convert all other characters to bytes according to UTF-8,
-  # and then percent-encode those values. This requirement was introduced in January 2005 with the publication of RFC 3986. URI schemes
-  # introduced before this date are not affected.
+  # The generic URI syntax mandates that new URI schemes that provide for the
+  # representation of character data in a URI must, in effect, represent characters from
+  # the unreserved set without translation, and should convert all other characters to
+  # bytes according to UTF-8, # and then percent-encode those values. This requirement was
+  # introduced in January 2005 with the publication of RFC 3986. URI schemes # introduced
+  # before this date are not affected.
   
-   
   # Hoe minus dependency pollution plus unidocs plus rdoc fix. Kommunizm, perestroika.
   class KolkHoe < Hoe
     DOCOPTS = %w(--webcvs=http://rutils.rubyforge.org/svn/trunk/%s --charset=utf-8 --promiscuous)
