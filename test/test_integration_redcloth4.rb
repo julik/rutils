@@ -18,7 +18,7 @@ class Redcloth4IntegrationTest < Test::Unit::TestCase
     
     RuTils::overrides = true      
     assert RuTils.overrides_enabled?
-    assert_equal '<p><strong>strong text</strong> and <em>emphasized text</em></p>',
+    assert_equal '<p><strong>strong text</strong> and&#160;<em>emphasized text</em></p>',
       RedCloth.new("*strong text* and _emphasized text_").to_html,
         "Spaces should be preserved"
     
