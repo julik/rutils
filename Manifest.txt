@@ -12,7 +12,10 @@ lib/gilenson/gilenson.rb
 lib/integration/blue_cloth_override.rb
 lib/integration/integration.rb
 lib/integration/rails_date_helper_override.rb
+lib/integration/rails_pre_filter.rb
+lib/integration/red_cloth_four.rb
 lib/integration/red_cloth_override.rb
+lib/integration/red_cloth_three.rb
 lib/pluralizer/pluralizer.rb
 lib/rutils.rb
 lib/transliteration/bidi.rb
@@ -25,3 +28,8 @@ test/t_integration.rb
 test/t_pluralize.rb
 test/t_rutils_base.rb
 test/t_transliteration.rb
+test/test_integration_bluecloth.rb
+test/test_integration_redcloth3.rb
+test/test_integration_redcloth4.rb
+test/test_rails_filter.rb
+test/test_rails_helpers.rb

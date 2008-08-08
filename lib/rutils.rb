@@ -8,7 +8,7 @@ module RuTils
   INSTALLATION_DIRECTORY = File.expand_path(File.dirname(__FILE__) + '/../') #:nodoc:
   MAJOR = 0  #:nodoc:
   MINOR = 2  #:nodoc:
-  TINY  = 4  #:nodoc:
+  TINY  = 5  #:nodoc:
 
   # Стандартный маркер для подстановок - invalid UTF sequence
   SUBSTITUTION_MARKER = "\xF0\xF0\xF0\xF0" #:nodoc:
