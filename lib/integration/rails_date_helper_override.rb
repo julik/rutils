@@ -36,9 +36,15 @@ if defined?(Object::ActionView)
     #   select_month(Date.today, :use_month_numbers => true) # Использует ключи "1", "3"
     #   select_month(Date.today, :add_month_numbers => true) # Использует ключи "1 - Январь", "3 - Март"
     def select_month(date, options = {}, html_options = {})
+      locale = options[:locale] unless RuTils::overrides_enabled?
+      
       val = date ? (date.kind_of?(Fixnum) ? date : date.month) : ''
       if options[:use_hidden]
-        hidden_html(options[:field_name] || 'month', val, options)
+        if self.class.private_instance_methods.include? "_date_hidden_html"
+          _date_hidden_html(options[:field_name] || 'month', val, options)
+        else
+          hidden_html(options[:field_name] || 'month', val, options)
+        end
       else
         month_options = [] 
         if RuTils::overrides_enabled?
@@ -52,9 +58,17 @@ if defined?(Object::ActionView)
               Date::RU_MONTHNAMES
           end
         else
-          month_names = options[:use_short_month] ? Date::ABBR_MONTHNAMES : Date::MONTHNAMES
+          if defined? I18n
+            month_names = options[:use_month_names] || begin
+              key = options[:use_short_month] ? :'date.abbr_month_names' : :'date.month_names'
+              I18n.translate key, :locale => locale
+            end
+          else
+            month_names = options[:use_short_month] ? Date::ABBR_MONTHNAMES : Date::MONTHNAMES
+          end
         end
         month_names.unshift(nil) if month_names.size < 13
+
         1.upto(12) do |month_number|
           month_name = if options[:use_month_numbers]
             month_number
@@ -70,8 +84,13 @@ if defined?(Object::ActionView)
           )
           month_options << "\n"
         end
+        
         if DATE_HELPERS_RECEIVE_HTML_OPTIONS
-          select_html(options[:field_name] || 'month', month_options.join, options, html_options)
+          if self.class.private_instance_methods.include? "_date_select_html"
+            _date_select_html(options[:field_name] || 'month', month_options.join, options, html_options)
+          else
+            select_html(options[:field_name] || 'month', month_options.join, options, html_options)
+          end
         else
           select_html(options[:field_name] || 'month', month_options.join, options)
         end

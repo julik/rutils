@@ -1,4 +1,5 @@
 === HEAD
+* Поддержка Rails Edge (pre-2.2) для хелперов DateTime. RuTils при overrides_enabled пытается поставить себя выше I18n -- при overrides_enabled I18n не вызывается для datetime хелперов. (Yaroslav Markin)
 * Частичная поддержка RedCloth 4 (julik)
 * Фильтр для контроллера чтобы установить верный флаг для экшена, то что происходит в экшене - thread local (julik)
 * Разделяем тесты и хаки (julik)
