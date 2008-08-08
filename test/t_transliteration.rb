@@ -90,20 +90,20 @@ class BiDiTranslitTest < Test::Unit::TestCase
   end
 
   def test_bidi_translify
-    @strings_all_with_slash.each do |strFrom, strTo|
-      assert_equal strTo, strFrom.bidi_translify
+    @strings_all_with_slash.each do |str_from, str_to|
+      assert_equal str_to, str_from.bidi_translify
     end
-    @strings_tran_without_slash.each do |strFrom, strTo|
-      assert_equal strTo, strFrom.bidi_translify(false)
+    @strings_tran_without_slash.each do |str_from, str_to|
+      assert_equal str_to, str_from.bidi_translify(false)
     end
   end
 
   def test_bidi_detranslify
-    @strings_all_with_slash.each do |strTo, strFrom|
-      assert_equal strTo, strFrom.bidi_detranslify
+    @strings_all_with_slash.each do |str_to, str_from|
+      assert_equal str_to, str_from.bidi_detranslify
     end
-    @strings_detran_without_slash.each do |strTo, strFrom|
-      assert_equal strTo, strFrom.bidi_detranslify(false)
+    @strings_detran_without_slash.each do |str_to, str_from|
+      assert_equal str_to, str_from.bidi_detranslify(false)
     end
   end
 end

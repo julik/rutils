@@ -22,6 +22,6 @@ class RailsFilterTest < Test::Unit::TestCase
   def test_overrides_preserved_in_render
     assert_nothing_raised { get :overridden }
     assert_response :success
-    assert_equal "Август", @response.body
+    assert_equal "август", @response.body
   end
 end
