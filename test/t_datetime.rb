@@ -116,7 +116,6 @@ class StrftimeTest < Test::Unit::TestCase
         RuTils::overrides = true
         sleep(rand(10)/200.0)
         assert_equal "11 декабря", Time.local(1985, "dec", 11).strftime("%d %B")
-        RuTils::overrides = false
       end
     end
     
@@ -125,7 +124,6 @@ class StrftimeTest < Test::Unit::TestCase
         RuTils::overrides = false
         sleep(rand(10)/200.0)
         assert_equal "11 December", Time.local(1985, "dec", 11).strftime("%d %B")
-        RuTils::overrides = true
       end
     end
     

@@ -18,7 +18,6 @@ module RuTils
   # Версия RuTils
   VERSION = [MAJOR, MINOR ,TINY].join('.')
   
-  @@overrides = true
   
   # Метод позволяет проверить, включена ли перегрузка функций других модулей.
   # Попутно он спрашивает модуль Locale (если таковой имеется) является ли русский
@@ -37,12 +36,14 @@ module RuTils
   
   # Включает или выключает перегрузки других модулей. Полезно, например, в случае когда нужно рендерить страницу
   # сайта на нескольких языках и нужно отключить русское оформление текста для других языков.  
+  #
+  # Флаг overrides в RuTils работают в контексте текущей нити
   def overrides=(new_override_flag)
     Thread.current[:rutils_overrided_enabled] = (new_override_flag ? true : false)
   end
   module_function :overrides=
   
-  def self.thread_local_or_own_flag
+  def self.thread_local_or_own_flag #:nodoc:
     Thread.current.keys.include?(:rutils_overrided_enabled) ? Thread.current[:rutils_overrided_enabled] : false
   end
   
