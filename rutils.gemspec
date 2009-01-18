@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ["History.txt", "Manifest.txt", "README.txt", "TODO.txt"]
   s.files = ["History.txt", "Manifest.txt", "README.txt", "Rakefile.rb", "TODO.txt", "bin/gilensize", "bin/rutilize", "init.rb", "lib/countries/countries.rb", "lib/datetime/datetime.rb", "lib/gilenson/gilenson.rb", "lib/integration/blue_cloth_override.rb", "lib/integration/integration.rb", "lib/integration/rails_date_helper_override.rb", "lib/integration/rails_pre_filter.rb", "lib/integration/red_cloth_four.rb", "lib/integration/red_cloth_override.rb", "lib/integration/red_cloth_three.rb", "lib/pluralizer/pluralizer.rb", "lib/rutils.rb", "lib/version.rb", "lib/transliteration/bidi.rb", "lib/transliteration/simple.rb", "lib/transliteration/transliteration.rb", "test/run_tests.rb", "test/t_datetime.rb", "test/t_gilenson.rb", "test/t_integration.rb", "test/t_pluralize.rb", "test/t_rutils_base.rb", "test/t_transliteration.rb", "test/test_integration_bluecloth.rb", "test/test_integration_redcloth3.rb", "test/test_integration_redcloth4.rb", "test/test_rails_filter.rb", "test/test_rails_helpers.rb", "test/test_datetime.rb", "test/test_gilenson.rb", "test/test_integration.rb", "test/test_pluralize.rb", "test/test_rutils_base.rb", "test/test_transliteration.rb"]
   s.has_rdoc = true
-  s.homepage = %q{RuTils - простой обработчик русского текста на Ruby. Основная цель RuTils -}
+  s.homepage = %q{RuTils - простой обработчик русского текста на Ruby. Основная цель RuTils - сделать разработку русскоязычных приложений на Ruby (и Rails) максимально простой и приятной (в идеале - столь же простой как и разработку оных на английском).}
   s.rdoc_options = ["--main", "README.txt"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{rutils}
