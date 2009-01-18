@@ -36,7 +36,8 @@ begin
     p.email = ['me@julik.nl', 'yaroslav@markin.net']
     p.description = 'Simple processing of russian strings'
     p.summary     = 'Simple processing of russian strings'
-    p.need_zip = true
+    p.remote_rdoc_dir = ''
+    p.need_zip = true # ненвижу
   end
 
   require 'load_multi_rails_rake_tasks'
