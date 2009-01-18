@@ -1,8 +1,9 @@
 # Интеграция с RedCloth - Textile.
 # Нужно иметь в виду что Textile осуществляет свою обработку типографики, которую мы подменяем!
 class Redcloth3IntegrationTest < Test::Unit::TestCase
-  def test_integration_textile
-    raise "You must have RedCloth to test Textile integration" and return if $skip_redcloth
+  def test_integration_with_redcloth_3
+    flunk("You must have RedCloth to test Textile integration") if $skip_redcloth
+    flunk("This test is for RedCloth 3 and less but ran on #{RedCloth::VERSION}") if RedCloth::VERSION.to_s.to_i > 3
     
     RuTils::overrides = true
     assert RuTils.overrides_enabled?

@@ -1,23 +1,18 @@
 $KCODE = 'u'
 
+require File.dirname(__FILE__) + '/version'
+
 # Главный контейнер модуля
 module RuTils
   #:stopdoc:
   
   # Папка, куда установлен модуль RuTils. Нужно чтобы автоматически копировать RuTils в другие приложения.
   INSTALLATION_DIRECTORY = File.expand_path(File.dirname(__FILE__) + '/../') #:nodoc:
-  MAJOR = 0  #:nodoc:
-  MINOR = 2  #:nodoc:
-  TINY  = 5  #:nodoc:
 
   # Стандартный маркер для подстановок - invalid UTF sequence
   SUBSTITUTION_MARKER = "\xF0\xF0\xF0\xF0" #:nodoc:
   
   # :startdoc:
-  
-  # Версия RuTils
-  VERSION = [MAJOR, MINOR ,TINY].join('.')
-  
   
   # Метод позволяет проверить, включена ли перегрузка функций других модулей.
   # Попутно он спрашивает модуль Locale (если таковой имеется) является ли русский
