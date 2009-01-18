@@ -18,6 +18,7 @@ lib/integration/red_cloth_override.rb
 lib/integration/red_cloth_three.rb
 lib/pluralizer/pluralizer.rb
 lib/rutils.rb
+lib/version.rb
 lib/transliteration/bidi.rb
 lib/transliteration/simple.rb
 lib/transliteration/transliteration.rb
