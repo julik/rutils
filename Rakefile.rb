@@ -1,10 +1,8 @@
 $KCODE = 'u'
 $:.reject! { |e| e.include? 'TextMate' }
 
-require 'lib/rutils'
+require 'lib/version'
 require 'rubygems'
-
-
 
 begin
   require 'hoe'
@@ -21,8 +19,8 @@ begin
   # before this date are not affected.
   
   # Hoe minus dependency pollution plus unidocs plus rdoc fix. Kommunizm, perestroika.
-  class KolkHoe < Hoe
-    DOCOPTS = %w(--webcvs=http://rutils.rubyforge.org/svn/trunk/%s --charset=utf-8 --promiscuous)
+  Class.new(Hoe) do
+    DOCOPTS = %w(--webcvs=http://github.com/julik/rutils/tree/master/%s --charset=utf-8 --promiscuous)
     Rake::RDocTask.class_eval do
       alias_method :_odefine, :define
       def define; @options.unshift(*DOCOPTS); _odefine; end
@@ -32,20 +30,16 @@ begin
       extra_deps.reject! {|e| e[0] == 'hoe' }
       super
     end
-  end
-  
-  KolkHoe.new('rutils', RuTils::VERSION) do |p|
+  end.new('rutils', RuTils::VERSION) do |p|
     p.name = "rutils"
     p.author = ["Julian 'Julik' Tarkhanov", "Danil Ivanov", "Yaroslav Markin"]
     p.email = ['me@julik.nl', 'yaroslav@markin.net']
     p.description = 'Simple processing of russian strings'
     p.summary     = 'Simple processing of russian strings'
-    p.url = "http://rutils.rubyforge.org"
-    p.test_globs = 'test/t_*.rb'
-    p.remote_rdoc_dir = ''
     p.need_zip = true
-    p.remote_rdoc_dir = ''
   end
+
+  require 'load_multi_rails_rake_tasks'
   
 rescue LoadError
   $stderr.puts "Meta-operations on this package require Hoe and multi_rails"
@@ -58,10 +52,4 @@ rescue LoadError
     t.pattern = 'test/t_*.rb'
     t.verbose = true
   end
-end
-
-begin
-  require 'load_multi_rails_rake_tasks'
-rescue LoadError
-  $stderr.puts "Proper testing of this package with Rails requires multi_rails"
 end
