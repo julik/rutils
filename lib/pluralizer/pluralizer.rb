@@ -157,8 +157,8 @@ module RuTils
       end
 
       # сборка строки
-      st = ''
-      return [(st << hundreds.to_s << tens.to_s  << ones.to_s << end_word.to_s << " " << into.to_s).strip, tmp_val] 
+      plural = [hundreds, tens, ones, end_word, " ", into].join.strip 
+      return [plural, tmp_val] 
     end
     
     # Реализует вывод прописью любого объекта, реализующего Float
