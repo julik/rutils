@@ -12,7 +12,7 @@ module RuTils
 
   # Стандартный маркер для подстановок - Unicode Character 'REPLACEMENT CHARACTER' (U+FFFD)
   # Cамый нелегальный из легальных UTF-8 символов
-  SUBSTITUTION_MARKER = [0xEF, 0xBF, 0xBD].pack("U*")
+  SUBSTITUTION_MARKER = [0xEF, 0xBF, 0xBD].pack("U*").freeze
   
   # :startdoc:
   
