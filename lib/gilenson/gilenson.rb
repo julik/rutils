@@ -150,9 +150,8 @@ class RuTils::Gilenson::Formatter
     :thinsp     => "&#8201;",   # полукруглая шпация (тонкий пробел)
     :nob_open   => '<span class="nobr">',    # открывающий блок без переноса слов
     :nob_close  => '</span>',    # закрывающий блок без переноса слов
-  }
-  
-  GLYPHS.freeze
+  }.freeze
+
   # Нормальные "типографские" символы в UTF-виде. Браузерами обрабатываются плохонько, поэтому
   # лучше заменять их на entities.
   VERBATIM_GLYPHS = {
@@ -182,8 +181,7 @@ class RuTils::Gilenson::Formatter
     '″'         => :inch,
    }.freeze
       
-   # Для маркера мы применяем UTF-BOM чтобы его НЕЛЬЗЯ было перепутать с частью
-   # любого другого мультибайтного глифа. Thanks to huNter.
+   # Метка на которую подменяются вынутые теги
    REPLACEMENT_MARKER = RuTils::SUBSTITUTION_MARKER #:nodoc:
    
    # Кто придумал &#147;? Не учите людей плохому...
