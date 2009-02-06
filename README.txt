@@ -216,3 +216,5 @@ RubyKanjiCode в своем httpd.conf.
 Если вы хотите участвовать в разработке RuTils пользуйтесь версией из официального git-репозитория
 
 git clone git://github.com/julik/rutils.git
+
+Ну или там fork us on github, или как там это еще называется.
