@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*- 
 module RuTils
-  module Pluralization #:nodoc:
+  module Pluralization
     # Выбирает нужный падеж существительного в зависимости от числа
     def self.choose_plural(amount, *variants)
       variant = (amount%10==1 && amount%100!=11 ? 1 : amount%10>=2 && amount%10<=4 && (amount%100<10 || amount%100>=20) ? 2 : 3)
