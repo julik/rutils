@@ -1,8 +1,7 @@
 # -*- encoding: utf-8 -*- 
-require 'rubygems'
 require 'redcloth'
 
-raise LoadError unless RedCloth::VERSION =~ /^3/
+raise LoadError, "need RedCloth 3.x" unless RedCloth::VERSION =~ /^3/
 
 # Интеграция с RedCloth - Textile.
 # Нужно иметь в виду что Textile осуществляет свою обработку типографики, которую мы подменяем!

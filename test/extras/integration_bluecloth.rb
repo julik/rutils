@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*- 
-require 'rubygems'
 require 'bluecloth'
 
 # Интеграция с BlueCloth - Markdown
