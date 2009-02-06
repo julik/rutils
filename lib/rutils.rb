@@ -9,9 +9,10 @@ module RuTils
   # Папка, куда установлен модуль RuTils. Нужно чтобы автоматически копировать RuTils в другие приложения.
   INSTALLATION_DIRECTORY = File.expand_path(File.dirname(__FILE__) + '/../') #:nodoc:
 
-  # Стандартный маркер для подстановок - invalid UTF sequence
-  SUBSTITUTION_MARKER = "\xF0\xF0\xF0\xF0" #:nodoc:
-  
+  # Стандартный маркер для подстановок - Unicode Character 'REPLACEMENT CHARACTER' (U+FFFD)
+  # Cамый нелегальный из легальных UTF-8 символов
+  SUBSTITUTION_MARKER = [0xEF, 0xBF, 0xBD].pack("U*")
+    
   # :startdoc:
   
   # Метод позволяет проверить, включена ли перегрузка функций других модулей.
