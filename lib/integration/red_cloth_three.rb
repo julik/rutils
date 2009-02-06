@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 # RuTils выполняет перегрузку Textile Glyphs в RedCloth, перенося форматирование спецсимволов на Gilenson.
 class RedCloth  < String #:nodoc:
   # Этот метод в RedCloth при наличии Гиленсона надо отключать    

@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 require 'action_controller/test_process'
 require File.dirname(__FILE__) +  '/../init.rb'
 

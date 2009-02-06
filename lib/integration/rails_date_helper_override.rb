@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 if defined?(Object::ActionView)
   module Object::ActionView::Helpers::DateHelper
     # Несколько хаков для корректной работы модуля с Rails 1.2--2.0 одновременно с Rails 2.1 и выше.

@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 module RuTils
   module Transliteration #:nodoc:
   end

@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 module RuTils
   module Pluralization #:nodoc:
     # Выбирает нужный падеж существительного в зависимости от числа

@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 =begin
   Этот файл - заглушка для Rails-плагина. 
   Если поместить rutils/ в папку vendor/plugins/ вашего Rails-приложения, 

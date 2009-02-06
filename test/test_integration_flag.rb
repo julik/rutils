@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 $KCODE = 'u'
 require 'test/unit'
 

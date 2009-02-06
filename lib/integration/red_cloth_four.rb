@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 # RedCloth 4
 class RedCloth::TextileDoc < String
   alias_method  :to_html_without_rutils, :to_html

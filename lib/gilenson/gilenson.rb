@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 module RuTils
   module Gilenson
     # Позволяет возвращать класс форматтера при вызове

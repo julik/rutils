@@ -1,3 +1,7 @@
+# -*- encoding: utf-8 -*- 
+require 'rubygems'
+require 'bluecloth'
+
 # Интеграция с BlueCloth - Markdown
 # Сам Markdown никакой обработки типографики не производит (это делает RubyPants, но вряд ли его кто-то юзает на практике)
 class MarkdownIntegrationTest < Test::Unit::TestCase

@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 $KCODE = 'u'
 
 require File.dirname(__FILE__) + '/version'
