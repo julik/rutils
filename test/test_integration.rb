@@ -3,8 +3,8 @@ $KCODE = 'u'
 require 'test/unit'
 
 require File.dirname(__FILE__) + '/../lib/rutils'
-load File.dirname(__FILE__) +  '/../lib/integration/integration.rb'
 
+# Load all the prereqs
 integration_tests = ['rubygems'] + Dir.glob(File.dirname(__FILE__) + '/extras/integration_*.rb') + ['multi_rails_init']
 
 if ENV['NO_RAILS']

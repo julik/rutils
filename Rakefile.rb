@@ -2,9 +2,9 @@ $KCODE = 'u'
 $:.reject! { |e| e.include? 'TextMate' }
 
 require 'lib/version'
-require 'rubygems'
 
 begin
+  require 'rubygems'
   require 'hoe'
   
   # Disable spurious warnings when running tests, ActiveMagic cannot stand -w

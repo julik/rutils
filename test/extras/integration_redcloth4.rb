@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*- 
 require 'redcloth'
 
-raise LoadError, "need RedCloth 4.x" unless RedCloth::VERSION =~ /^4/
+raise LoadError, "need RedCloth 4.x" unless RedCloth::VERSION.to_s =~ /^4/
+load RuTils::INSTALLATION_DIRECTORY +  '/lib/integration/red_cloth_override.rb'
 
 # Интеграция с RedCloth - Textile.
 # Нужно иметь в виду что Textile осуществляет свою обработку типографики, которую мы подменяем!

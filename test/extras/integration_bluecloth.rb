@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*- 
 require 'bluecloth'
+load RuTils::INSTALLATION_DIRECTORY +  '/lib/integration/blue_cloth_override.rb'
 
 # Интеграция с BlueCloth - Markdown
 # Сам Markdown никакой обработки типографики не производит (это делает RubyPants, но вряд ли его кто-то юзает на практике)

@@ -47,10 +47,6 @@ module RuTils
   def self.load_component(name) #:nodoc:
     require File.join(RuTils::INSTALLATION_DIRECTORY, "lib", name.to_s, name.to_s)
   end
-
-  def self.reload_component(name) #:nodoc:
-    load File.join(RuTils::INSTALLATION_DIRECTORY, "lib", name.to_s, "#{name}.rb")
-  end
 end
 
 

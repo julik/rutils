@@ -8,3 +8,16 @@
 require File.join(File.dirname(__FILE__), 'lib', 'rutils')
 RuTils::overrides = true
 require File.dirname(__FILE__) + '/lib/integration/rails_pre_filter' 
+
+def russan_gem_required?
+  require 'action_pack/version'
+  ma, mi, ti = ActionPack::VERSION::MAJOR, ActionPack::VERSION::MINOR, ActionPack::VERSION::TINY 
+  return true if (ma >= 2 && mi >= 2 && ti >= 1)
+  false
+end
+
+if russan_gem_required?
+  STDERR.puts "RuTils: Use russian gem for helper override instead on this version of Rails"
+else
+  require File.dirname(__FILE__) + '/lib/integration/rails_date_helper_override'
+end
