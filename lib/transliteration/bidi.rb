@@ -30,9 +30,11 @@ module RuTils::Transliteration::BiDi
   TABLE_FROM = TABLE_TO.unshift([" ","__"]).clone
   TABLE_TO.unshift(["_","__"])
 
+  extend self
+  
   #:startdoc:
   
-  def self.translify(str, allow_slashes = true)
+  def translify(str, allow_slashes = true)
     slash = allow_slashes ? '/' : '';
 
     s = str.clone.gsub(/[^\- _0-9a-zA-ZА-ёЁ#{slash}]/, '')
@@ -62,7 +64,7 @@ module RuTils::Transliteration::BiDi
     end
   end
 
-  def self.detranslify(str, allow_slashes = true)
+  def detranslify(str, allow_slashes = true)
     slash = allow_slashes ? '/' : '';
 
     str.split('/').inject(out = "") do |out, pg|
@@ -74,6 +76,6 @@ module RuTils::Transliteration::BiDi
       end
       out << slash << strings.to_s
     end
-    out[slash.length, out.length-slash.length]
+    out[slash.length, (out.length - slash.length)]
   end
 end

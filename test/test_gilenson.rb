@@ -64,10 +64,23 @@ class GilensonOwnTest < Test::Unit::TestCase
     assert_equal '&#34; &#38; &#39; &#62; &#60; &#160; &#167; &#169; &#171; &#174; &#176; &#177; &#183; &#187; &#8211; &#8212; &#8216; &#8217; &#8220; &#8221; &#8222; &#8226; &#8230; &#8482; &#8722;', '&quot; &amp; &apos; &gt; &lt; &nbsp; &sect; &copy; &laquo; &reg; &deg; &plusmn; &middot; &raquo; &ndash; &mdash; &lsquo; &rsquo; &ldquo; &rdquo; &bdquo; &bull; &hellip; &trade; &minus;'.gilensize
   end
 
-  def test_ugly_entities_replace1 # not_correct_number
+  def test_non_displayable_entities_replace1 # not_correct_number
     assert_equal '&#8222; &#8230; &#39; &#8220; &#8221; &#8226; &#8211; &#8212; &#8482;', '&#132; &#133; &#146; &#147; &#148; &#149; &#150; &#151; &#153;'.gilensize
   end
+  
+  def test_non_displayable_entities_replace2 # copy&paste
+    @gilenson.configure!(:copypaste => true)
+    assert_equal '&#171; &#160; &#187; &#167; &#169; &#174; &#176; &#177; &#182; &#183; &#8211; &#8212; &#8216; &#8217; &#8220; &#8221; &#8222; &#8226; &#8230; &#8470; &#8482; &#8722; &#8201; &#8243;', @gilenson.process('«   » § © ® ° ± ¶ · – — ‘ ’ “ ” „ • … № ™ −   ″')
+  end
 
+  def test_nbsp_removed_on_anchor_start
+    assert_equal 'abcd', @gilenson.process(' abcd')
+  end
+
+  def test_nbsp_removed_on_anchor_end
+    assert_equal 'abcd', @gilenson.process('abcd ')
+  end
+  
   def test_specials
     assert_equal '&#169; 2002, &#169; 2003, &#169; 2004, &#169; 2005 &#8212; тоже без&#160;пробелов: &#169;2002, &#169;Кукуц. однако: варианты (а) и&#160;(с)', '(с) 2002, (С) 2003, (c) 2004, (C) 2005 -- тоже без пробелов: (с)2002, (c)Кукуц. однако: варианты (а) и (с)'.gilensize
     assert_equal '+5&#176;С, +7&#176;C, &#8211;5&#176;F', '+5^С, +17^C, -275^F'.gilensize
@@ -346,11 +359,6 @@ class GilensonConfigurationTest < Test::Unit::TestCase
     @gilenson.glyph[:nbsp] = '&nbsp;'
     assert_equal 'скажи, мне, ведь не&nbsp;даром! Москва, клеймённая пожаром. Французу отдана',
       @gilenson.process('скажи ,мне, ведь не даром !Москва, клеймённая пожаром .Французу отдана')
-  end
-  
-  def test_ugly_entities_replace2 # copy&paste
-    @gilenson.configure!(:copypaste => true)
-    assert_equal '&#160; &#171; &#187; &#167; &#169; &#174; &#176; &#177; &#182; &#183; &#8211; &#8212; &#8216; &#8217; &#8220; &#8221; &#8222; &#8226; &#8230; &#8470; &#8482; &#8722; &#8201; &#8243;', @gilenson.process('  « » § © ® ° ± ¶ · – — ‘ ’ “ ” „ • … № ™ −   ″')
   end
   
   def test_raise_on_unknown_setting
