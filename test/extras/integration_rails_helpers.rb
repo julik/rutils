@@ -1,9 +1,12 @@
 # -*- encoding: utf-8 -*- 
-TEST_DATE = Date.parse("1983-10-15") # coincidentially...
-TEST_TIME = Time.local(1983, 10, 15, 12, 15) # also coincidentially...
+require 'action_controller/test_process'
+require File.dirname(__FILE__) +  '/../init.rb'
 
 # Перегрузка helper'ов Rails
 class RailsHelpersOverrideTest < Test::Unit::TestCase
+  TEST_DATE = Date.parse("1983-10-15") # coincidentially...
+  TEST_TIME = Time.local(1983, 10, 15, 12, 15) # also coincidentially...
+  
   # Вспомогательный класс для тестирования перегруженного DateHelper
   class HelperStub
     # для тестирования to_datetime_select_tag
