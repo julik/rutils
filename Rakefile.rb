@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 $KCODE = 'u'
 $:.reject! { |e| e.include? 'TextMate' }
 
