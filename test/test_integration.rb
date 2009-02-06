@@ -5,7 +5,7 @@ require 'test/unit'
 require File.dirname(__FILE__) + '/../lib/rutils'
 
 # Load all the prereqs
-integration_tests = ['rubygems'] + Dir.glob(File.dirname(__FILE__) + '/extras/integration_*.rb') + ['multi_rails_init']
+integration_tests = ['rubygems', 'multi_rails_init'] + Dir.glob(File.dirname(__FILE__) + '/extras/integration_*.rb')
 
 if ENV['NO_RAILS']
   integration_tests.reject! {|t| t.include?("rails") }
