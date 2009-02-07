@@ -17,7 +17,7 @@ def russan_gem_required?
 end
 
 if russan_gem_required?
-  STDERR.puts "RuTils: Use russian gem for helper override instead on this version of Rails"
+  STDERR.puts "RuTils: On this version of Rails use the `russian` gem for helper overrides instead"
 else
-  require File.dirname(__FILE__) + '/lib/integration/rails_date_helper_override'
+  require File.dirname(__FILE__) + "/lib/integration/rails_date_helper_override"
 end

@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*- 
 
 # Use unless to prevent botching with multirails
-require 'action_controller' unless defined?(ActionController)
-require 'action_view' unless defined?(ActionView)
+require 'action_controller' #nless defined?(ActionController)
+require 'action_view' #unless defined?(ActionView)
 
 require 'action_controller/test_process'
 require File.dirname(__FILE__) +  '/../../init.rb'
@@ -11,8 +11,6 @@ require 'action_pack/version'
 ma, mi, ti = ActionPack::VERSION::MAJOR, ActionPack::VERSION::MINOR, ActionPack::VERSION::TINY 
 
 raise LoadError, "RuTils is not 2.2.2 compat" if (ma >= 2 && mi >= 2 && ti >= 1)
-
-load RuTils::INSTALLATION_DIRECTORY +  '/integration/rails_date_helper_override.rb'
 
 # Перегрузка helper'ов Rails
 class RailsHelpersOverrideTest < Test::Unit::TestCase
