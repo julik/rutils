@@ -17,7 +17,10 @@ def russan_gem_required?
 end
 
 if russan_gem_required?
-  STDERR.puts "RuTils: On this version of Rails use the `russian` gem for helper overrides instead"
+  STDERR.puts "RuTils: On this version of Rails use the `russian` gem for date helper overrides instead"
 else
   require File.dirname(__FILE__) + "/lib/integration/rails_date_helper_override"
 end
+
+# textilize и markdown
+::ActionController::Base.send(:helper, RuTils::Gilenson::Helper)

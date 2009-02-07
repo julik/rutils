@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*- 
-require 'bluecloth'
+require 'maruku'
 
 # Интеграция с BlueCloth - Markdown
 # Сам Markdown никакой обработки типографики не производит (это делает RubyPants, но вряд ли его кто-то юзает на практике)
-class BlueclothIntegrationTest < Test::Unit::TestCase
-  C = RuTils::Gilenson::BlueClothExtra
+class MarukuIntegrationTest < Test::Unit::TestCase
+  C = RuTils::Gilenson::MarukuExtra
   
   def test_integration_markdown
     

@@ -1,8 +1,7 @@
 # -*- encoding: utf-8 -*- 
 
-# Use unless to prevent botching with multirails
-require 'action_controller' #nless defined?(ActionController)
-require 'action_view' #unless defined?(ActionView)
+require 'action_controller'
+require 'action_view'
 
 require 'action_controller/test_process'
 require File.dirname(__FILE__) +  '/../../init.rb'
