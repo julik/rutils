@@ -1,8 +1,21 @@
-TEST_DATE = Date.parse("1983-10-15") # coincidentially...
-TEST_TIME = Time.local(1983, 10, 15, 12, 15) # also coincidentially...
+# -*- encoding: utf-8 -*- 
+
+require 'action_controller'
+require 'action_view'
+
+require 'action_controller/test_process'
+require File.dirname(__FILE__) +  '/../../init.rb'
+require 'action_pack/version'
+
+ma, mi, ti = ActionPack::VERSION::MAJOR, ActionPack::VERSION::MINOR, ActionPack::VERSION::TINY 
+
+raise LoadError, "RuTils is not 2.2.2 compat" if (ma >= 2 && mi >= 2 && ti >= 1)
 
 # Перегрузка helper'ов Rails
 class RailsHelpersOverrideTest < Test::Unit::TestCase
+  TEST_DATE = Date.parse("1983-10-15") # coincidentially...
+  TEST_TIME = Time.local(1983, 10, 15, 12, 15) # also coincidentially...
+  
   # Вспомогательный класс для тестирования перегруженного DateHelper
   class HelperStub
     # для тестирования to_datetime_select_tag
@@ -21,7 +34,6 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
     assert_equal "20 минут", @stub.distance_of_time_in_words(Time.now - 20.minutes, Time.now)
   end
   
-  # TODO - TextMate это не хайлайтит, и это _крайне_ достает
   def test_select_month
     assert_match /июль/, @stub.select_month(TEST_DATE), 
       "Месяц в выборе месяца должен быть указан в именительном падеже"

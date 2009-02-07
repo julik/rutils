@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 module RuTils
   module Pluralization #:nodoc:
     # Выбирает нужный падеж существительного в зависимости от числа
@@ -97,10 +98,10 @@ module RuTils
       rest = rest % 100
       rest1 = rest / 10
       ones = ""
-      case rest1
-        when 0 then tens = ""
+      tens = case rest1
+        when 0 then ""
         when 1 # особый случай
-          tens = case rest
+          case rest
             when 10 then "десять "
             when 11 then "одиннадцать "
             when 12 then "двенадцать "
@@ -112,14 +113,14 @@ module RuTils
             when 18 then "восемнадцать "
             when 19 then "девятнадцать "
           end
-        when 2: tens = "двадцать "
-        when 3: tens = "тридцать "
-        when 4: tens = "сорок "
-        when 5: tens = "пятьдесят "
-        when 6: tens = "шестьдесят "
-        when 7: tens = "семьдесят "
-        when 8: tens = "восемьдесят "
-        when 9: tens = "девяносто "
+        when 2 then "двадцать "
+        when 3 then "тридцать "
+        when 4 then "сорок "
+        when 5 then "пятьдесят "
+        when 6 then "шестьдесят "
+        when 7 then "семьдесят "
+        when 8 then "восемьдесят "
+        when 9 then "девяносто "
       end
       #
       if rest1 < 1 or rest1 > 1 # единицы
@@ -156,8 +157,8 @@ module RuTils
       end
 
       # сборка строки
-      st = ''
-      return [(st << hundreds.to_s << tens.to_s  << ones.to_s << end_word.to_s << " " << into.to_s).strip, tmp_val] 
+      plural = [hundreds, tens, ones, end_word,  " ",  into].join.strip 
+      return [plural, tmp_val] 
     end
     
     # Реализует вывод прописью любого объекта, реализующего Float

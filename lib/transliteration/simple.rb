@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 # Реализует простейшую транслитерацию
 #   "вот мы и здесь".translify => "vot my i zdes"
 #   "vot my i zdes".detranslify => "вот мы и здесь"

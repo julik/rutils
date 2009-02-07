@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 module RuTils
   module Gilenson
     # Позволяет возвращать класс форматтера при вызове
@@ -5,6 +6,12 @@ module RuTils
     def self.new(*args) #:nodoc:
       RuTils::Gilenson::Formatter.new(*args)
     end
+    
+    autoload :BlueClothExtra, File.dirname(__FILE__) + '/bluecloth_extra'
+    autoload :RedClothExtra, File.dirname(__FILE__) + '/redcloth_extra'
+    autoload :RDiscountExtra, File.dirname(__FILE__) + '/rdiscount_extra'
+    autoload :MarukuExtra, File.dirname(__FILE__) + '/maruku_extra'
+    autoload :Helper, File.dirname(__FILE__) + '/helper'
   end
 end
 
@@ -149,9 +156,8 @@ class RuTils::Gilenson::Formatter
     :thinsp     => "&#8201;",   # полукруглая шпация (тонкий пробел)
     :nob_open   => '<span class="nobr">',    # открывающий блок без переноса слов
     :nob_close  => '</span>',    # закрывающий блок без переноса слов
-  }
-  
-  GLYPHS.freeze
+  }.freeze
+
   # Нормальные "типографские" символы в UTF-виде. Браузерами обрабатываются плохонько, поэтому
   # лучше заменять их на entities.
   VERBATIM_GLYPHS = {
@@ -179,12 +185,10 @@ class RuTils::Gilenson::Formatter
     '−'         => :minus,
     ' '         => :thinsp,
     '″'         => :inch,
-   }
-   VERBATIM_GLYPHS.freeze #:nodoc:
+   }.freeze
       
-   # Для маркера мы применяем UTF-BOM чтобы его НЕЛЬЗЯ было перепутать с частью
-   # любого другого мультибайтного глифа. Thanks to huNter.
-   REPLACEMENT_MARKER = RuTils::SUBSTITUTION_MARKER.freeze #:nodoc:
+   # Метка на которую подменяются вынутые теги
+   REPLACEMENT_MARKER = RuTils::SUBSTITUTION_MARKER #:nodoc:
    
    # Кто придумал &#147;? Не учите людей плохому...
    # Привет А.Лебедеву http://www.artlebedev.ru/kovodstvo/62/
@@ -200,8 +204,23 @@ class RuTils::Gilenson::Formatter
      '150'       => :ndash,
      '151'       => :mdash,
      '153'       => :trade,
-   }
-   FORBIDDEN_NUMERIC_ENTITIES.freeze #:nodoc:
+   }.freeze
+   
+   # All the unicode whitespace
+   UNICODE_WHITESPACE = [
+     (0x0009..0x000D).to_a, # White_Space # Cc   [5] <control-0009>..<control-000D>
+     0x0020,                # White_Space # Zs       SPACE
+     0x0085,                # White_Space # Cc       <control-0085>
+     0x00A0,                # White_Space # Zs       NO-BREAK SPACE
+     0x1680,                # White_Space # Zs       OGHAM SPACE MARK
+     0x180E,                # White_Space # Zs       MONGOLIAN VOWEL SEPARATOR
+     (0x2000..0x200A).to_a, # White_Space # Zs  [11] EN QUAD..HAIR SPACE
+     0x2028,                # White_Space # Zl       LINE SEPARATOR
+     0x2029,                # White_Space # Zp       PARAGRAPH SEPARATOR
+     0x202F,                # White_Space # Zs       NARROW NO-BREAK SPACE
+     0x205F,                # White_Space # Zs       MEDIUM MATHEMATICAL SPACE
+     0x3000,                # White_Space # Zs       IDEOGRAPHIC SPACE
+   ].flatten.pack("U*").freeze
    
    PROTECTED_SETTINGS = [ :raw_output ] #:nodoc:
    
@@ -223,27 +242,24 @@ class RuTils::Gilenson::Formatter
    def method_missing(meth, *args) #:nodoc:
      setting = meth.to_s.gsub(/=$/, '')
      super(meth, *args) unless @settings.has_key?(setting) #this will pop the exception if we have no such setting
-   
+     
      return (@settings[setting] = args[0])
    end
-
+   
    # Обрабатывает text_to_process с сохранением настроек, присвоенных обьекту-форматтеру
    # Дополнительные аргументы передаются как параметры форматтера и не сохраняются после прогона.
    def process(text_to_process, *args)
      @_text = text_to_process
      
-     if args.last.is_a?(Hash)
-       with_configuration(args.last) { self.to_html }
-     else
-       self.to_html
-     end
+     args.last.is_a?(Hash) ? with_configuration(args.last) { to_html } : to_html
    end
 
-   # Обрабатывает текст, присвоенный форматтеру при создании и возвращает результат обработки.
-   def to_html()
+   # Обрабатывает текст, присвоенный форматтеру при создании и возвращает результат обработки
+   def to_html
      return '' unless @_text
      
-     text = @_text.strip
+     # NOTE: strip is Unicode-space aware on 1.9.1, so here we simulate that
+     text = @_text.gsub(/[#{UNICODE_WHITESPACE}]\z/, '').gsub(/\A[#{UNICODE_WHITESPACE}]/, '')
      
      # -6. Подмухляем таблицу глифов, если нам ее передали
      glyph_table = glyph.dup
@@ -261,12 +277,12 @@ class RuTils::Gilenson::Formatter
    
      # -4. запрет тагов html
      process_escape_html(text) unless @settings["html"]
-   
+    
      # -3. Никогда (вы слышите?!) не пущать лабуду &#not_correct_number;
      FORBIDDEN_NUMERIC_ENTITIES.dup.each_pair do | key, rep |
        text.gsub!(/&##{key};/, self.glyph[rep])
      end
-   
+      
      # -2. Чистим copy&paste
      process_copy_paste_clearing(text) if @settings['copypaste']
    
@@ -487,7 +503,7 @@ class RuTils::Gilenson::Formatter
    end
    
    def process_copy_paste_clearing(text)
-     VERBATIM_GLYPHS.each {|key,value| text.gsub!(/#{key}/, glyph[value]) }
+     VERBATIM_GLYPHS.each {|key,value| text.gsub!(/#{Regexp.escape(key)}/, glyph[value]) }
    end
    
    def process_spacing(text)

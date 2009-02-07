@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 $KCODE = 'u'
 require 'test/unit'
 require File.dirname(__FILE__) + '/../lib/rutils'
@@ -16,7 +17,7 @@ class PropisjuTestCase < Test::Unit::TestCase
     assert_equal "двадцать пять колес", 25.propisju_items(3, "колесо", "колеса", "колес")
     assert_equal "двадцать одна подстава", 21.propisju_items(2, "подстава", "подставы", "подстав")    
   end
-
+  
   def test_floats
     assert_equal "шесть целых пять десятых", (6.50).propisju
     assert_equal "триста сорок одна целая девять десятых", (341.9).propisju
@@ -26,7 +27,7 @@ class PropisjuTestCase < Test::Unit::TestCase
     assert_equal "двести двенадцать целых четыре десятых сволочи", (212.40).propisju_items(2, "сволочь", "сволочи", "сволочей")
     assert_equal "двести двенадцать сволочей", (212.00).propisju_items(2, "сволочь", "сволочи", "сволочей")
   end
-      
+  
   def test_items
     assert_equal "чемодана", 523.items("чемодан", "чемодана", "чемоданов")
     assert_equal "партий", 6727.items("партия", "партии", "партий")

@@ -1,11 +1,13 @@
+# -*- encoding: utf-8 -*- 
 module RuTils
   module Transliteration #:nodoc:
   end
 end
 
 require File.join(File.dirname(__FILE__), 'simple')
-require File.join(File.dirname(__FILE__), 'bidi')
 
+# Заглушка
+require File.join(File.dirname(__FILE__), 'bidi')
     
 # Реализует транслитерацию любого объекта, реализующего String или to_s
 module RuTils::Transliteration::StringFormatting
@@ -25,24 +27,24 @@ module RuTils::Transliteration::StringFormatting
     RuTils::Transliteration::Simple::dirify(self.to_s)
   end
   
-  # Транслитерирует строку (взаимно-однозначный транслит), и возвращает измененную строку
+  # ++DEPRECATED++ Вызывает ошибку
   def bidi_translify(allow_slashes = true)
-    RuTils::Transliteration::BiDi::translify(self.to_s, allow_slashes)
+    RuTils::Transliteration::BiDi.bail!
   end
   
-  # Транслитерирует строку (взаимно-однозначный транслит), меняя объект
+  # ++DEPRECATED++ Вызывает ошибку
   def bidi_translify!(allow_slashes = true)
-    self.replace(RuTils::Transliteration::BiDi::translify(self.to_s, allow_slashes))
+    RuTils::Transliteration::BiDi.bail!
   end
 
-  # Заменяет латиницу на кириллицу (взаимно-однозначный транслит), меняя объект
+  # ++DEPRECATED++ Вызывает ошибку
   def bidi_detranslify!(allow_slashes = true)
-    self.replace(RuTils::Transliteration::BiDi::detranslify(self.to_s, allow_slashes))
+    RuTils::Transliteration::BiDi.bail!
   end
   
-  # Заменяет латиницу на кириллицу (взаимно-однозначный транслит), и возвращает измененную строку
+  # ++DEPRECATED++ Вызывает ошибку
   def bidi_detranslify(allow_slashes = true)
-    RuTils::Transliteration::BiDi::detranslify(self.to_s, allow_slashes)
+    RuTils::Transliteration::BiDi.bail!
   end
 end
 

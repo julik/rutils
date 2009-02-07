@@ -1,5 +1,7 @@
+# -*- encoding: utf-8 -*- 
+require 'action_controller'
 require 'action_controller/test_process'
-require File.dirname(__FILE__) +  '/../init.rb'
+require File.dirname(__FILE__) +  '/../../init.rb'
 
 ActionController::Routing::Routes.draw {  |map| map.connect ':controller/:action/:id' }
 
