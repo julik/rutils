@@ -15,6 +15,6 @@ integration_tests.each do | integration_test |
   begin
     require integration_test
   rescue LoadError => e
-    $stderr.puts "Skipping integration test #{integration_test} - deps not met (#{e.message})"
+    $stderr.puts "Skipping integration test #{File.basename(integration_test)} - deps not met (#{e.message})"
   end
 end
