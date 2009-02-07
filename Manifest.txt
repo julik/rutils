@@ -3,6 +3,7 @@ Manifest.txt
 README.txt
 Rakefile.rb
 TODO.txt
+WHAT_HAS_CHANGED.txt
 bin/gilensize
 bin/rutilize
 init.rb
