@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*- 
 # RDiscount с поддержкой Gilenson
 class RuTils::Gilenson::RDiscountExtra < RDiscount
   def to_html(*opts)
