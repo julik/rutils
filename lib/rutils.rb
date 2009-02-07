@@ -5,16 +5,16 @@ require File.dirname(__FILE__) + '/version'
 
 # Главный контейнер модуля
 module RuTils
-  #:stopdoc:
-  
   # Папка, куда установлен модуль RuTils. Нужно чтобы автоматически копировать RuTils в другие приложения.
   INSTALLATION_DIRECTORY = File.expand_path(File.dirname(__FILE__) + '/../') #:nodoc:
-
-  # Стандартный маркер для подстановок - Unicode Character 'REPLACEMENT CHARACTER' (U+FFFD)
-  # Cамый нелегальный из легальных UTF-8 символов
-  SUBSTITUTION_MARKER = [0xEF, 0xBF, 0xBD].pack("U*").freeze
   
-  # :startdoc:
+  # Стандартный маркер для подстановок - Unicode Character 'OBJECT REPLACEMENT CHARACTER' (U+FFFC)
+  # http://unicode.org/reports/tr20/tr20-1.html
+  # Он официально применяется для обозначения вложенного обьекта
+  SUBSTITUTION_MARKER = [0xEF, 0xBF, 0xBC].pack("U*").freeze
+  
+  class RemovedFeature < RuntimeError
+  end
   
   # Метод позволяет проверить, включена ли перегрузка функций других модулей.
   # Попутно он спрашивает модуль Locale (если таковой имеется) является ли русский
@@ -49,10 +49,6 @@ module RuTils
   end
 end
 
-
-RuTils::load_component :pluralizer #Выбор числительного и сумма прописью
-RuTils::load_component :gilenson # Гиленсон
-RuTils::load_component :datetime # Дата и время без локалей
-RuTils::load_component :transliteration # Транслит
-RuTils::load_component :integration # Интеграция с rails, textile и тд
-RuTils::load_component :countries # Данные о странах на русском и английском
+[:pluralizer, :gilenson, :datetime, :transliteration, :integration, :countries].each do | submodule |
+  require File.join(RuTils::INSTALLATION_DIRECTORY, "lib", submodule.to_s, submodule.to_s)
+end

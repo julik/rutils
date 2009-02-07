@@ -59,24 +59,6 @@ RuTils на данный момент реализует простейший т
  "Вот такое вот дело".translify => "Vot takoye vot delo" 
  "Несомненный прогресс по сравнению с PHP".dirify => "nesomnennyi-progress-po-sravneniu-s-php"
 
-== BiDi-транслит
-
-Порт BiDiTranslit[http://pixel-apes.com/translit/article#h256-10] от Pixel Apes.
-Реализует транслитерацию "в обе стороны", предоставляя возможность получить
-валидный URL из строки, содержащей русские и английские буквы. С некоторыми
-потерями (запятых и прочих "слабозначащих" символов) возможно восстановление
-исходной строки.
-
-Два режима работы:
-
-1. Уничтожение всех слешей, которые встретятся во входной строке. В этом случае методы вызываются с передачей в них false. Например, <tt>"Web/Скрипты".bidi_translify(false)</tt>
-2. Пропуск слэшей (используется по умолчанию). Например,
-
-  "WebРазработка/Скрипты".bidi_translify     => "Web+Razrabotka+/+Skripty"
-  "+Ustanovka__+mod_perl".bidi_detranslify   => "Установка mod_perl"
-  "WebРазработка/Мимо".bidi_translify(false) => "Web+RazrabotkaMimo"
-  "+PKHP+/Scripts".bidi_detranslify(false)   => "ПХПScripts"
-
 == Обработка русской типографики в HTML
 
 Gilenson - порт Typografica[http://pixel-apes.com/typografica] от Pixel Apes.
