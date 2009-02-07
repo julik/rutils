@@ -35,7 +35,6 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
     assert_equal "20 минут", @stub.distance_of_time_in_words(Time.now - 20.minutes, Time.now)
   end
   
-  # TODO - TextMate это не хайлайтит, и это _крайне_ достает
   def test_select_month
     assert_match /июль/, @stub.select_month(TEST_DATE), 
       "Месяц в выборе месяца должен быть указан в именительном падеже"
