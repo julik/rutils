@@ -40,7 +40,7 @@ rescue LoadError
   desc "Run all tests (requires BlueCloth, RedCloth and Rails for integration tests)"
   Rake::TestTask.new("test") do |t|
     t.libs << "test"
-    t.pattern = 'test/t_*.rb'
+    t.pattern = 'test/test_*.rb'
     t.verbose = true
   end
 end
