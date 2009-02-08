@@ -8,23 +8,13 @@ begin
   require 'rubygems'
   require 'hoe'
   
+  DOCOPTS = %w(--charset utf-8 --promiscuous)
+  
   # Disable spurious warnings when running tests, ActiveMagic cannot stand -w
   Hoe::RUBY_FLAGS.replace ENV['RUBY_FLAGS'] || "-I#{%w(lib test).join(File::PATH_SEPARATOR)}" + 
     (Hoe::RUBY_DEBUG ? " #{RUBY_DEBUG}" : '')
   
-  # Hoe minus dependency pollution plus unidocs plus rdoc fix. Kommunizm, perestroika.
-  Class.new(Hoe) do
-    DOCOPTS = %w(--webcvs=http://github.com/julik/rutils/tree/master/%s --charset=utf-8 --promiscuous)
-    Rake::RDocTask.class_eval do
-      alias_method :_odefine, :define
-      def define; @options.unshift(*DOCOPTS); _odefine; end
-    end
-    
-    def define_tasks
-      extra_deps.reject! {|e| e[0] == 'hoe' }
-      super
-    end
-  end.new('rutils', RuTils::VERSION) do |p|
+  rutils = Hoe.new('rutils', RuTils::VERSION) do |p|
     p.name = "rutils"
     p.author = ["Julian 'Julik' Tarkhanov", "Danil Ivanov", "Yaroslav Markin"]
     p.email = ['me@julik.nl', 'yaroslav@markin.net']
@@ -33,7 +23,8 @@ begin
     p.remote_rdoc_dir = ''
     p.need_zip = true # ненвижу
   end
-
+  rutils.spec.rdoc_options += DOCOPTS
+  
   require 'load_multi_rails_rake_tasks'
   
 rescue LoadError
