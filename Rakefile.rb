@@ -14,6 +14,11 @@ begin
   Hoe::RUBY_FLAGS.replace ENV['RUBY_FLAGS'] || "-I#{%w(lib test).join(File::PATH_SEPARATOR)}" + 
     (Hoe::RUBY_DEBUG ? " #{RUBY_DEBUG}" : '')
   
+  Rake::RDocTask.class_eval do
+    alias_method :_odefine, :define
+    def define; @options.unshift(*DOCOPTS); _odefine; end
+  end
+
   rutils = Hoe.new('rutils', RuTils::VERSION) do |p|
     p.name = "rutils"
     p.author = ["Julian 'Julik' Tarkhanov", "Danil Ivanov", "Yaroslav Markin"]
