@@ -17,10 +17,11 @@ def russan_gem_required?
   false
 end
 
-if russan_gem_required?
+RUTILS_USE_DATE_HELPERS = if russan_gem_required?
   STDERR.puts "RuTils: On this version of Rails use the `russian` gem for date helper overrides instead"
+  false
 else
-  require File.dirname(__FILE__) + "/lib/integration/rails_date_helper_override"
+  true
 end
 
 # textilize и markdown
