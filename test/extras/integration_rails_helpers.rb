@@ -66,7 +66,7 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
   end
   
   def test_html_options
-    if ActionView::Helpers::DateHelper::DATE_HELPERS_RECEIVE_HTML_OPTIONS
+    if defined?(ActionView::Helpers::DateHelper::DATE_HELPERS_RECEIVE_HTML_OPTIONS)
       assert_match /id\=\"foobar\"/m,  @stub.select_month(TEST_DATE, {}, :id => "foobar"),
         "Хелпер select_month принимает html_options"
 
