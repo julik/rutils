@@ -53,6 +53,7 @@ end
   require File.join(RuTils::INSTALLATION_DIRECTORY, "lib", submodule.to_s, submodule.to_s)
 end
 
-unless defined?(RUTILS_USE_DATE_HELPERS) && !RUTILS_USE_DATE_HELPERS
+# Оверлоады грузим только если константа не установлена в false
+unless defined?(::RuTils::RUTILS_USE_DATE_HELPERS) && !::RuTils::RUTILS_USE_DATE_HELPERS
   require File.join(RuTils::INSTALLATION_DIRECTORY, "lib", "integration", "integration")
 end

@@ -17,7 +17,7 @@ def russan_gem_required?
   false
 end
 
-RUTILS_USE_DATE_HELPERS = if russan_gem_required?
+::RuTils::RUTILS_USE_DATE_HELPERS = if russan_gem_required?
   STDERR.puts "RuTils: On this version of Rails use the `russian` gem for date helper overrides instead"
   false
 else
