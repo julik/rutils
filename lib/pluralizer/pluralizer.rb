@@ -24,6 +24,23 @@ module RuTils
       pts.join(' ')
     end
     
+    # Выводит целое или дробное число как сумму в гривнах прописью
+    def self.griven(amount)
+      pts = []
+      
+      pts << RuTils::Pluralization::sum_string(amount.to_i, 2, "гривна", "гривны", "гривен") unless amount.to_i == 0
+      if amount.kind_of?(Float)
+        remainder = (amount.divmod(1)[1]*100).round
+        if (remainder == 100)
+          pts = [RuTils::Pluralization::sum_string(amount.to_i+1, 2, 'гривна', 'гривны', 'гривен')]
+        else
+          pts << RuTils::Pluralization::sum_string(remainder.to_i, 2, 'копейка', 'копейки', 'копеек')
+        end
+      end
+      
+      pts.join(' ')
+    end
+    
     def self.kopeek(amount)
       pts = []
       r, k = (amount/100.0).floor, (amount - ((amount/100.0).floor * 100)).to_i
@@ -236,6 +253,16 @@ module RuTils
       end
       alias :rubl   :rublej
       alias :rublja :rublej
+      
+      # Выводит сумму в гривнах прописью. Например:
+      # * (15.4).griven => "пятнадцать гривен сорок копеек"
+      # * 1.grivna      => "одна гривна"
+      # * (3.14).grivny => "три гривны четырнадцать копеек"
+      def griven
+        RuTils::Pluralization::griven(self)
+      end
+      alias :grivna :griven
+      alias :grivny :griven
     end
     
     module FixnumFormatting
