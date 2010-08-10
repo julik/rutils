@@ -27,7 +27,7 @@ module Object::ActionView::Helpers::DateHelper
   # <tt>distance_of_time_in_words(50)</tt> возвращает "меньше минуты".
   alias :stock_distance_of_time_in_words :distance_of_time_in_words
   def distance_of_time_in_words(*args)
-    RuTils::overrides_enabled? ? RuTils::DateTime::distance_of_time_in_words(*args) : stock_distance_of_time_in_words
+    RuTils::overrides_enabled? ? RuTils::DateTime::distance_of_time_in_words(*args) : stock_distance_of_time_in_words(*args)
   end
 
   # Заменяет ActionView::Helpers::DateHelper::select_month меню выбора русских месяцев.
