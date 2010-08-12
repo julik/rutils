@@ -13,7 +13,10 @@ class RutiledController < ActionController::Base #:nodoc:
   def rescue_action(e); raise e; end
 end
 
-class RailsFilterTest < Test::Unit::TestCase
+# Перегрузка helper'ов Rails
+rails_test_class = defined?(ActionController::TestCase) ? ActionController::TestCase : Test::Unit::TestCase
+
+class RailsFilterTest < rails_test_class
   
   def setup
     @controller = RutiledController.new
