@@ -7,7 +7,9 @@ require 'action_controller/test_process'
 require File.dirname(__FILE__) +  '/../../init.rb'
 
 # Перегрузка helper'ов Rails
-class RailsGilensonHelpersTest < Test::Unit::TestCase
+rails_test_class = defined?(ActionController::TestCase) ? ActionController::TestCase : Test::Unit::TestCase
+
+class RailsGilensonHelpersTest < rails_test_class
   
   class Kontroller < ActionController::Base
     def action_with_gilensize
