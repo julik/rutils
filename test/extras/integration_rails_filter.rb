@@ -18,6 +18,10 @@ rails_test_class = defined?(ActionController::TestCase) ? ActionController::Test
 
 class RailsFilterTest < rails_test_class
   
+  if respond_to?(:tests) # Еще одно изобретение чтобы как можно больше вещей были несовместимы от рельсов к рельсам 
+    tests RutiledController
+  end
+  
   def setup
     @controller = RutiledController.new
     @request = ActionController::TestRequest.new

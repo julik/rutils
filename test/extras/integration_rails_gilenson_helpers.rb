@@ -43,6 +43,10 @@ class RailsGilensonHelpersTest < rails_test_class
     end
   end
   
+  if respond_to?(:tests) # Еще одно изобретение чтобы как можно больше вещей были несовместимы от рельсов к рельсам 
+    tests Kontroller
+  end
+  
   def setup
     @request = ActionController::TestRequest.new
     @response = ActionController::TestResponse.new
