@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*- 
 # ++DEPRECATED++ Этот модуль удален и присутствует только для выдачи сообщения об ошибке.
 module RuTils::Transliteration::BiDi
-  ERR = "Equivalent bidirectional transliteration for URLs is malpractive. BiDi translit has been removed from RuTils"
+  ERR = "Equivalent bidirectional transliteration for URLs is malpractice. BiDi translit has been removed from RuTils"
   
   extend self
   
