@@ -26,11 +26,12 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
     RuTils::overrides = true
     # А никто и не говорил что класс должен быть один :-)
     k = Class.new(HelperStub)
-    [ActionView::Helpers::TagHelper, ActionView::Helpers::DateHelper].each{|m| k.send(:include, m)}
+    [ActionView::Helpers::TagHelper, ActionView::Helpers::DateHelper, RuTils::DateHelper].each{|m| k.send(:include, m)}
     @stub = k.new
   end
   
   def test_distance_of_time_in_words
+    RuTils::overrides = true
     assert_equal "20 минут", @stub.distance_of_time_in_words(Time.now - 20.minutes, Time.now)
   end
   

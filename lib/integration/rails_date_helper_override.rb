@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*- 
-module Object::ActionView::Helpers::DateHelper
+module RuTils::DateHelper
   # Несколько хаков для корректной работы модуля с Rails 1.2--2.0 одновременно с Rails 2.1 и выше.
 
   # Хелперы DateHelper принимают параметр <tt>html_options</tt> (идет последним) начиная с Rails 2.1.
@@ -25,9 +25,8 @@ module Object::ActionView::Helpers::DateHelper
   #
   # Целые числа интерпретируются как секунды.
   # <tt>distance_of_time_in_words(50)</tt> возвращает "меньше минуты".
-  alias :stock_distance_of_time_in_words :distance_of_time_in_words
   def distance_of_time_in_words(*args)
-    RuTils::overrides_enabled? ? RuTils::DateTime::distance_of_time_in_words(*args) : stock_distance_of_time_in_words(*args)
+    RuTils::overrides_enabled? ? RuTils::DateTime::distance_of_time_in_words(*args) : super
   end
 
   # Заменяет ActionView::Helpers::DateHelper::select_month меню выбора русских месяцев.
@@ -36,7 +35,10 @@ module Object::ActionView::Helpers::DateHelper
   #   select_month(Date.today, :use_month_numbers => true) # Использует ключи "1", "3"
   #   select_month(Date.today, :add_month_numbers => true) # Использует ключи "1 - Январь", "3 - Март"
   def select_month(date, options = {}, html_options = {})
-    raise "boo"
+    
+    # Выпрыгиваем пораньше на всякий случай
+    return super unless RuTils::overrides_enabled?
+    
     locale = options[:locale] unless RuTils::overrides_enabled?
     
     val = date ? (date.kind_of?(Fixnum) ? date : date.month) : ''
@@ -85,7 +87,6 @@ module Object::ActionView::Helpers::DateHelper
         )
         month_options << "\n"
       end
-      raise month_options.inspect
       
       if DATE_HELPERS_RECEIVE_HTML_OPTIONS
         if self.class.private_instance_methods.include? "_date_select_html"
@@ -99,31 +100,33 @@ module Object::ActionView::Helpers::DateHelper
     end
   end
   
-  alias :stock_select_date :select_date
   # Заменяет ActionView::Helpers::DateHelper::select_date меню выбора русской даты.
   def select_date(date = Date.current, options = {}, html_options = {})
     options[:order] ||= [:day, :month, :year]
     if DATE_HELPERS_RECEIVE_HTML_OPTIONS
-      stock_select_date(date, options, html_options)
+      super(date, options, html_options)
     else
-      stock_select_date(date, options)
+      super(date, options)
     end
   end
 end
 
-module Object::ActionView::Helpers
-  if defined?(InstanceTag) && InstanceTag.private_method_defined?(:date_or_time_select)
-    class InstanceTag #:nodoc:
-      private
-        alias :stock_date_or_time_select :date_or_time_select
-        def date_or_time_select(options, html_options = {})
-          options[:order] ||= [:day, :month, :year]
-          if DATE_HELPERS_RECEIVE_HTML_OPTIONS
-            stock_date_or_time_select(options, html_options)
-          else
-            stock_date_or_time_select(options)
-          end
-        end
-    end
-  end
+if defined?(::ActionView::Helpers::InstanceTag)
 end
+
+#module Object::ActionView::Helpers
+#  if defined?(InstanceTag) && InstanceTag.private_method_defined?(:date_or_time_select)
+#    class InstanceTag #:nodoc:
+#      private
+#        alias :stock_date_or_time_select :date_or_time_select
+#        def date_or_time_select(options, html_options = {})
+#          options[:order] ||= [:day, :month, :year]
+#          if RuTils::DateHelper::DATE_HELPERS_RECEIVE_HTML_OPTIONS
+#            stock_date_or_time_select(options, html_options)
+#          else
+#            stock_date_or_time_select(options)
+#          end
+#        end
+#    end
+#  end
+#end

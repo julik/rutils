@@ -3,8 +3,6 @@ Manifest.txt
 README.txt
 Rakefile.rb
 TODO.txt
-WHAT_HAS_CHANGED.txt
-bin/gilensize
 bin/rutilize
 init.rb
 lib/countries/countries.rb
@@ -34,7 +32,6 @@ test/extras/integration_redcloth3.rb
 test/extras/integration_redcloth4.rb
 test/run_tests.rb
 test/test_datetime.rb
-test/test_gilenson.rb
 test/test_integration.rb
 test/test_integration_flag.rb
 test/test_pluralize.rb
