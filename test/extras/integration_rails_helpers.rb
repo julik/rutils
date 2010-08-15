@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*- 
 
+require "ostruct"
 require 'action_controller'
 require 'action_view'
-
 require 'action_controller/test_process'
 require File.dirname(__FILE__) +  '/../../init.rb'
 require 'action_pack/version'
@@ -11,8 +11,12 @@ ma, mi, ti = ActionPack::VERSION::MAJOR, ActionPack::VERSION::MINOR, ActionPack:
 
 raise LoadError, "RuTils is not 2.2.2 compat" if (ma >= 2 && mi >= 2 && ti >= 1)
 
+
+ActionController::Routing::Routes.draw {  |map| map.connect ':controller/:action/:id' }
+rails_test_class = defined?(ActionController::TestCase) ? ActionController::TestCase : Test::Unit::TestCase
+
 # Перегрузка helper'ов Rails
-class RailsHelpersOverrideTest < Test::Unit::TestCase
+class RailsDateHelperTest < Test::Unit::TestCase
   TEST_DATE = Date.parse("1983-10-15") # coincidentially...
   TEST_TIME = Time.local(1983, 10, 15, 12, 15) # also coincidentially...
   
@@ -77,12 +81,33 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
         "Хелпер select_date принимает html_options"
     end
   end
+end
+
+class DateHelperWithControllerTest < rails_test_class
+  TEST_DATE = Date.parse("1983-10-15") # coincidentially...
   
-  def test_instance_tag
-    @it = ActionView::Helpers::InstanceTag.new(:stub, :date_field, self).to_datetime_select_tag
-    assert_match /\>10\<.+\>октября\<.+\>1983\</m, @it,
-      "to_datetime_select_rag должен выводить поля в следующем порядке: день, месяц, год"
-    assert_match /июля/m, @it,
-     "to_datetime_select_tag выводит месяц в родительном падеже"
+  class DatifiedController < ActionController::Base #:nodoc:
+    def schmoo
+      @widget = OpenStruct.new(:birthday => TEST_DATE)
+      render :inline => '<%= date_select(:widget, :birthday) %>'
+    end
+    def rescue_action(e); raise e; end
+  end
+  
+  if respond_to?(:tests) # Еще одно изобретение чтобы как можно больше вещей были несовместимы от рельсов к рельсам 
+    tests DatifiedController
+  end
+  
+  def setup
+    @controller = DatifiedController.new
+    @request = ActionController::TestRequest.new
+    @response = ActionController::TestResponse.new
+  end 
+
+  def test_select_month
+    RuTils::overrides = true
+    
+    get :schmoo
+    assert_match /июля/, @response.body
   end
 end

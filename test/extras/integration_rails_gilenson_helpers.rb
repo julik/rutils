@@ -55,32 +55,32 @@ class RailsGilensonHelpersTest < rails_test_class
   
   def test_action_with_gilensize
     get :action_with_gilensize
-    assert_equal 'Они&#160;пришли &#8212; туда &#8212; к&#160;А.П.&#8201;Чехову', @response.body
+    assert_equal 'Они&#160;пришли &#8212; туда &#8212; к&#160;А.П.&#8201;Чехову', @response.body.strip
   end
   
   def test_action_with_gilensize_and_options
     get :action_with_gilensize_and_options
-    assert_equal "Они пришли — туда — к А.П. Чехову", @response.body
+    assert_equal "Они пришли — туда — к А.П. Чехову", @response.body.strip
   end
   
   def test_action_with_textilize
     get :action_with_textilize
-    assert_equal "<p>Они пришли &#8212; туда &#8212; к&#160;А.П.&#8201;Чехову</p>", @response.body
+    assert_equal "<p>Они пришли &#8212; туда &#8212; к&#160;А.П.&#8201;Чехову</p>", @response.body.strip
   end
   
   def test_action_with_textilize_without_overrides
     get :action_with_textilize_without_overrides
-    assert_equal "<p>Они пришли &#8212; туда &#8212; к А. П. Чехову</p>", @response.body, "Initials should not be formatted"
+    assert_equal "<p>Они пришли &#8212; туда &#8212; к А. П. Чехову</p>", @response.body.strip, "Initials should not be formatted"
   end
   
   def test_action_with_markdown
     get :action_with_markdown
-    assert_equal "<p>Они пришли &#8212; туда &#8212; к&#160;А.П.&#8201;Чехову</p>", @response.body
+    assert_equal "<p>Они пришли &#8212; туда &#8212; к&#160;А.П.&#8201;Чехову</p>", @response.body.strip
   end
   
   def test_action_with_markdown_without_overrides
     get :action_with_markdown_without_overrides
-    assert_equal "<p>Они пришли -- туда -- к А. П. Чехову</p>", @response.body
+    assert_equal "<p>Они пришли -- туда -- к А. П. Чехову</p>", @response.body.strip
   end
   
 end

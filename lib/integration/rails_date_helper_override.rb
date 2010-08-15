@@ -1,12 +1,11 @@
 # -*- encoding: utf-8 -*- 
 module RuTils::DateHelper
-  # Несколько хаков для корректной работы модуля с Rails 1.2--2.0 одновременно с Rails 2.1 и выше.
-
+  # Несколько вторжений :-) для корректной работы модуля с Rails 1.2--2.0 одновременно с Rails 2.1 и выше.
   # Хелперы DateHelper принимают параметр <tt>html_options</tt> (идет последним) начиная с Rails 2.1.
   # Нужно понять, имеем ли мы дело с Rails 2.1+, для этого проверяем наличие классметода helper_modules у
   # ActionView::Base, который появился как раз в версии 2.1.
   DATE_HELPERS_RECEIVE_HTML_OPTIONS = ActionView::Base.respond_to?(:helper_modules) #:nodoc:
-
+  
   # В Rails Edge (2.1+) определяется <tt>Time.current</tt> для работы с временными зонами.
   unless Time.respond_to? :current
     class << ::Time # :nodoc:
@@ -28,7 +27,7 @@ module RuTils::DateHelper
   def distance_of_time_in_words(*args)
     RuTils::overrides_enabled? ? RuTils::DateTime::distance_of_time_in_words(*args) : super
   end
-
+  
   # Заменяет ActionView::Helpers::DateHelper::select_month меню выбора русских месяцев.
   #
   #   select_month(Date.today)                             # Использует ключи "Январь", "Март"
@@ -109,24 +108,9 @@ module RuTils::DateHelper
       super(date, options)
     end
   end
+  
 end
 
-if defined?(::ActionView::Helpers::InstanceTag)
+if defined?(Object::ActionView::Helpers::InstanceTag)
+  Object::ActionView::Helpers::InstanceTag.send(:include, RuTils::DateHelper) # kaboom! наш хелпер загружен ПОСЛЕ стандартного а следовательно имеет приоритет
 end
-
-#module Object::ActionView::Helpers
-#  if defined?(InstanceTag) && InstanceTag.private_method_defined?(:date_or_time_select)
-#    class InstanceTag #:nodoc:
-#      private
-#        alias :stock_date_or_time_select :date_or_time_select
-#        def date_or_time_select(options, html_options = {})
-#          options[:order] ||= [:day, :month, :year]
-#          if RuTils::DateHelper::DATE_HELPERS_RECEIVE_HTML_OPTIONS
-#            stock_date_or_time_select(options, html_options)
-#          else
-#            stock_date_or_time_select(options)
-#          end
-#        end
-#    end
-#  end
-#end
