@@ -18,5 +18,4 @@ module RuTils
 end
 
 # Этот класс теперь живет в геме gilenson.
-class RuTils::Gilenson::Formatter < ::Gilenson
-end
+RuTils::Gilenson::Formatter = ::Gilenson
