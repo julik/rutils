@@ -36,6 +36,7 @@ module Object::ActionView::Helpers::DateHelper
   #   select_month(Date.today, :use_month_numbers => true) # Использует ключи "1", "3"
   #   select_month(Date.today, :add_month_numbers => true) # Использует ключи "1 - Январь", "3 - Март"
   def select_month(date, options = {}, html_options = {})
+    raise "boo"
     locale = options[:locale] unless RuTils::overrides_enabled?
     
     val = date ? (date.kind_of?(Fixnum) ? date : date.month) : ''
@@ -84,6 +85,7 @@ module Object::ActionView::Helpers::DateHelper
         )
         month_options << "\n"
       end
+      raise month_options.inspect
       
       if DATE_HELPERS_RECEIVE_HTML_OPTIONS
         if self.class.private_instance_methods.include? "_date_select_html"

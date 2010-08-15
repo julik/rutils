@@ -10,7 +10,7 @@ init.rb
 lib/countries/countries.rb
 lib/datetime/datetime.rb
 lib/gilenson/bluecloth_extra.rb
-lib/gilenson/gilenson.rb
+lib/gilenson/gilenson_stub.rb
 lib/gilenson/helper.rb
 lib/gilenson/maruku_extra.rb
 lib/gilenson/rdiscount_extra.rb

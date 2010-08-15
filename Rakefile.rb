@@ -26,6 +26,7 @@ begin
     p.email = ['me@julik.nl', 'yaroslav@markin.net']
     p.description = 'Simple processing of russian strings'
     p.summary     = 'Simple processing of russian strings'
+    p.extra_deps = {"gilenson" => ">=0"}
     p.remote_rdoc_dir = ''
     p.need_zip = true # ненвижу
   end

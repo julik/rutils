@@ -49,9 +49,12 @@ module RuTils
   end
 end
 
-[:pluralizer, :gilenson, :datetime, :transliteration, :countries].each do | submodule |
+[:pluralizer, :datetime, :transliteration, :countries].each do | submodule |
   require File.join(RuTils::INSTALLATION_DIRECTORY, "lib", submodule.to_s, submodule.to_s)
 end
+
+# Заглушка для подключения типографа (он теперь в отдельном геме)
+require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/gilenson/gilenson_stub")
 
 # Оверлоады грузим только если константа не установлена в false
 unless defined?(::RuTils::RUTILS_USE_DATE_HELPERS) && !::RuTils::RUTILS_USE_DATE_HELPERS

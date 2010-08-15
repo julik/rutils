@@ -35,6 +35,8 @@ class RailsHelpersOverrideTest < Test::Unit::TestCase
   end
   
   def test_select_month
+    RuTils::overrides = true
+    
     assert_match /июль/, @stub.select_month(TEST_DATE), 
       "Месяц в выборе месяца должен быть указан в именительном падеже"
     assert_match />7\<\/option\>/, @stub.select_month(TEST_DATE, :use_month_numbers => true), 
