@@ -25,4 +25,4 @@ else
 end
 
 # textilize и markdown
-::ActionController::Base.send(:helper, RuTils::Gilenson::Helper)
+::ActionController::Base.send(:helper, RuTils::GilensonStub::Helper)
