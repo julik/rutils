@@ -17,9 +17,7 @@ module RuTils
       # Возвращает текст обработанный Гиленсоном
       def gilensize(text, options = {})
         return "" if text.blank?
-        f = Gilenson.new
-        f.configure!(options)
-        f.process(text)
+        Gilenson.new.process(text, options)
       end
       
       # Возвращает текст обработанный Текстилем и Гиленсоном
