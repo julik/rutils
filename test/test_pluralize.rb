@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*- 
-$KCODE = 'u'
+$KCODE = 'u' if RUBY_VERSION < '1.9.0'
 require 'test/unit'
 require File.dirname(__FILE__) + '/../lib/rutils'
 

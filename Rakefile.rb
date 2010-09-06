@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*- 
-$KCODE = 'u'
+$KCODE = 'u' if RUBY_VERSION < '1.9.0'
 $:.reject! { |e| e.include? 'TextMate' }
 
 require 'lib/version'
