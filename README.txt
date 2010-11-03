@@ -201,3 +201,7 @@ RubyKanjiCode в своем httpd.conf.
 Если вы хотите участвовать в разработке RuTils - fork us on GitHub
 
 git clone git://github.com/julik/rutils.git
+
+== Лицензия
+
+Поставляется под лицензией MIT (см. MIT_LICENSE.txt)
