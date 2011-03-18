@@ -41,7 +41,8 @@ module RuTils
   module_function :overrides=
   
   def self.thread_local_or_own_flag #:nodoc:
-    Thread.current.keys.include?(:rutils_overrides_enabled) ? Thread.current[:rutils_overrides_enabled] : false
+    # Это может быть умирает на 1.9.2
+    Thread.current[:rutils_overrides_enabled] || false
   end
   
   def self.load_component(name) #:nodoc:
@@ -49,9 +50,10 @@ module RuTils
   end
 end
 
-[:pluralizer, :datetime, :transliteration, :countries].each do | submodule |
-  require File.join(RuTils::INSTALLATION_DIRECTORY, "lib", submodule.to_s, submodule.to_s)
-end
+require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/pluralizer/pluralizer")
+require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/datetime/datetime")
+require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/transliteration/stub")
+require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/countries/countries")
 
 # Заглушка для подключения типографа (он теперь в отдельном геме)
 require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/gilenson/gilenson_stub")

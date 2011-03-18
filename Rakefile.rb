@@ -14,11 +14,6 @@ begin
   Hoe::RUBY_FLAGS.replace ENV['RUBY_FLAGS'] || "-I#{%w(lib test).join(File::PATH_SEPARATOR)}" + 
     (Hoe::RUBY_DEBUG ? " #{RUBY_DEBUG}" : '')
   
-  #Rake::RDocTask.class_eval do
-  #  alias_method :_odefine, :define
-  #  def define; @options.unshift(*DOCOPTS); _odefine; end
-  #end
-
   rutils = Hoe.spec('rutils') do |p|
     p.version = RuTils::VERSION
     p.name = "rutils"
@@ -26,10 +21,9 @@ begin
     p.email = ['me@julik.nl', 'yaroslav@markin.net']
     p.description = 'Simple processing of russian strings'
     p.summary     = 'Simple processing of russian strings'
-    p.extra_deps = {"gilenson" => ">=1.1.0"}
-    p.remote_rdoc_dir = ''
-    p.need_zip = true # ненвижу
+    p.extra_deps = {"gilenson" => ">=1.1.0", "ru_translify" => ">= 1.0.0" }
   end
+  
   rutils.spec.rdoc_options += DOCOPTS
   
   require 'load_multi_rails_rake_tasks'

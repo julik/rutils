@@ -20,6 +20,10 @@ end
 
 class StrftimeRuTest < Test::Unit::TestCase
   
+  def test_to_datetime_does_not_recurse_indefinitely
+    puts Time.new.send(:to_datetime).strftime("%a, %A, %b, %B")
+  end
+  
   def test_a_formatter_should_actually_return
     the_fmt = "Это случилось %d %B"
     assert_equal "Это случилось 01 декабря", RuTils::DateTime::ru_strftime(Time.local(1985, "dec", 01), the_fmt)

@@ -5,12 +5,6 @@ require "gilenson"
 module RuTils
   module GilensonStub
     
-    # Позволяет возвращать класс форматтера при вызове
-    #  RuTils::Gilenson.new
-    def self.new(*args) #:nodoc:
-      Gilenson.new(*args)
-    end
-    
     # Включается на правах хелпера в Rails-приложение
     module Helper
       

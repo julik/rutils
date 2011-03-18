@@ -31,6 +31,7 @@ module RuTils
          when 2..45      then distance_in_minutes.to_s + 
                               " " + distance_in_minutes.items("минута", "минуты", "минут") 
          when 46..90     then 'около часа'
+         
          # исключение, сдвигаем на один влево чтобы соответствовать падежу
          when 90..1440   then "около " + (distance_in_minutes.to_f / 60.0).round.to_s + 
                               " " + (distance_in_minutes.to_f / 60.0).round.items("часа", 'часов', 'часов')
@@ -40,7 +41,7 @@ module RuTils
        end
     end
     
-    def self.ru_strftime(time, format_str='%d.%m.%Y')
+    def self.ru_strftime(time, format_str='%d.%m.%Y') #;yields: replaced time string
       clean_fmt = format_str.to_s.gsub(/%{2}/, RuTils::SUBSTITUTION_MARKER).
         gsub(/%a/, RU_ABBR_DAYNAMES[time.wday]).
         gsub(/%A/, RU_DAYNAMES[time.wday]).
@@ -59,7 +60,9 @@ module RuTils
     
     module RuStrftime
       def self.included(into)
-        return if into.instance_methods.include?(:strftime_norutils)
+        if instance_methods.include?(:strftime_norutils)
+          return super
+        end
         
         into.send(:alias_method, :strftime_norutils, :strftime)
         into.send(:define_method, :strftime) do | fmt |
@@ -74,6 +77,8 @@ module RuTils
       end
     end
     
+    # Включаем всякие оверрайды только если версия Ruby старая.
+    # Лазить в чужие кишки немытыми руками нехорошо.
     if defined?(::DateTime)
       ::DateTime.send(:include, RuStrftime)
     end
