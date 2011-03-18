@@ -2,7 +2,7 @@
 $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 require 'test/unit'
 
-require File.dirname(__FILE__) + '/../lib/rutils'
+require File.expand_path(File.dirname(__FILE__)) + '/../lib/rutils'
 
 # Load all the prereqs
 integration_tests = ['rubygems', 'multi_rails_init'] + Dir.glob(File.dirname(__FILE__) + '/extras/integration_*.rb')

@@ -4,7 +4,7 @@ require 'action_controller'
 require 'action_view'
 
 require 'action_controller/test_process'
-require File.dirname(__FILE__) +  '/../../init.rb'
+require File.expand_path(File.dirname(__FILE__)) +  '/../../init.rb'
 
 # Перегрузка helper'ов Rails
 rails_test_class = defined?(ActionController::TestCase) ? ActionController::TestCase : Test::Unit::TestCase

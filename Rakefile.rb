@@ -2,7 +2,7 @@
 $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 $:.reject! { |e| e.include? 'TextMate' }
 
-require 'lib/version'
+require File.expand_path(File.dirname(__FILE__) + '/lib/version')
 
 begin
   require 'rubygems'

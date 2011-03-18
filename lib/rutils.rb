@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*- 
 $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 
-require File.dirname(__FILE__) + '/version'
+require File.expand_path(File.dirname(__FILE__)) + '/version'
 
 # Главный контейнер модуля
 module RuTils
@@ -36,12 +36,12 @@ module RuTils
   #
   # Флаг overrides в RuTils работают в контексте текущей нити
   def overrides=(new_override_flag)
-    Thread.current[:rutils_overrided_enabled] = (new_override_flag ? true : false)
+    Thread.current[:rutils_overrides_enabled] = (new_override_flag ? true : false)
   end
   module_function :overrides=
   
   def self.thread_local_or_own_flag #:nodoc:
-    Thread.current.keys.include?(:rutils_overrided_enabled) ? Thread.current[:rutils_overrided_enabled] : false
+    Thread.current.keys.include?(:rutils_overrides_enabled) ? Thread.current[:rutils_overrides_enabled] : false
   end
   
   def self.load_component(name) #:nodoc:

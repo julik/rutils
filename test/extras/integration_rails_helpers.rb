@@ -4,7 +4,7 @@ require "ostruct"
 require 'action_controller'
 require 'action_view'
 require 'action_controller/test_process'
-require File.dirname(__FILE__) +  '/../../init.rb'
+require File.expand_path(File.dirname(__FILE__)) +  '/../../init.rb'
 require 'action_pack/version'
 
 ma, mi, ti = ActionPack::VERSION::MAJOR, ActionPack::VERSION::MINOR, ActionPack::VERSION::TINY 

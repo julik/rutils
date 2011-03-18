@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*- 
+require "rubygems"
 $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 require 'test/unit'
-require File.dirname(__FILE__) + '/../lib/rutils'
+require File.expand_path(File.dirname(__FILE__)) + '/../lib/rutils'
 
 class DistanceOfTimeTest < Test::Unit::TestCase
   def test_distance_of_time_in_words
@@ -62,7 +63,7 @@ class StrftimeRuTest < Test::Unit::TestCase
   
   def test_shorthands_defined
     date = Date.new(2005, 12, 31)
-    assert_equal "дек декабрь сб суббота", "#{Date::RU_ABBR_MONTHNAMES[date.mon]} #{Date::RU_MONTHNAMES[date.mon]} #{Date::RU_ABBR_DAYNAMES[date.wday]} #{Date::RU_DAYNAMES[date.wday]}"
+    assert_equal "дек декабрь сб суббота", "#{RuTils::DateTime::RU_ABBR_MONTHNAMES[date.mon]} #{RuTils::DateTime::RU_MONTHNAMES[date.mon]} #{RuTils::DateTime::RU_ABBR_DAYNAMES[date.wday]} #{RuTils::DateTime::RU_DAYNAMES[date.wday]}"
     
     date = Date.new(2005, 11, 9)
     assert_equal "Nov November Wed Wednesday", "#{Date::ABBR_MONTHNAMES[date.mon]} #{Date::MONTHNAMES[date.mon]} #{Date::ABBR_DAYNAMES[date.wday]} #{Date::DAYNAMES[date.wday]}"

@@ -5,10 +5,10 @@
   RuTils будет автоматически загружен с включенным флагом <tt>RuTils::overrides = true</tt>.
   В ActionController::Base будет установлен пре-фильтр устанавливающий флаг <tt>overrides.</tt>
 =end
-require File.dirname(__FILE__) +  '/lib/rutils' unless defined?(RuTils)
+require File.expand_path(File.dirname(__FILE__)) +  '/lib/rutils' unless defined?(RuTils)
 
 RuTils::overrides = true
-require File.dirname(__FILE__) + '/lib/integration/rails_pre_filter' 
+require File.expand_path(File.dirname(__FILE__)) + '/lib/integration/rails_pre_filter' 
 
 def russan_gem_required?
   require 'action_pack/version'
@@ -20,7 +20,7 @@ end
 if russan_gem_required?
   STDERR.puts "RuTils WARNING: On this version of Rails use the `russian` gem for date helper overrides instead"
 else
-  require File.dirname(__FILE__) +  '/lib/integration/rails_date_helper_override'
+  require File.expand_path(File.dirname(__FILE__)) +  '/lib/integration/rails_date_helper_override'
   ::ActionController::Base.send(:helper, RuTils::DateHelper)
 end
 
