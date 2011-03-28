@@ -53,10 +53,11 @@ end
 require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/pluralizer/pluralizer")
 require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/datetime/datetime")
 require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/transliteration")
-require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/countries/countries")
 
 # Заглушка для подключения типографа (он теперь в отдельном геме)
 require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/gilenson/gilenson_stub")
+
+require "ru_propisju"
 
 # Оверлоады грузим только если константа не установлена в false
 unless defined?(::RuTils::RUTILS_USE_DATE_HELPERS) && !::RuTils::RUTILS_USE_DATE_HELPERS

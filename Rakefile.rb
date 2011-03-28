@@ -19,9 +19,9 @@ begin
     p.name = "rutils"
     p.author = ["Julian 'Julik' Tarkhanov", "Danil Ivanov", "Yaroslav Markin"]
     p.email = ['me@julik.nl', 'yaroslav@markin.net']
-    p.description = 'Simple processing of russian strings'
-    p.summary     = 'Simple processing of russian strings'
-    p.extra_deps = {"gilenson" => ">=1.1.0", "ru_translify" => ">= 1.0.0" }
+    p.description = 'DEPRECATED processing of russian strings'
+    p.summary     = 'DEPRECATED processing of russian strings'
+    p.extra_deps = {"gilenson" => ">=1.1.0", "ru_translify" => ">= 1.0.0", "ru_propisju" => ">= 1.0.0"  }
   end
   
   rutils.spec.rdoc_options += DOCOPTS

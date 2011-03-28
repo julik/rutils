@@ -77,8 +77,6 @@ module RuTils
       end
     end
     
-    # Включаем всякие оверрайды только если версия Ruby старая.
-    # Лазить в чужие кишки немытыми руками нехорошо.
     if defined?(::DateTime)
       ::DateTime.send(:include, RuStrftime)
     end
