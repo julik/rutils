@@ -14,19 +14,22 @@ class DistanceOfTimeTest < Test::Unit::TestCase
   end
   
   def assert_format_eq(str, *from_and_distance)
-    assert_equal str, RuTils::DateTime.distance_of_time_in_words(*from_and_distance) 
+    assert_equal str, RuTils::RuDates.distance_of_time_in_words(*from_and_distance) 
   end
 end
 
 class StrftimeRuTest < Test::Unit::TestCase
-  
+
   def test_to_datetime_does_not_recurse_indefinitely
-    puts Time.new.send(:to_datetime).strftime("%a, %A, %b, %B")
+    assert_nothing_raised do
+      s =  Time.new.send(:to_datetime).strftime("%a, %A, %b, %B")
+      assert_equal "Sat, Saturday, Apr, April", s
+    end
   end
   
   def test_a_formatter_should_actually_return
     the_fmt = "Это случилось %d %B"
-    assert_equal "Это случилось 01 декабря", RuTils::DateTime::ru_strftime(Time.local(1985, "dec", 01), the_fmt)
+    assert_equal "Это случилось 01 декабря", RuTils::RuDates::ru_strftime(Time.local(1985, "dec", 01), the_fmt)
   end
   
   def test_should_not_touch_double_marks
@@ -67,7 +70,7 @@ class StrftimeRuTest < Test::Unit::TestCase
   
   def test_shorthands_defined
     date = Date.new(2005, 12, 31)
-    assert_equal "дек декабрь сб суббота", "#{RuTils::DateTime::RU_ABBR_MONTHNAMES[date.mon]} #{RuTils::DateTime::RU_MONTHNAMES[date.mon]} #{RuTils::DateTime::RU_ABBR_DAYNAMES[date.wday]} #{RuTils::DateTime::RU_DAYNAMES[date.wday]}"
+    assert_equal "дек декабрь сб суббота", "#{RuTils::RuDates::RU_ABBR_MONTHNAMES[date.mon]} #{RuTils::RuDates::RU_MONTHNAMES[date.mon]} #{RuTils::RuDates::RU_ABBR_DAYNAMES[date.wday]} #{RuTils::RuDates::RU_DAYNAMES[date.wday]}"
     
     date = Date.new(2005, 11, 9)
     assert_equal "Nov November Wed Wednesday", "#{Date::ABBR_MONTHNAMES[date.mon]} #{Date::MONTHNAMES[date.mon]} #{Date::ABBR_DAYNAMES[date.wday]} #{Date::DAYNAMES[date.wday]}"
@@ -78,7 +81,7 @@ class StrftimeRuTest < Test::Unit::TestCase
   
   def test_formatter_should_not_mutate_passed_format_strings
     the_fmt, backup = "Это случилось %d %B", "Это случилось %d %B"
-    assert_equal "Это случилось 01 декабря", RuTils::DateTime::ru_strftime(Time.local(1985, "dec", 01), the_fmt)
+    assert_equal "Это случилось 01 декабря", RuTils::RuDates::ru_strftime(Time.local(1985, "dec", 01), the_fmt)
     assert_equal the_fmt, backup
   end
   
@@ -90,7 +93,7 @@ class StrftimeRuTest < Test::Unit::TestCase
   end
   
   def assert_format_eq(str, time_or_date, fmt, msg = 'Should format as desired')
-    r = RuTils::DateTime::ru_strftime(time_or_date, fmt)
+    r = RuTils::RuDates::ru_strftime(time_or_date, fmt)
     assert_not_nil r, "The formatter should have returned a not-nil value for #{time_or_date} and #{fmt}"
     assert_kind_of String, "The formatter should have returned a String for #{time_or_date} and #{fmt}"
     assert_equal str, r, msg
@@ -134,7 +137,7 @@ class StrftimeTest < Test::Unit::TestCase
     end
     
     ensure
-     a.join; b.join 
+    a.join; b.join 
   end
   
   def with_overrides_set_to(value, &blk)

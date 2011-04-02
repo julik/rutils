@@ -1,13 +1,16 @@
 # -*- encoding: utf-8 -*- 
 module RuTils
-  module DateTime
+  module RuDates
     
     RU_MONTHNAMES = [nil] + %w{ январь февраль март апрель май июнь июль август сентябрь октябрь ноябрь декабрь }
     RU_DAYNAMES = %w(воскресенье понедельник вторник среда четверг пятница суббота)
     RU_ABBR_MONTHNAMES = [nil] + %w{ янв фев мар апр май июн июл авг сен окт ноя дек }
     RU_ABBR_DAYNAMES = %w(вск пн вт ср чт пт сб)
-    RU_INFLECTED_MONTHNAMES = [nil] + %w{ января февраля марта апреля мая июня июля августа сентября октября ноября декабря }
-    RU_DAYNAMES_E = [nil] + %w{первое второе третье четвёртое пятое шестое седьмое восьмое девятое десятое одиннадцатое двенадцатое тринадцатое четырнадцатое пятнадцатое шестнадцатое семнадцатое восемнадцатое девятнадцатое двадцатое двадцать тридцатое тридцатьпервое}
+    RU_INFLECTED_MONTHNAMES = [nil] + %w{ января февраля марта апреля мая июня июля
+        августа сентября октября ноября декабря }
+    RU_DAYNAMES_E = [nil] + %w{первое второе третье четвёртое пятое шестое седьмое восьмое
+       девятое десятое одиннадцатое двенадцатое тринадцатое четырнадцатое пятнадцатое шестнадцатое 
+       семнадцатое восемнадцатое девятнадцатое двадцатое двадцать тридцатое тридцатьпервое}
     
     def self.distance_of_time_in_words(from_time, to_time = 0, include_seconds = false, absolute = false) #nodoc
       from_time = from_time.to_time if from_time.respond_to?(:to_time)
@@ -41,7 +44,7 @@ module RuTils
        end
     end
     
-    def self.ru_strftime(time, format_str='%d.%m.%Y') #;yields: replaced time string
+    def self.ru_strftime(time, format_str='%d.%m.%Y') #:yields: replaced time string
       clean_fmt = format_str.to_s.gsub(/%{2}/, RuTils::SUBSTITUTION_MARKER).
         gsub(/%a/, RU_ABBR_DAYNAMES[time.wday]).
         gsub(/%A/, RU_DAYNAMES[time.wday]).
@@ -52,38 +55,31 @@ module RuTils
         gsub(/#{RuTils::SUBSTITUTION_MARKER}/, '%%')
       # Теперь когда все нужные нам маркеры заменены можно отдать это стандартному strftime
       if block_given?
-        yield(clean_fmt) 
+        yield(clean_fmt)
       else
-        time.strftime(clean_fmt)
+        time.strftime_norutils(clean_fmt)
       end
     end
     
-    module RuStrftime
+    module RuStrftimeOverride
+      
       def self.included(into)
-        if instance_methods.include?(:strftime_norutils)
-          return super
-        end
-        
         into.send(:alias_method, :strftime_norutils, :strftime)
-        into.send(:define_method, :strftime) do | fmt |
-          if RuTils::overrides_enabled?
-            RuTils::DateTime::ru_strftime(self, fmt) {| fmt_with_replacements | strftime_norutils(fmt_with_replacements) }
-          else
-            strftime_norutils(fmt)
+        into.class_eval do
+          def strftime(fmt)
+            if RuTils::overrides_enabled?
+              RuTils::RuDates.ru_strftime(self, fmt) do | fmt_with_replacements | 
+                strftime_norutils(fmt_with_replacements)
+              end
+            else
+              strftime_norutils(fmt)
+            end
           end
         end
-        
-        super
       end
+      
     end
     
-    if defined?(::DateTime)
-      ::DateTime.send(:include, RuStrftime)
-    end
-    
-    ::Time.send(:include, RuStrftime)
-    if defined?(::Date)
-      ::Date.send(:include, RuStrftime)
-    end
+    [Time, Date].each{|k| k.send(:include, RuStrftimeOverride) }
   end
 end

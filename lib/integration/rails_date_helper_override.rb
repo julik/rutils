@@ -25,7 +25,7 @@ module RuTils::DateHelper
   # Целые числа интерпретируются как секунды.
   # <tt>distance_of_time_in_words(50)</tt> возвращает "меньше минуты".
   def distance_of_time_in_words(*args)
-    RuTils::overrides_enabled? ? RuTils::DateTime::distance_of_time_in_words(*args) : super
+    RuTils::overrides_enabled? ? RuTils::RuDates.distance_of_time_in_words(*args) : super
   end
   
   # Заменяет ActionView::Helpers::DateHelper::select_month меню выбора русских месяцев.
@@ -52,12 +52,12 @@ module RuTils::DateHelper
       if RuTils::overrides_enabled?
         month_names = case true
           when options[:use_short_month]
-            Date::RU_ABBR_MONTHNAMES
+            RuTils::RuDates::RU_ABBR_MONTHNAMES
           # использование в контексте date_select с днями требует родительный падеж
           when options[:order] && options[:order].include?(:day)
-            Date::RU_INFLECTED_MONTHNAMES
+            RuTils::RuDates::RU_INFLECTED_MONTHNAMES
           else
-            Date::RU_MONTHNAMES
+            RuTils::RuDates::RU_MONTHNAMES
         end
       else
         if defined? I18n
