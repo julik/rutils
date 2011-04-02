@@ -3,18 +3,17 @@ require "rubygems"
 require "ru_propisju"
 
 module RuTils
+  
+  # ++DEPRECATED++ - Сумма прописью и выбор падежа
   module Pluralization #:nodoc:
-    # Выбирает нужный падеж существительного в зависимости от числа
     def self.choose_plural(amount, *variants)
       RuPropisju.choose_plural(amount, *variants)
     end
     
-    # Выводит целое или дробное число как сумму в рублях прописью
     def self.rublej(amount)
       RuPropisju.rublej(amount)
     end
     
-    # Выводит целое или дробное число как сумму в гривнах прописью
     def self.griven(amount)
       RuPropisju.griven(amount)
     end
