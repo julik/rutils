@@ -22,8 +22,9 @@ class StrftimeRuTest < Test::Unit::TestCase
 
   def test_to_datetime_does_not_recurse_indefinitely
     assert_nothing_raised do
-      s =  Time.new.send(:to_datetime).strftime("%a, %A, %b, %B")
-      assert_equal "Sat, Saturday, Apr, April", s
+      t = Time.local(2,1,1,1)
+      s =  t.send(:to_datetime).strftime("%a, %A, %b, %B")
+      assert_equal "Tue, Tuesday, Jan, January", s
     end
   end
   
