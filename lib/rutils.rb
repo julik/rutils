@@ -50,12 +50,12 @@ module RuTils
   end
 end
 
-require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/pluralizer/pluralizer")
-require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/datetime/datetime")
+require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/pluralizer")
+require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/rudates")
 require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/transliteration")
 
 # Заглушка для подключения типографа (он теперь в отдельном геме)
-require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/gilenson/gilenson_stub")
+require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/gilenson_stub")
 
 require "ru_propisju"
 
