@@ -57,6 +57,9 @@ require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/transliteration")
 # Заглушка для подключения типографа (он теперь в отдельном геме)
 require File.join(RuTils::INSTALLATION_DIRECTORY, "lib/gilenson_stub")
 
+require "russian"
+require "russian/transliteration"
+require "gilenson"
 require "ru_propisju"
 
 # Оверлоады грузим только если константа не установлена в false

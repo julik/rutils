@@ -21,7 +21,7 @@ begin
     p.email = ['me@julik.nl', 'yaroslav@markin.net']
     p.description = 'DEPRECATED processing of russian strings'
     p.summary     = 'DEPRECATED processing of russian strings'
-    p.extra_deps = {"gilenson" => ">=1.1.0", "russian" => ">= 1.0.0", "ru_propisju" => ">= 1.0.0"  }
+    p.extra_deps = {"gilenson" => ">=1.1.0", "russian" => ">= 0.2.7", "ru_propisju" => ">= 1.0.0"  }
   end
   
   rutils.spec.rdoc_options += DOCOPTS
